@@ -1,10 +1,5 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { BsFillCalendarFill } from "react-icons/bs";
-import { BsFillTrashFill } from "react-icons/bs";
-import { FaClipboardList } from "react-icons/fa";
-import { AiOutlineStepBackward } from "react-icons/ai";
-import { AiFillStepForward } from "react-icons/ai";
 import { Modal, Button } from "react-bootstrap";
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
@@ -16,6 +11,7 @@ import AspNetData from 'devextreme-aspnet-data-nojquery';
 import _ from "lodash";
 import { Breadcrumb } from 'antd';
 import { HomeOutlined, UserOutlined } from '@ant-design/icons';
+import AlertPopUp from "../../components/popup/alert_popup";
 
 
 const url = 'https://js.devexpress.com/Demos/Mvc/api/TreeListTasks';
@@ -61,7 +57,11 @@ class Work extends React.Component {
         typeId: null
       },
       projectList: [],
-      jobtypeList: []
+      jobtypeList: [],
+      isPopupSuccess: true,
+      isPopupError: false,
+      isPopupMsg: 'test',
+
     };
   }
 
@@ -182,7 +182,7 @@ class Work extends React.Component {
           <div className="row wrap-container">
             <Breadcrumb>
               <Breadcrumb.Item href="#">
-              <HomeOutlined />
+                <HomeOutlined />
                 <span className="breadcrum-custom">  work</span>
               </Breadcrumb.Item>
             </Breadcrumb>
@@ -357,6 +357,11 @@ class Work extends React.Component {
 
         </div>
       </div>
+
+      <AlertPopUp successStatus={this.state.isPopupSuccess} errorStatus={this.state.isPopupError} message={this.state.isPopupMsg} onClose={() => {
+        this.setState({ isPopupError: false })
+        this.setState({ isPopupSuccess: false })
+      }} />
     </>
     );
 
