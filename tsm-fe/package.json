@@ -1,0 +1,91 @@
+{
+  "name": "nodejs-express-sequelize-postgresql",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.11.6",
+    "@testing-library/react": "^11.2.2",
+    "@testing-library/user-event": "^12.6.0",
+    "antd": "^4.10.3",
+    "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
+    "bootstrap": "^4.5.3",
+    "browser-history": "^1.0.1",
+    "cors": "^2.8.5",
+    "devextreme": "20.2.4",
+    "devextreme-aspnet-data-nojquery": "^2.8.0",
+    "devextreme-react": "20.2.4",
+    "express": "^4.17.1",
+    "lodash": "^4.17.15",
+    "moment": "^2.26.0",
+    "multer": "^1.4.2",
+    "next": "^9.4.2",
+    "next-compose-plugins": "^2.2.0",
+    "next-fonts": "^1.1.0",
+    "next-optimized-images": "^2.6.0",
+    "next-react-svg": "^1.1.2",
+    "next-redux-saga": "^4.1.2",
+    "next-redux-wrapper": "4.0.1",
+    "next-routes": "^1.4.2",
+    "pg": "^8.5.1",
+    "pg-hstore": "^2.3.3",
+    "react": "^17.0.1",
+    "react-bootstrap": "^1.4.0",
+    "react-calendar": "^3.3.0",
+    "react-dom": "^17.0.1",
+    "react-dropdown": "^1.9.0",
+    "react-hooks-lib": "^0.4.0",
+    "react-icons": "^4.1.0",
+    "react-native-router-flux": "^4.2.0",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.1",
+    "react-search-field": "^1.2.0",
+    "react-select": "^3.2.0",
+    "rrule": "^2.6.6",
+    "sequelize": "^6.4.0",
+    "sweetalert2": "^10.12.7",
+    "web-vitals": "^0.2.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "index.js sever.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "repository"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "sequelize",
+    "postgresql",
+    "rest",
+    "api"
+  ],
+  "author": "bezkoder",
+  "license": "ISC"
+}
