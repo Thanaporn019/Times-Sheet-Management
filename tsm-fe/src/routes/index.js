@@ -18,9 +18,11 @@ export default () => (
     <Route exact path="/project" component={Project} />
     <Route exact path="/work" component={Work} />
     <Route exact path="/work/:query?" render={(props) => <ActionsWork {...props} /> } />
+    <Route exact path="/project/:query?" render={(props) => <ActionsProject {...props} /> } />
+    <Route exact path="/jobtype/:query?" render={(props) => <ActionJobType {...props} /> } />
     {/* <Route exact path="/work/:action?/:workId?" render={(props) => <ActionsWork {...props} /> } /> */}
-    <Route exact path="/jobtype/:action?" render={(props) => <ActionJobType {...props} /> } />
-    <Route exact path="/project/:action?/:projectId" render={(props) => <ActionsProject {...props} /> } />
+    {/* <Route exact path="/jobtype/:action?/:typeId" render={(props) => <ActionJobType {...props} /> } />
+    <Route exact path="/project/:action?/:projectId" render={(props) => <ActionsProject {...props} /> } /> */}
    
   </Switch>
 )

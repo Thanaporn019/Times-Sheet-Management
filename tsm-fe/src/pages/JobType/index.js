@@ -1,22 +1,21 @@
 import React, { Component } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 import { BsFillCalendarFill } from "react-icons/bs";
 import { BsFillTrashFill } from "react-icons/bs";
 import { FaClipboardList } from "react-icons/fa";
 import { AiOutlineStepBackward } from "react-icons/ai";
 import { AiFillStepForward } from "react-icons/ai";
 import { Modal, Button } from "react-bootstrap";
-import 'devextreme/dist/css/dx.common.css';
-import 'devextreme/dist/css/dx.light.css';
+// import 'devextreme/dist/css/dx.common.css';
+// import 'devextreme/dist/css/dx.light.css';
 import DateBox from 'devextreme-react/date-box';
 import { IoAddOutline } from "react-icons/io5";
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import TreeList, { RemoteOperations, Column, SearchPanel, HeaderFilter, Editing, RequiredRule, Lookup } from 'devextreme-react/tree-list';
 import AspNetData from 'devextreme-aspnet-data-nojquery';
 import _ from "lodash";
 import { Breadcrumb } from 'antd';
-import { HomeOutlined, UserOutlined } from '@ant-design/icons';
-
+import { HomeOutlined, EyeOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons';
+import DataGrid, { Column, Pager, Paging } from 'devextreme-react/data-grid';
 
 const url = 'https://js.devexpress.com/Demos/Mvc/api/TreeListTasks';
 
@@ -68,7 +67,48 @@ class JobType extends React.Component {
         typeId: null
       },
       projectList: [],
-      jobtypeList: []
+      jobtypeList: [],
+      data: [{
+        typeId: '0001',
+        typeName: 'test',
+        typeCode: 'T0001',
+        updateDate: '01/12/2020',
+        updateBy: 'joon',
+        createDate: '01/11/2020',
+        createBy: 'joon',
+      }, {
+        typeId: '0002',
+        typeName: 'test2',
+        typeCode: 'T0002',
+        updateDate: '01/12/2020',
+        updateBy: 'joon',
+        createDate: '01/11/2020',
+        createBy: 'joon',
+      }, {
+        typeId: '0003',
+        typeName: 'test3',
+        typeCode: 'T0003',
+        updateDate: '01/12/2020',
+        updateBy: 'joon',
+        createDate: '01/11/2020',
+        createBy: 'joon',
+      }, {
+        typeId: '0004',
+        typeName: 'test4',
+        typeCode: 'T0004',
+        updateDate: '01/12/2020',
+        updateBy: 'joon',
+        createDate: '01/11/2020',
+        createBy: 'joon',
+      }, {
+        typeId: '0005',
+        typeName: 'test5',
+        typeCode: 'T0005',
+        updateDate: '01/12/2020',
+        updateBy: 'joon',
+        createDate: '01/11/2020',
+        createBy: 'joon',
+      }]
     };
   }
 
@@ -191,7 +231,7 @@ class JobType extends React.Component {
             <Breadcrumb>
               <Breadcrumb.Item href="#">
                 <HomeOutlined />
-                <span className="breadcrum-custom">job type</span>
+                <span className="breadcrum-custom">Job Type</span>
               </Breadcrumb.Item>
             </Breadcrumb>
 
@@ -205,40 +245,31 @@ class JobType extends React.Component {
                   <div className="box-search-border">
                     <form>
 
-                      {/* <div className="box-action-content"> */}
-
                       <div className="row form-group">
                         <div className="col-4" style={{ textAlign: 'right' }}>
 
                         </div>
 
-
                       </div>
                       {/* Job Type Name */}
                       <div className="row form-group">
-                        <div className="col-4" style={{ textAlign: 'right' }}><label for="txtJob Type">Job Type<span style={{ color: 'red' }}>*</span></label></div>
-                        <input type="text" class="form-control col-3" id="txtJob Type" />
-                        {/* <div class="col-3">
-        <button type="button" class="btn btn-custom-color" style={{ marginRight: 20 }} onClick={this.calManHours}>Calculate</button></div> */}
+                        <div className="col-4" style={{ textAlign: 'right' }}><label for="txtJobType" className="title-field">Job Type<span style={{ color: 'red' }}>*</span></label></div>
+                        <input type="text" class="form-control col-3" id="txtJobType" />
                       </div>
 
                       {/* Code */}
                       <div className="row form-group">
-                        <div className="col-4" style={{ textAlign: 'right' }}><label for="txtCode">Code <span style={{ color: 'red' }}>*</span></label></div>
+                        <div className="col-4" style={{ textAlign: 'right' }}><label for="txtCode" className="title-field">Code <span style={{ color: 'red' }}>*</span></label></div>
                         <input type="text" class="form-control col-3" id="txtCode" />
 
                       </div>
-
-
-
-                      {/* </div> */}
 
                     </form>
 
                     <div className="row form-group">
                       <div className="col-12" style={{ textAlign: 'center' }}>
-                        <button type="button" class="btn btn-secondary" style={{ marginRight: 20 }} onClick={this.handleReset}>RESET</button>
-                        <button type="button" class="btn btn-custom-color">SEARCH</button>
+                        <button class="btn-custom btn-reset " style={{ marginRight: 20 }} onClick={this.handleReset}>RESET</button>
+                        <button class="btn-custom btn-search ">SEARCH</button>
                       </div>
                     </div>
                   </div>
@@ -252,94 +283,33 @@ class JobType extends React.Component {
             <div className="wrap-content">
               <div className="box-search" style={{ padding: 30 }}>
                 <div style={{ textAlign: 'end', padding: 15 }}>
-                  <Link to="/JobType/create">
-                    <Button variant="btn btn-custom-color" onClick={this.openModal}><IoAddOutline style={{ width: '16px' }} /> Create Job Type</Button>
+                  <Link to='/jobtype/{"action":"create"}'>
+                    <button className="btn-custom btn-search " style={{ width: 250 }} ><span className="btn-icon"><IoAddOutline /></span> <span className="btn-txt-icon">Create Job Type</span></button>
                   </Link>
                 </div>
 
+                <div style={{ padding: 20 }}>
+                  <DataGrid
+                    dataSource={this.state.data}
+                    showBorders={true}
+                    showRowLines={true}
+                  >
+                    <Paging defaultPageSize={3} />
+                    <Pager
+                      showPageSizeSelector={true}
+                      allowedPageSizes={[5, 10, 20]}
+                      showInfo={true}
+                      showNavigationButtons={true}
+                    />
 
-                <table class="table text-center">
-                  <table class="table ">
-                    <thead class="thead-light">
+                    <Column width="100" caption="No" alignment="center" cellRender={noCellRender} dataType="string" />
+                    <Column caption="Job Type" dataField="typeName" dataType="string" />
+                    <Column caption="Code" dataField="typeCode" dataType="string" />
+                    <Column width="100" alignment="center" caption="Edit" cellRender={editCellRender} />
+                    <Column width="100" alignment="center" cellRender={delCellRender} caption="Delete" />
 
-                      <tr>
-                        <th scope="col">No</th>
-                        <th scope="col">Job Type</th>
-                        <th scope="col">Code</th>
-                        <th scope="col">Edit</th>
-                        <th scope="col">Delete</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <th scope="row">1</th>
-                        <td>Coding</td>
-                        <td>ECT</td>
-                        <td><FaClipboardList /></td>
-                        <td onClick={this.openModal}><BsFillTrashFill /></td>
-
-
-                        <Modal show={this.state.isOpen} onHide={this.closeModal}>
-                          <Modal.Header closeButton style={{ color: "#bb1717" }}>
-                            <Modal.Title style={{ padding: "1rem 11rem" }}>Confirm</Modal.Title>
-                          </Modal.Header>
-                          <Modal.Body style={{ textAlign: "center" }}>Are you sure you want to delete this?</Modal.Body>
-
-                          <Modal.Footer style={{ borderTop: "0px" }} style={{ justifyContent: "center" }}>
-                            <Button variant="btn btn-secondary" onClick={this.closeModal}>
-                              ON</Button>
-
-                            <Button variant="danger" onClick={this.openModal}>
-                              YES</Button>
-
-                          </Modal.Footer>
-
-                        </Modal>
-                      </tr>
-
-                      <tr>
-                        <th scope="row">2</th>
-                        <td>Coding</td>
-                        <td>ECT</td>
-                        <td><FaClipboardList /></td>
-                        <td onClick={this.openModal}><BsFillTrashFill /></td>
-                      </tr>
-                      <tr>
-                        <th scope="row">3</th>
-                        <td>Coding</td>
-                        <td>ECT</td>
-                        <td><FaClipboardList /></td>
-                        <td onClick={this.openModal}><BsFillTrashFill /></td>
-                      </tr>
-                    </tbody>
-                  </table>
-
-                </table>
-
-
-
-
-                {/* <div style={{padding: 20}}>
-              <DataGrid
-                  dataSource={customers}
-                  showBorders={true}
-                >
-                  <GroupPanel visible={true} />
-                  {/* <Grouping autoExpandAll={this.state.autoExpandAll} /> */}
-                {/* <Paging defaultPageSize={10} />
-
-                  <Column dataField="PROJECT" dataType="string" />
-                  <Column dataField="PHASE" dataType="string" />
-                  <Column dataField="TYPE" dataType="string" />
-                  <Column dataField="DETAIL" dataType="string" />
-                  <Column dataField="MANHOUR" dataType="string" />
-                  <Column dataField="TIME IN" dataType="string" />
-                  <Column dataField="TIME OUT" dataType="string" />
-                  <Column dataField="EDIT DELETE" dataType="string" />
-                  <Column dataField="State" dataType="string" groupIndex={0} />
-
-                </DataGrid>
-              // </div> */}
+                  </DataGrid>
+                </div>
 
               </div>
             </div>
@@ -356,5 +326,22 @@ class JobType extends React.Component {
 
   }
 }
+
+function delCellRender(data) {
+  console.log("JobType -> DelcellRender -> data", data)
+  return <a onClick={() => {
+    console.log("JobType -> DelcellRender -> data", data.data.typeId)
+  }}><span style={{ color: '#111', fontSize: '16pt' }}><DeleteOutlined /></span></a>;
+}
+function editCellRender(data) {
+  return <Link to={"/jobtype" + `/{"action":"edit","jobTypeId":"${data.data.typeId}"}`}>
+    <span style={{ color: 'black', fontSize: '16pt' }}><FormOutlined /></span>
+  </Link>
+}
+function noCellRender(data) {
+  return <span style={{ color: 'black', fontSize: '16pt' }}>  {data.component.pageIndex() * data.component.pageSize() + data.rowIndex + 1}</span>
+
+}
+
 
 export default JobType;

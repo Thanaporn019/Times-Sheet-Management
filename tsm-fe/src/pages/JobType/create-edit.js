@@ -8,7 +8,7 @@ import _ from "lodash";
 import { Breadcrumb, TimePicker, Select } from 'antd';
 import { HomeOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
-
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 // const format = 'HH:mm';
 // const Option = Select.Option;
 
@@ -30,10 +30,11 @@ class ActionJobType extends React.Component {
     closeModal = () => this.setState({ isOpen: false });
 
     constructor(props) {
-        // console.log("ActionsWork -> constructor -> props", props.match.params.action)
-        // let param = useParams();
-        // console.log("param", param)
-        // console.log("ActionsWork -> constructor -> props", props)
+        console.log("Actionsjobtype -> constructor -> props", props)
+        let query = _.cloneDeep(props.match.params.query);
+        let tempQuery = JSON.parse(JSON.stringify(query))
+        let param = JSON.parse(tempQuery)
+        console.log("ActionJobType -> constructor -> param", param)
         super(props);
         this.state = {
             data: [{
@@ -42,7 +43,8 @@ class ActionJobType extends React.Component {
 
             }],
             projectList: [],
-            typeList: []
+            typeList: [],
+            params: param
         };
     }
 
@@ -260,30 +262,32 @@ class ActionJobType extends React.Component {
             <div className="App">
                 <div id="boxType" className="container-box-content">
                     <div className="row wrap-container">
+
                         <Breadcrumb>
                             <Breadcrumb.Item href="/jobtype">
                                 <HomeOutlined />
                                 <span className="breadcrum-custom">Job Type</span>
                             </Breadcrumb.Item>
-                            <Breadcrumb.Item href="#">
-                                {this.props.match.params.action === 'create' ? <span className="breadcrum-custom">  Create Job Type</span> : null}
-                                {this.props.match.params.action === 'edit' ? <span className="breadcrum-custom">  Edit</span> : null}
+                            {/* <Breadcrumb.Item href="#"> */}
+                                {this.state.params.action === 'create' ? <span className="breadcrum-custom">  Create Job Type</span> : null}
+                                {this.state.params.action === 'edit' ? <span className="breadcrum-custom">  Update Job Type</span> : null}
 
-                            </Breadcrumb.Item>
+                            {/* </Breadcrumb.Item> */}
                         </Breadcrumb>
+
                         <div className="wrap-content">
                             <div className="box-action">
                                 <div className="box-title-search">
 
 
                                     {this.state.data.map((data, i) => {
-                                        console.log("ActionsWork -> render -> data", data)
-                                        console.log("ActionsWork -> render -> i", i);
+                                        console.log("ActionsJobType -> render -> data", data)
+                                        console.log("ActionsJobType -> render -> i", i);
                                         return (
                                             <>
                                                 <div className="box-action-content">
-                                                    {this.props.match.params.action === 'create' ? <p className="font-size-search">Create Job Type</p> : null}
-                                                    {this.props.match.params.action === 'edit' ? <p className="font-size-search">Edit Work</p> : null}
+                                                    {this.state.params.action === 'create' ? <p className="font-size-search">Create Job Type</p> : null}
+                                                    {this.state.params.action === 'edit' ? <p className="font-size-search">Update Job Type</p> : null}
                                                     <div className="row form-group">
                                                         <div className="col-4" style={{ textAlign: 'right' }}>
 
@@ -293,20 +297,23 @@ class ActionJobType extends React.Component {
                                                     </div>
                                                     {/* Job Type Name */}
                                                     <div className="row form-group">
-                                                        <div className="col-4" style={{ textAlign: 'right' }}><label for="txtManHours">Job Type Name<span style={{ color: 'red' }}>*</span></label></div>
-                                                        <input type="text" class="form-control col-3" id="txtManHours" />
+                                                        <div className="col-5" style={{ textAlign: 'right' }}><label for="txtJob Type Name">Job Type Name<span style={{ color: 'red' }}>*</span></label></div>
+                                                        <input type="text" class="form-control col-3" id="txtJob Type Name" />
                                                         {/* <div class="col-3">
                                                             <button type="button" class="btn btn-custom-color" style={{ marginRight: 20 }} onClick={this.calManHours}>Calculate</button></div> */}
                                                     </div>
+                                                   
+                                                    {/* <hr className="hr-action"></hr> */}
 
                                                     {/* Code */}
                                                     <div className="row form-group">
-                                                        <div className="col-4" style={{ textAlign: 'right' }}><label for="txtUrl">Code <span style={{ color: 'red' }}>*</span></label></div>
-                                                        <input type="text" class="form-control col-3" id="txtUrl" />
+                                                        <div className="col-5" style={{ textAlign: 'right' }}><label for="txtCode">Code <span style={{ color: 'red' }}>*</span></label></div>
+                                                        <input type="text" class="form-control col-3" id="txtCode" />
 
                                                     </div>
 
                                                     <div style={{ textAlign: 'right' }}>
+
                                                         <p><span style={{ color: 'red' }}>*</span> Items marked with an asterisk are required</p>
                                                     </div>
 
@@ -324,12 +331,15 @@ class ActionJobType extends React.Component {
 
                                 <div className="row form-group">
                                     <div className="col-12" style={{ textAlign: 'right' }}>
-                                        <button type="button" class="btn btn-secondary" style={{ marginRight: 20 }} onClick={this.handleReset}>CANCEL</button>
-                                        {/* <button type="button" class="btn btn-primary" style={{ marginRight: 80 }}>CREATE</button> */}
+                                        {this.state.params.action !== 'view' ?
+                                            <Link to='/jobtype'>
+                                                <button type="button" class="btn btn-secondary" style={{ marginRight: 20 }} onClick={this.handleReset}>CANCEL</button>
+                                            </Link> : null}
 
-                                        <button type="button" class="btn btn-custom-color" style={{ marginRight: 20 }} onClick={this.openModal}>CREATE</button>
-                                        {/* <Button variant="custom" style={{ marginRight: 70 }} onClick={this.openModal}>CREATE
-                     </Button> */}
+                                        {this.state.params.action !== 'view' ? <button type="button" class="btn btn-custom-color" style={{ marginRight: 20 }} onClick={this.openModal}>{this.state.params.action === 'edit' ? 'UPDATE' : 'CREATE'}</button> : null}
+
+
+
                                     </div>
 
                                     <Modal show={this.state.isOpen} onHide={this.closeModal}>

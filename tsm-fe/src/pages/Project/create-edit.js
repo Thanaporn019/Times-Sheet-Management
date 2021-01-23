@@ -8,6 +8,7 @@ import _ from "lodash";
 import { Breadcrumb, TimePicker, Select } from 'antd';
 import { HomeOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
 const format = 'HH:mm';
 const Option = Select.Option;
@@ -37,10 +38,11 @@ class ActionsProject extends React.Component {
     closeModal = () => this.setState({ isOpen: false });
 
     constructor(props) {
-        // console.log("ActionsWork -> constructor -> props", props.match.params.action)
-        // let param = useParams();
-        // console.log("param", param)
-        // console.log("ActionsWork -> constructor -> props", props)
+        console.log("Actionsproject -> constructor -> props", props)
+        let query = _.cloneDeep(props.match.params.query);
+        let tempQuery = JSON.parse(JSON.stringify(query))
+        let param = JSON.parse(tempQuery)
+
         super(props);
         this.state = {
             data: [{
@@ -54,7 +56,8 @@ class ActionsProject extends React.Component {
                 workTimeOut: null,
             }],
             projectList: [],
-            typeList: []
+            typeList: [],
+            params: param
         };
     }
 
@@ -262,7 +265,7 @@ class ActionsProject extends React.Component {
         })
         let a = this.state.data
         this.setState({ data: a })
-        console.log("ActionsWork -> handleAddData ->  this.state.data", this.state.data)
+        console.log("ActionsProject -> handleAddData ->  this.state.data", this.state.data)
     }
 
     render() {
@@ -272,17 +275,21 @@ class ActionsProject extends React.Component {
             <div className="App">
                 <div id="boxType" className="container-box-content">
                     <div className="row wrap-container">
+
                         <Breadcrumb>
                             <Breadcrumb.Item href="/project">
                                 <HomeOutlined />
                                 <span className="breadcrum-custom">project</span>
                             </Breadcrumb.Item>
-                            <Breadcrumb.Item href="#">
-                                {this.props.match.params.action === 'create' ? <span className="breadcrum-custom">create project</span> : null}
-                                {this.props.match.params.action === 'edit' ? <span className="breadcrum-custom">  Edit</span> : null}
-                                {this.props.match.params.action === 'view' ? <span className="breadcrum-custom">  View</span> : null}
-                            </Breadcrumb.Item>
+                            {/* <Breadcrumb.Item href="#"> */}
+                                {this.state.params.action === 'create' ? <span className="breadcrum-custom">Create project</span> : null}
+                                {this.state.params.action === 'edit' ? <span className="breadcrum-custom">  Update project</span> : null}
+                                {this.state.params.action === 'view' ? <span className="breadcrum-custom">  Detail project</span> : null}
+
+                             {/* </Breadcrumb.Item> */}
                         </Breadcrumb>
+
+
                         <div className="wrap-content">
                             <div className="box-action">
                                 <div className="box-title-search">
@@ -305,18 +312,18 @@ class ActionsProject extends React.Component {
                                     {/* <p><span style={{ color: 'red' }}>*</span> Items marked with an asterisk are required</p> */}
                                 </div>
                                 {this.state.data.map((data, i) => {
-                                    console.log("ActionsWork -> render -> data", data)
-                                    console.log("ActionsWork -> render -> i", i);
+                                    console.log("ActionsProject -> render -> data", data)
+                                    console.log("ActionsProject -> render -> i", i);
                                     return (
                                         <>
                                             <div className="box-action-content text-center">
-                                                {this.props.match.params.action === 'create' ? <p className="font-size-search">Create Project</p> : null}
-                                                {this.props.match.params.action === 'edit' ? <p className="font-size-search">Edit Work</p> : null}
-                                                {this.props.match.params.action === 'view' ? <p className="font-size-search">View Work</p> : null}
+                                                {this.state.params.action === 'create' ? <p className="font-size-search">Create Project</p> : null}
+                                                {this.state.params.action === 'edit' ? <p className="font-size-search">Update Project</p> : null}
+                                                {this.state.params.action === 'view' ? <p className="font-size-search">Detail Project</p> : null}
 
                                                 {/* Start Date */}
                                                 <div className="row form-group">
-                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlStartDate">Start Date : <span style={{ color: 'red' }}>*</span></label></div>
+                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlStartDate">Start Date {this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
                                                     <div className="col-4" style={{ paddingLeft: 0, paddingRight: 0 }}>
                                                         <DateBox
                                                             value={null}
@@ -340,7 +347,7 @@ class ActionsProject extends React.Component {
 
                                                 {/* End Date */}
                                                 <div className="row form-group">
-                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlEndDate">End Date<span style={{ color: 'red' }}>*</span></label></div>
+                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlEndDate">End Date{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
                                                     <div className="col-4" style={{ paddingLeft: 0, paddingRight: 0 }}>
                                                         <DateBox
                                                             value={null}
@@ -349,28 +356,28 @@ class ActionsProject extends React.Component {
 
                                                 {/* Project */}
                                                 <div className="row form-group">
-                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlProject">Project<span style={{ color: 'red' }}>*</span></label></div>
+                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlProject">Project{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
                                                     <input type="text" class="form-control col-4" id="txtProject" />
 
                                                 </div>
 
-                                                {/* WorkOut */}
+                                                {/* Phase */}
                                                 <div className="row form-group">
-                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlPhase">Phase<span style={{ color: 'red' }}>*</span></label></div>
+                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlPhase">Phase{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
                                                     <input type="text" class="form-control col-5" id="txtPhase" />
                                                 </div>
 
-                                                {/* man hours */}
+                                                {/*Man Day */}
                                                 <div className="row form-group">
-                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="txtManDay">Man Day<span style={{ color: 'red' }}></span></label></div>
-                                                    <input type="text" class="form-control col-5" id="txtManDay" />
-                                                    <div class="col-3">
-                                                    </div>
+                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="txtManDay">Man Day{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}></span> : null}</label></div>
+                                                  
+                                                        <input type="text" class="form-control col-5" id="txtManDay" />
+                                                   
                                                 </div>
 
                                                 {/* Detail */}
                                                 <div className="row form-group">
-                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="txtDetail">Detail <span style={{ color: 'red' }}>*</span></label></div>
+                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="txtDetail">Detail {this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
                                                     <textarea rows="3" type="text" class="form-control col-5" id="txtDetail" />
 
                                                 </div>
@@ -381,26 +388,61 @@ class ActionsProject extends React.Component {
                                                     <input type="text" class="form-control col-5" id="txtCustomerEmail" />
 
                                                 </div>
-                                                <div style={{ textAlign: 'right' }}>
-                                                    <p><span style={{ color: 'red' }}>*</span> Items marked with an asterisk are required</p> 
-                                            </div></div>
 
-   <div className="row form-group">
-                                    <div className="col-12" style={{ textAlign: 'right' }}>
-                                        <button type="button" class="btn btn-secondary" style={{ marginRight: 20 }} onClick={this.handleReset}>CANCEL</button>
-                                        {/* <button type="button" class="btn btn-primary" style={{ marginRight: 80 }}>CREATE</button> */}
+                                                {/* CreateDate */}
+                                                {this.state.params.action === 'view' ? <div className="row form-group">
+                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="txtCreateDate">CreateDate<span style={{ color: 'red' }}></span></label></div>
+                                                    <input type="text" class="form-control col-5" id="txtCreateDate" />
 
-                                        <button type="button" class="btn btn-custom-color" style={{ marginRight: 20 }} onClick={this.openModal}>CREATE</button>
-                                        {/* <Button variant="custom" style={{ marginRight: 70 }} onClick={this.openModal}>CREATE
-                     </Button> */}
-                                    </div>  </div> 
+                                                </div> : null}
+
+                                                {/* CreateBy */}
+                                                {this.state.params.action === 'view' ? <div className="row form-group">
+                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="txtCreateBy">CreateBy<span style={{ color: 'red' }}></span></label></div>
+                                                    <input type="text" class="form-control col-5" id="txtCreateBy" />
+
+                                                </div> : null}
+
+                                                  {/* UpdateDate */}
+                                                  {this.state.params.action === 'view' ? <div className="row form-group">
+                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="txtUpdateDate">UpdateDate<span style={{ color: 'red' }}></span></label></div>
+                                                    <input type="text" class="form-control col-5" id="txtUpdateDate" />
+
+                                                </div> : null}
+
+                                                  {/*  UpdateBy */}
+                                                  {this.state.params.action === 'view' ? <div className="row form-group">
+                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="txtUpdateBy">UpdateBy<span style={{ color: 'red' }}></span></label></div>
+                                                    <input type="text" class="form-control col-5" id="txtUpdateBy" />
+
+                                                </div> : null}
+
+                                                {this.state.params.action !== 'view' ? <div style={{ textAlign: 'right' }}>
+                                                    <p><span style={{ color: 'red' }}>*</span> Items marked with an asterisk are required</p>
+                                                </div> : null}
+                                            </div>
+
+                                            <div className="row form-group">
+                                                <div className="col-12" style={{ textAlign: 'right' }}>
+                                                    {this.state.params.action !== 'view' ?
+                                                        <Link to='/project'>
+                                                            <button type="button" class="btn btn-secondary" style={{ marginRight: 20 }} onClick={this.handleReset}>CANCEL</button>
+                                                        </Link> : null}
+                                                    {this.state.params.action !== 'view' ? <button type="button" class="btn btn-custom-color" style={{ marginRight: 20 }} onClick={this.openModal}>{this.state.params.action === 'edit' ? 'UPDATE' : 'CREATE'}</button> : null}
+                                                    {this.state.params.action === 'view' ?
+                                                        <Link to='/project'>
+                                                            <button type="button" class="btn btn-custom-color" style={{ marginRight: 20 }} >BACK</button>
+                                                        </Link>
+                                                        : null}
+                                                </div>
+                                            </div>
                                         </>
                                     )
 
                                 })}
                                 <br />
                                 <div>
-                                   
+
                                 </div>
                             </div>
                             {/* <div className="row form-group">

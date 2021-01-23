@@ -21,21 +21,21 @@ class Head extends Component {
                         <i class="icon icon-search"></i>
                       </span> */}
 
-                      <span style={{ color: '#fff', fontSize: '22pt' }}>SMARTADMIN</span>
+                      <span style={{ color: '#fff', fontSize: '22pt', fontWeight: 700 }}>SMARTADMIN</span>
 
                     </div>
                   </div>
                 </div>
 
                 <ul class="gx-header-notifications gx-ml-auto">
-                  <li class="gx-notify">
+                  <li class="gx-notify" style={{fontSize: '20pt'}}>
                 <Link to="/work" >
                     <span class="gx-pointer gx-d-block">
                       Work
                     </span>
                 </Link>
                   </li>
-                  <li class="gx-msg">
+                  <li class="gx-msg" style={{fontSize: '20pt'}}>
                   <Link to="/project" >
                     <span class="gx-pointer gx-status-pos gx-d-block">
                       Project
@@ -43,7 +43,7 @@ class Head extends Component {
                     </Link>
                   </li>
                   <li class="gx-msg">
-                  <Link to="/jobtype" >
+                  <Link to="/jobtype" style={{fontSize: '20pt'}}>
                     <span class="gx-pointer gx-status-pos gx-d-block">
                       Job type
                     </span>

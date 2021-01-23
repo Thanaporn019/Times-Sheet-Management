@@ -5,19 +5,17 @@ import { BsFillTrashFill } from "react-icons/bs";
 import { FaClipboardList } from "react-icons/fa";
 import { AiOutlineStepBackward } from "react-icons/ai";
 import { AiFillStepForward } from "react-icons/ai";
-import { AiTwotoneEye } from "react-icons/ai";
 import { Modal, Button } from "react-bootstrap";
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import DateBox from 'devextreme-react/date-box';
 import { IoAddOutline } from "react-icons/io5";
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import TreeList, { RemoteOperations, Column, SearchPanel, HeaderFilter, Editing, RequiredRule, Lookup } from 'devextreme-react/tree-list';
 import AspNetData from 'devextreme-aspnet-data-nojquery';
 import _ from "lodash";
 import { Breadcrumb } from 'antd';
-import { HomeOutlined, UserOutlined } from '@ant-design/icons';
-
+import { HomeOutlined, EyeOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons';
+import DataGrid, { Column, Pager, Paging } from 'devextreme-react/data-grid';
 
 const url = 'https://js.devexpress.com/Demos/Mvc/api/TreeListTasks';
 
@@ -69,7 +67,64 @@ class Project extends React.Component {
         typeId: null
       },
       projectList: [],
-      jobtypeList: []
+      jobtypeList: [],
+      data: [{
+        projectId: '0001',
+        projectName: 'name1',
+        projectPhase: '1',
+        projectDetail: '....',
+        projectStartDate: '20/01/2020',
+        projectEndDate: '31/12/2021',
+        projectManDays: '50',
+        customerEmail: 'test@test.com',
+        updateDate: '01/01/2020',
+        updateBy: 'joon',
+        createDate: '01/01/2020',
+        createBy: 'joon',
+      },
+      {
+        projectId: '0002',
+        projectName: 'name2',
+        projectPhase: '1',
+        projectDetail: '....',
+        projectStartDate: '20/01/2020',
+        projectEndDate: '31/12/2021',
+        projectManDays: '50',
+        customerEmail: 'test@test.com',
+        updateDate: '01/01/2020',
+        updateBy: 'joon',
+        createDate: '01/01/2020',
+        createBy: 'joon',
+      },
+      {
+        projectId: '0003',
+        projectName: 'name3',
+        projectPhase: '1',
+        projectDetail: '....',
+        projectStartDate: '20/01/2020',
+        projectEndDate: '31/12/2021',
+        projectManDays: '50',
+        customerEmail: 'test@test.com',
+        updateDate: '01/01/2020',
+        updateBy: 'joon',
+        createDate: '01/01/2020',
+        createBy: 'joon',
+      },
+      {
+        projectId: '0004',
+        projectName: 'name4',
+        projectPhase: '1',
+        projectDetail: '....',
+        projectStartDate: '20/01/2020',
+        projectEndDate: '31/12/2021',
+        projectManDays: '50',
+        customerEmail: 'test@test.com',
+        updateDate: '01/01/2020',
+        updateBy: 'joon',
+        createDate: '01/01/2020',
+        createBy: 'joon',
+      }]
+
     };
   }
 
@@ -192,7 +247,7 @@ class Project extends React.Component {
             <Breadcrumb>
               <Breadcrumb.Item href="#">
                 <HomeOutlined />
-                <span className="breadcrum-custom">project</span>
+                <span className="breadcrum-custom">Project</span>
               </Breadcrumb.Item>
             </Breadcrumb>
 
@@ -206,8 +261,6 @@ class Project extends React.Component {
                   <div className="box-search-border">
                     <form>
 
-                      {/* <div className="box-action-content"> */}
-
                       <div className="row form-group">
                         <div className="col-4" style={{ textAlign: 'right' }}>
 
@@ -217,15 +270,9 @@ class Project extends React.Component {
                       </div>
                       {/* Job Type Name */}
                       <div className="row form-group">
-                        <div className="col-3" style={{ textAlign: 'right' }}><label for="txtProject Name">Project Name<span style={{ color: 'red' }}>*</span></label></div>
+                        <div className="col-3" style={{ textAlign: 'right' }}><label className="title-field" for="txtProject Name">Project Name<span style={{ color: 'red' }}>*</span></label></div>
                         <input type="text" class="form-control col-6" id="txtJob Type" />
-                        {/* <div class="col-3">
-        <button type="button" class="btn btn-custom-color" style={{ marginRight: 20 }} onClick={this.calManHours}>Calculate</button></div> */}
                       </div>
-
-                     
-
-
 
                       {/* </div> */}
 
@@ -233,8 +280,8 @@ class Project extends React.Component {
 
                     <div className="row form-group">
                       <div className="col-12" style={{ textAlign: 'center' }}>
-                        <button type="button" class="btn btn-secondary" style={{ marginRight: 20 }} onClick={this.handleReset}>RESET</button>
-                        <button type="button" class="btn btn-custom-color">SEARCH</button>
+                        <button class="btn-custom btn-reset " style={{ marginRight: 20 }} onClick={this.handleReset}>RESET</button>
+                        <button class="btn-custom btn-search ">SEARCH</button>
                       </div>
                     </div>
                   </div>
@@ -248,98 +295,37 @@ class Project extends React.Component {
             <div className="wrap-content">
               <div className="box-search" style={{ padding: 30 }}>
                 <div style={{ textAlign: 'end', padding: 15 }}>
-                  <Link to="/project/create">
-                    <Button variant="btn btn-custom-color" onClick={this.openModal}><IoAddOutline style={{ width: '16px' }} /> Create Project</Button>
+                  <Link to='/project/{"action":"create"}'>
+                    <button className="btn-custom btn-search " style={{ width: 250 }} ><span className="btn-icon"><IoAddOutline /></span> <span className="btn-txt-icon">Create Project</span></button>
                   </Link>
                 </div>
 
+                {/* data grid */}
 
-                <table class="table text-center">
-                  <table class="table ">
-                    <thead class="thead-light">
+                <div style={{ padding: 20 }}>
+                  <DataGrid
+                    dataSource={this.state.data}
+                    showBorders={true}
+                    showRowLines={true}
+                  >
+                    <Paging defaultPageSize={3} />
+                    <Pager
+                      showPageSizeSelector={true}
+                      allowedPageSizes={[5, 10, 20]}
+                      showInfo={true}
+                      showNavigationButtons={true}
+                    />
 
-                      <tr>
-                        <th scope="col">No</th>
-                        <th scope="col">Job Type</th>
-                        <th scope="col">Code</th>
-                        <th scope="col">View</th>
-                        <th scope="col">Edit</th>
-                        <th scope="col">Delete</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <th scope="row">1</th>
-                        <td>Coding</td>
-                        <td>ECT</td>
-                        <td><AiTwotoneEye /></td>
-                        <td><FaClipboardList /></td>
-                        <td onClick={this.openModal}><BsFillTrashFill /></td>
+                    <Column width="100" caption="No" alignment="center" cellRender={noCellRender} dataType="string" />
+                    <Column caption="Project Name" dataField="projectName" dataType="string" />
+                    <Column caption="Phase" dataField="projectPhase" dataType="string" />
+                    <Column width="100" alignment="center" caption="View" cellRender={viewCellRender} />
+                    <Column width="100" alignment="center" caption="Edit" cellRender={editCellRender} />
+                    <Column width="100" alignment="center" cellRender={delCellRender} caption="Delete" />
 
+                  </DataGrid>
+                </div>
 
-                        <Modal show={this.state.isOpen} onHide={this.closeModal}>
-                          <Modal.Header closeButton style={{ color: "#bb1717" }}>
-                            <Modal.Title style={{ padding: "1rem 11rem" }}>Confirm</Modal.Title>
-                          </Modal.Header>
-                          <Modal.Body style={{ textAlign: "center" }}>Are you sure you want to delete this?</Modal.Body>
-
-                          <Modal.Footer style={{ borderTop: "0px" }} style={{ justifyContent: "center" }}>
-                            <Button variant="btn btn-secondary" onClick={this.closeModal}>
-                              ON</Button>
-
-                            <Button variant="danger" onClick={this.openModal}>
-                              YES</Button>
-
-                          </Modal.Footer>
-
-                        </Modal>
-                      </tr>
-
-                      <tr>
-                        <th scope="row">2</th>
-                        <td>Coding</td>
-                        <td>ECT</td>
-                        <td><AiTwotoneEye /></td>
-                        <td><FaClipboardList /></td>
-                        <td onClick={this.openModal}><BsFillTrashFill /></td>
-                      </tr>
-                      <tr>
-                        <th scope="row">3</th>
-                        <td>Coding</td>
-                        <td>ECT</td>
-                        <td><AiTwotoneEye /></td>
-                        <td><FaClipboardList /></td>
-                        <td onClick={this.openModal}><BsFillTrashFill /></td>
-                      </tr>
-                    </tbody>
-                  </table>
-
-                </table>
-
-
-
-
-                {/* <div style={{padding: 20}}>
-              <DataGrid
-                  dataSource={customers}
-                  showBorders={true}
-                >
-                  <GroupPanel visible={true} />
-                  {/* <Grouping autoExpandAll={this.state.autoExpandAll} /> */}
-                {/* <Paging defaultPageSize={10} />
-
-                  <Column dataField="PROJECT" dataType="string" />
-                  <Column dataField="PHASE" dataType="string" />
-                  <Column dataField="TYPE" dataType="string" />
-                  <Column dataField="DETAIL" dataType="string" />
-                  <Column dataField="MANHOUR" dataType="string" />
-                  <Column dataField="TIME IN" dataType="string" />
-                  <Column dataField="TIME OUT" dataType="string" />
-                  <Column dataField="EDIT DELETE" dataType="string" />
-                  <Column dataField="State" dataType="string" groupIndex={0} />
-
-                </DataGrid>
-              // </div> */}
 
               </div>
             </div>
@@ -355,6 +341,27 @@ class Project extends React.Component {
     );
 
   }
+}
+
+function delCellRender(data) {
+  console.log("project -> DelcellRender -> data", data)
+  return <a onClick={() => {
+    console.log("project -> DelcellRender -> data", data.data.typeId)
+  }}><span style={{ color: '#111', fontSize: '16pt' }}><DeleteOutlined /></span></a>;
+}
+function editCellRender(data) {
+  return <Link to={"/project" + `/{"action":"edit","projectId":"${data.data.typeId}"}`}>
+    <span style={{ color: 'black', fontSize: '16pt' }}><FormOutlined /></span>
+  </Link>
+}
+function viewCellRender(data) {
+  return <Link to={"/project" + `/{"action":"view","projectId":"${data.data.typeId}"}`}>
+    <span style={{ color: 'black', fontSize: '16pt' }}><EyeOutlined /></span>
+  </Link>
+}
+function noCellRender(data) {
+  return <span style={{ color: 'black', fontSize: '16pt' }}>  {data.component.pageIndex() * data.component.pageSize() + data.rowIndex + 1}</span>
+
 }
 
 export default Project;
