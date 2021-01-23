@@ -12,7 +12,7 @@ import _ from "lodash";
 import { Breadcrumb } from 'antd';
 import { HomeOutlined, UserOutlined } from '@ant-design/icons';
 import AlertPopUp from "../../components/popup/alert_popup";
-
+import ConfirmPopup from "../../components/popup/confirm_popup";
 
 const url = 'https://js.devexpress.com/Demos/Mvc/api/TreeListTasks';
 
@@ -58,10 +58,13 @@ class Work extends React.Component {
       },
       projectList: [],
       jobtypeList: [],
-      isPopupSuccess: true,
+      isPopupSuccess: false,
       isPopupError: false,
-      isPopupMsg: 'test',
-
+      isPopupMsg: 'Please contact your administrator.',
+      isOpen: true,
+      isTypeShowConfirm: 'del',
+      isDataPopUp: {},
+      isTextMsg: 'Are you sure you want to delete this?',
     };
   }
 
@@ -262,7 +265,7 @@ class Work extends React.Component {
                     <div className="row form-group">
                       <div className="col-12" style={{ textAlign: 'center' }}>
                         <button type="button" class="btn btn-secondary" style={{ marginRight: 20 }} onClick={this.handleReset}>RESET</button>
-                        <button type="button" class="btn btn-primary">SEARCH</button>
+                        <button type="button" class="btn btn-custom-color">SEARCH</button>
                       </div>
                     </div>
                   </div>
@@ -276,8 +279,8 @@ class Work extends React.Component {
             <div className="wrap-content">
               <div className="box-search" style={{ padding: 30 }}>
                 <div style={{ textAlign: 'end', padding: 15 }}>
-                  <Link to="/work/create">
-                    <Button variant="primary" onClick={this.openModal}><IoAddOutline style={{ width: '16px' }} /> Create Work</Button>
+                  <Link to='/work/{"action":"create","projectId":"rrrr4444"}'>
+                    <Button variant="btn btn-custom-color"><IoAddOutline style={{ width: '16px' }} /> Create Work</Button>
                   </Link>
                 </div>
 
@@ -313,40 +316,12 @@ class Work extends React.Component {
                   <Column dataField="Task_MANHOUR" caption="MANHOUR" minWidth={120}>
                     <Lookup dataSource={statusesData} />
                   </Column>
-
-
-
-
                   <Column dataField="Task_TIME_IN" caption="TIME IN" dataType="date" />
                   <Column dataField="Task_TIME_OUT" caption="TIME OUT" dataType="date" />
-
                   <Column dataField="Task_EDIT_DELETE" caption="EDIT DELETE" minWidth={120}>
                     <Lookup dataSource={statusesData} />
                   </Column>
                 </TreeList>
-
-                {/* <div style={{padding: 20}}>
-              <DataGrid
-                  dataSource={customers}
-                  showBorders={true}
-                >
-                  <GroupPanel visible={true} />
-                  {/* <Grouping autoExpandAll={this.state.autoExpandAll} /> */}
-                {/* <Paging defaultPageSize={10} />
-
-                  <Column dataField="PROJECT" dataType="string" />
-                  <Column dataField="PHASE" dataType="string" />
-                  <Column dataField="TYPE" dataType="string" />
-                  <Column dataField="DETAIL" dataType="string" />
-                  <Column dataField="MANHOUR" dataType="string" />
-                  <Column dataField="TIME IN" dataType="string" />
-                  <Column dataField="TIME OUT" dataType="string" />
-                  <Column dataField="EDIT DELETE" dataType="string" />
-                  <Column dataField="State" dataType="string" groupIndex={0} />
-
-                </DataGrid>
-              // </div> */}
-
               </div>
             </div>
             {/* content end*/}
@@ -358,10 +333,20 @@ class Work extends React.Component {
         </div>
       </div>
 
-      <AlertPopUp successStatus={this.state.isPopupSuccess} errorStatus={this.state.isPopupError} message={this.state.isPopupMsg} onClose={() => {
-        this.setState({ isPopupError: false })
-        this.setState({ isPopupSuccess: false })
-      }} />
+      <AlertPopUp successStatus={this.state.isPopupSuccess} errorStatus={this.state.isPopupError} message={this.state.isPopupMsg}
+        clearActive={() => {
+          this.setState({ isPopupError: false })
+          this.setState({ isPopupSuccess: false })
+        }} />
+
+        <ConfirmPopup open={this.state.isOpen} type={this.state.isTypeShowConfirm} text={this.state.isTextMsg} data={this.state.isDataPopUp} del={false}
+            onClose={() => { this.setState({ isOpen: false }) }}
+            clearActive={(e) => { this.setState({ isOpen: false }) }}
+            confirmActive={(e) => {
+              console.log("Work -> render -> e", e)
+            }}
+          />
+
     </>
     );
 

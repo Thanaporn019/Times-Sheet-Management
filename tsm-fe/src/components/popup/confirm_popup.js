@@ -28,34 +28,61 @@ const ConfirmPopup = (props) => {
             footer={null}
             header={null}
             visible={isOpen}
-            width={500}
-            closable={true}
+            width={650}
+            closable={false}
             onOk={() => {
                 setIsOpen(false)
             }}
-            onCancel={() => {
-                setIsOpen(false)
-            }}>
-            {isPopupType === 'confirm' ?
+        >
+            {isPopupType === 'save' ?
                 <div>
-                    <div style={{ textAlign: 'center' }}>
-                        <div style={{ display: 'flow-root', textAlign: 'center', justifyContent: 'center' }}>
-                            {isDel ? <IconTrash style={{ width: '75px', color: '#b1b1b1' }} /> : <IconWarning style={{ width: '75px', color: '#b1b1b1' }} />}
+                    <div style={{ textAlign: 'center' , margin: 40}}>
+                        <p className="popup-title save" style={{ color: '#38B000' }}> Confirm </p>
+                        <p className="popup-sub-title"> {props.text}</p>
+                        <div style={{ textAlign: 'center', position: 'relative', top: 20 }}>
+                            <div className="row">
+                                <div className="col-6" style={{textAlign:'end'}}>
+                                    <Button style={{ background: '#DCE1DE', color: '#111' }} className="btn-popup-custom success" htmlType="submit" onClick={() => { props.clearActive() }} >
+                                        No
+                            </Button>
+                                </div>
+                                <div className="col-6" style={{textAlign:'start'}}>
+                                    <Button className="btn-popup-custom success" style={{ background: '#38B000' }} onClick={() => {
+                                        confirmActive()
+                                    }}>
+                                        Yes
+                            </Button>
+                                </div>
+                            </div>
+
                         </div>
-                        <p style={{ fontSize: 17, marginTop: 15, marginBottom: 15 }}> {props.text}</p>
-                    </div>
-                    <div style={{ textAlign: 'center' }}>
-                        <Button type="primary" htmlType="submit" onClick={() => {
-                            confirmActive()
-                        }}>
-                            <IconCheckRegular style={{ width: 10 }} /> ใช่, ยืนยัน
-                        </Button>
-                        <Button onClick={() => { props.clearActive() }} >
-                            <IconExitRegular style={{ width: 10 }} /> ไม่, ยกเลิก
-                        </Button>
                     </div>
                 </div>
-                : null
+                
+                : <div>
+                <div style={{ textAlign: 'center' , margin: 40}}>
+                    <p className="popup-title del" style={{ color: 'red' }}> Confirm </p>
+                    <p className="popup-sub-title"> {props.text}</p>
+                    <div style={{ textAlign: 'center', position: 'relative', top: 20 }}>
+                        <div className="row">
+                            <div className="col-6" style={{textAlign:'end'}}>
+                                <Button style={{ background: '#DCE1DE', color: '#111' }} className="btn-popup-custom success" htmlType="submit" onClick={() => { props.clearActive() }} >
+                                    No
+                        </Button>
+                            </div>
+                            <div className="col-6" style={{textAlign:'start'}}>
+                                <Button className="btn-popup-custom error" style={{ background: 'red' }} onClick={() => {
+                                    confirmActive()
+                                }}>
+                                    Yes
+                        </Button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            
             }
         </Modal>
     </>)

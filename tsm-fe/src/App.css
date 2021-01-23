@@ -47892,10 +47892,10 @@ a:hover {
 }
 
 .popup-icon-success {
-  width           : 100px;
-  height          : 100px;
-  border-radius   : 50px;
-  background-color: #17d417;
+  width           : 120px;
+  height          : 120px;
+  border-radius   : 78px;
+  background-color: #008000;
   position        : relative;
   top             : -75px;
   left            : 40%
@@ -47903,16 +47903,16 @@ a:hover {
 
 .popup-title {
   /* bottom          : 50px; */
-  font-size       : 30px;
+  font-size       : 46px;
   /* margin-top   : 15px; */
   /* margin-bottom: 15px; */
-  font-weight     : 600;
+  font-weight     : 900;
   /* position        : relative; */
   /* top          : -49px; */
 }
 .popup-sub-title {
-  font-size: 17px;
-  /* margin-top: 15px; */
+  font-size: 20pt;
+  margin-top: 20px;
   /* margin-bottom: 15px; */
   /* position: relative; */
   /* bottom: 44px; */
@@ -47929,9 +47929,9 @@ a:hover {
 }
 
 .popup-icon-error {
-  width           : 100px;
-  height          : 100px;
-  border-radius   : 50px;
+  width           : 120px;
+  height          : 120px;
+  border-radius   : 78px;
   background-color: red;
   position        : relative;
   top             : -75px;
@@ -47946,4 +47946,26 @@ a:hover {
   color           : #ffffff !important;
   background-color: red !important;
   border-color    : red !important;
+}
+
+.btn-popup-custom {
+  width: 75%;
+  font-size: 16pt;
+  font-weight: 600;
+  color: white;
+  height: 2.5em;
+}
+
+.btn-popup-custom .success {
+  background: #38B000;
+}
+.btn-popup-custom .error {
+  background: red !important;
+}
+
+.popup-title .save {
+  color: #38B000 !important;
+}
+.popup-title .del {
+  color: red !important;
 }

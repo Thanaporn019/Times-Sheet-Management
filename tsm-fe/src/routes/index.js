@@ -6,7 +6,10 @@ import Project from '../pages/Project'
 import JobType from '../pages/JobType'
 import Work from '../pages/Work'
 import ActionsWork from '../pages/Work/create-edit-view'
-// import CreateP from '../pages/Project/CreateP'
+import ActionJobType from '../pages/JobType/create-edit'
+import ActionsProject from '../pages/Project/create-edit'
+
+
 
 export default () => (
   <Switch>
@@ -14,8 +17,10 @@ export default () => (
     <Route exact path="/jobtype" component={JobType} />
     <Route exact path="/project" component={Project} />
     <Route exact path="/work" component={Work} />
-    <Route exact path="/work/:action?" render={(props) => <ActionsWork {...props} /> } />
-
-    {/* <Route exact path="/CreateP" component={CreateP} /> */}
+    <Route exact path="/work/:query?" render={(props) => <ActionsWork {...props} /> } />
+    {/* <Route exact path="/work/:action?/:workId?" render={(props) => <ActionsWork {...props} /> } /> */}
+    <Route exact path="/jobtype/:action?" render={(props) => <ActionJobType {...props} /> } />
+    <Route exact path="/project/:action?/:projectId" render={(props) => <ActionsProject {...props} /> } />
+   
   </Switch>
 )

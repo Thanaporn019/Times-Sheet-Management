@@ -28,7 +28,7 @@ let typeList = [];
 let timeHours = [];
 let timeMin = [];
 
-class ActionsWork extends React.Component {
+class ActionsProject extends React.Component {
     state = {
         isOpen: false
     };
@@ -37,11 +37,7 @@ class ActionsWork extends React.Component {
     closeModal = () => this.setState({ isOpen: false });
 
     constructor(props) {
-        console.log("ActionsWork -> constructor -> props", props)
-        let query = _.cloneDeep(props.match.params.query);
-        let dd = JSON.parse(JSON.stringify(query))
-        console.log("ActionsWork -> constructor -> filter", JSON.parse(dd));
-        
+        // console.log("ActionsWork -> constructor -> props", props.match.params.action)
         // let param = useParams();
         // console.log("param", param)
         // console.log("ActionsWork -> constructor -> props", props)
@@ -253,20 +249,20 @@ class ActionsWork extends React.Component {
     }
 
     handleAddData = () => {
-    console.log("ActionsWork -> handleAddData -> handleAddData")
-    this.state.data.push({
-        projectId: null,
-        typeId: null,
-        workDate: null,
-        workDetail: null,
-        workUrl: null,
-        workManhour: null,
-        workTimeIn: null,
-        workTimeOut: null,
-    })
-    let a = this.state.data
-    this.setState({data: a})
-        console.log("ActionsWork -> handleAddData ->  this.state.data",  this.state.data)
+        console.log("ActionsWork -> handleAddData -> handleAddData")
+        this.state.data.push({
+            projectId: null,
+            typeId: null,
+            workDate: null,
+            workDetail: null,
+            workUrl: null,
+            workManhour: null,
+            workTimeIn: null,
+            workTimeOut: null,
+        })
+        let a = this.state.data
+        this.setState({ data: a })
+        console.log("ActionsWork -> handleAddData ->  this.state.data", this.state.data)
     }
 
     render() {
@@ -277,12 +273,12 @@ class ActionsWork extends React.Component {
                 <div id="boxType" className="container-box-content">
                     <div className="row wrap-container">
                         <Breadcrumb>
-                            <Breadcrumb.Item href="/work">
+                            <Breadcrumb.Item href="/project">
                                 <HomeOutlined />
-                                <span className="breadcrum-custom">  work</span>
+                                <span className="breadcrum-custom">project</span>
                             </Breadcrumb.Item>
                             <Breadcrumb.Item href="#">
-                                {this.props.match.params.action === 'create' ? <span className="breadcrum-custom">  Create</span> : null}
+                                {this.props.match.params.action === 'create' ? <span className="breadcrum-custom">create project</span> : null}
                                 {this.props.match.params.action === 'edit' ? <span className="breadcrum-custom">  Edit</span> : null}
                                 {this.props.match.params.action === 'view' ? <span className="breadcrum-custom">  View</span> : null}
                             </Breadcrumb.Item>
@@ -290,12 +286,10 @@ class ActionsWork extends React.Component {
                         <div className="wrap-content">
                             <div className="box-action">
                                 <div className="box-title-search">
-                                    {this.props.match.params.action === 'create' ? <p className="font-size-search">Create Work</p> : null}
-                                    {this.props.match.params.action === 'edit' ? <p className="font-size-search">Edit Work</p> : null}
-                                    {this.props.match.params.action === 'view' ? <p className="font-size-search">View Work</p> : null}
+
 
                                 </div>
-                                <div className="box-content">
+                                {/* <div className="box-content">
                                     <div className="box-action-date">
                                         <div className="row form-group">
                                             <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlDate">Date : <span style={{ color: 'red' }}>*</span></label></div>
@@ -305,23 +299,31 @@ class ActionsWork extends React.Component {
                                                     type="date" />
                                             </div>
                                         </div>
-                                    </div>
-                                    <hr className="hr-action"></hr>
-                                    <div style={{ textAlign: 'right' }}>
-                                        <p><span style={{ color: 'red' }}>*</span> Items marked with an asterisk are required</p>
-                                    </div>
-                                    {this.state.data.map((data, i) => {
-                                        console.log("ActionsWork -> render -> data", data)
-                                        console.log("ActionsWork -> render -> i", i);
-                                        return (
-                                            <>
-                                                <div className="box-action-content">
-                                                    <div className="row form-group">
-                                                        <div className="col-4" style={{ textAlign: 'right' }}>
-                                                            <label for="ddlProjectName">Project Name <span style={{ color: 'red' }}>*</span></label>
-                                                        </div>
+                                    </div> */}
+                                {/* <hr className="hr-action"></hr> */}
+                                <div style={{ textAlign: 'right' }}>
+                                    {/* <p><span style={{ color: 'red' }}>*</span> Items marked with an asterisk are required</p> */}
+                                </div>
+                                {this.state.data.map((data, i) => {
+                                    console.log("ActionsWork -> render -> data", data)
+                                    console.log("ActionsWork -> render -> i", i);
+                                    return (
+                                        <>
+                                            <div className="box-action-content text-center">
+                                                {this.props.match.params.action === 'create' ? <p className="font-size-search">Create Project</p> : null}
+                                                {this.props.match.params.action === 'edit' ? <p className="font-size-search">Edit Work</p> : null}
+                                                {this.props.match.params.action === 'view' ? <p className="font-size-search">View Work</p> : null}
 
-                                                        <Select
+                                                {/* Start Date */}
+                                                <div className="row form-group">
+                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlStartDate">Start Date : <span style={{ color: 'red' }}>*</span></label></div>
+                                                    <div className="col-4" style={{ paddingLeft: 0, paddingRight: 0 }}>
+                                                        <DateBox
+                                                            value={null}
+                                                            type="date" />
+                                                    </div>
+
+                                                    {/* <Select
                                                             showSearch
                                                             style={{ width: 200 }}
                                                             placeholder="Please selete project"
@@ -333,108 +335,111 @@ class ActionsWork extends React.Component {
                                                             value={data.projectId}
                                                         >
                                                             {this.projectList}
-                                                        </Select>
-                                                    </div>
-                                                    <div className="row form-group">
-                                                        <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlJobType">Job Type <span style={{ color: 'red' }}>*</span></label></div>
-                                                        <Select
-                                                            showSearch
-                                                            style={{ width: 200 }}
-                                                            placeholder="Please selete Type"
-                                                            optionFilterProp="children"
-                                                            onChange={(e) => { this.handleChangeType(e, i) }}
-                                                            onFocus={(e) => { this.handleFocusType(e, i) }}
-                                                            onBlur={(e) => { this.handleBlurType(e, i) }}
-                                                            filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                                                            value={data.typeId}
-                                                        >
-                                                            {this.typeList}
-                                                        </Select>
-                                                    </div>
+                                                        </Select> */}
+                                                </div>
 
-                                                    {/* WorkIn */}
-                                                    <div className="row form-group">
-                                                        <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlTimeIn">Time in <span style={{ color: 'red' }}>*</span></label></div>
+                                                {/* End Date */}
+                                                <div className="row form-group">
+                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlEndDate">End Date<span style={{ color: 'red' }}>*</span></label></div>
+                                                    <div className="col-4" style={{ paddingLeft: 0, paddingRight: 0 }}>
+                                                        <DateBox
+                                                            value={null}
+                                                            type="date" />
+                                                    </div> </div>
 
-                                                        <TimePicker placeholder="Select time in" format={format} value={data.workTimeIn} showNow={true} onChange={(time, timestring) => { this.onChangeTimeIn(time, timestring, i) }} />
-                                                    </div>
+                                                {/* Project */}
+                                                <div className="row form-group">
+                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlProject">Project<span style={{ color: 'red' }}>*</span></label></div>
+                                                    <input type="text" class="form-control col-4" id="txtProject" />
 
-                                                    {/* WorkOut */}
-                                                    <div className="row form-group">
-                                                        <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlTimeOut">Time out <span style={{ color: 'red' }}>*</span></label></div>
+                                                </div>
 
-                                                        <TimePicker placeholder="Select Time out" format={format} value={data.workTimeOut} showNow={true} onChange={(time, timestring) => { this.onChangeTimeOut(time, timestring, i) }} />
-                                                    </div>
+                                                {/* WorkOut */}
+                                                <div className="row form-group">
+                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlPhase">Phase<span style={{ color: 'red' }}>*</span></label></div>
+                                                    <input type="text" class="form-control col-5" id="txtPhase" />
+                                                </div>
 
-                                                    {/* man hours */}
-                                                    <div className="row form-group">
-                                                        <div className="col-4" style={{ textAlign: 'right' }}><label for="txtManHours">Man hours <span style={{ color: 'red' }}>*</span></label></div>
-                                                        <input type="text" class="form-control col-3" id="txtManHours" />
-                                                        <div class="col-3">
-                                                            <button type="button" class="btn btn-custom-color" style={{ marginRight: 20 }} onClick={this.calManHours}>Calculate</button></div>
-                                                    </div>
-
-                                                    {/* Detail */}
-                                                    <div className="row form-group">
-                                                        <div className="col-4" style={{ textAlign: 'right' }}><label for="txtDetail">Detail <span style={{ color: 'red' }}>*</span></label></div>
-                                                        <textarea rows="3" type="text" class="form-control col-6" id="txtDetail" />
-
-                                                    </div>
-
-                                                    {/* Url */}
-                                                    <div className="row form-group">
-                                                        <div className="col-4" style={{ textAlign: 'right' }}><label for="txtUrl">Url <span style={{ color: 'red' }}>*</span></label></div>
-                                                        <input type="text" class="form-control col-6" id="txtUrl" />
-
+                                                {/* man hours */}
+                                                <div className="row form-group">
+                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="txtManDay">Man Day<span style={{ color: 'red' }}></span></label></div>
+                                                    <input type="text" class="form-control col-5" id="txtManDay" />
+                                                    <div class="col-3">
                                                     </div>
                                                 </div>
-                                                <hr className="hr-action"></hr>
-                                            </>
-                                        )
 
-                                    })}
-                                    <br />
-                                    <div>
-                                        <button type="button" class="btn btn-add-work" onClick={this.handleAddData}><span className="btn-add-work-icon"><PlusOutlined /></span></button>
-                                    </div>
-                                </div>
-                                <div className="row form-group">
+                                                {/* Detail */}
+                                                <div className="row form-group">
+                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="txtDetail">Detail <span style={{ color: 'red' }}>*</span></label></div>
+                                                    <textarea rows="3" type="text" class="form-control col-5" id="txtDetail" />
+
+                                                </div>
+
+                                                {/* CustomerEmail */}
+                                                <div className="row form-group">
+                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="txtCustomerEmail">Customer Email<span style={{ color: 'red' }}></span></label></div>
+                                                    <input type="text" class="form-control col-5" id="txtCustomerEmail" />
+
+                                                </div>
+                                                <div style={{ textAlign: 'right' }}>
+                                                    <p><span style={{ color: 'red' }}>*</span> Items marked with an asterisk are required</p> 
+                                            </div></div>
+
+   <div className="row form-group">
                                     <div className="col-12" style={{ textAlign: 'right' }}>
-                                    <button type="button" class="btn btn-secondary" style={{ marginRight: 20 }} onClick={this.handleReset}>CANCEL</button>
-                                    
-                                    <button type="button" class="btn btn-custom-color" style={{ marginRight: 70 }} onClick={this.openModal}>CREATE</button>
-                                    </div>
+                                        <button type="button" class="btn btn-secondary" style={{ marginRight: 20 }} onClick={this.handleReset}>CANCEL</button>
+                                        {/* <button type="button" class="btn btn-primary" style={{ marginRight: 80 }}>CREATE</button> */}
+
+                                        <button type="button" class="btn btn-custom-color" style={{ marginRight: 20 }} onClick={this.openModal}>CREATE</button>
+                                        {/* <Button variant="custom" style={{ marginRight: 70 }} onClick={this.openModal}>CREATE
+                     </Button> */}
+                                    </div>  </div> 
+                                        </>
+                                    )
+
+                                })}
+                                <br />
+                                <div>
+                                   
                                 </div>
-
-                                    <Modal show={this.state.isOpen} onHide={this.closeModal}>
-                                        <Modal.Header closeButton style={{ color: "#bb1717" }}>
-                                            <Modal.Title style={{ padding: "3rem 11rem" }}>Confirm</Modal.Title>
-                                        </Modal.Header>
-                                        <Modal.Body style={{ textAlign: "center" }}>Please confirm your configuration.</Modal.Body>
-
-                                        <Modal.Footer style={{ borderTop: "3px" }} style={{ justifyContent: "center" }}>
-                                            <Button variant="btn btn-secondary" onClick={this.closeModal}>
-                                                ON</Button>
-
-                                            <Button variant="primary" onClick={this.openModal}>
-                                                YES</Button>
-
-                                        </Modal.Footer>
-
-                                    </Modal>
-                                  
-
                             </div>
-                        </div>
+                            {/* <div className="row form-group">
+                                <div className="col-12" style={{ textAlign: 'right' }}>
+                                    <button type="button" class="btn btn-secondary" style={{ marginRight: 20 }} onClick={this.handleReset}>CANCEL</button>
 
+                                    <button type="button" class="btn btn-custom-color" style={{ marginRight: 70 }} onClick={this.openModal}>CREATE</button>
+                                </div>
+                            </div> */}
+
+                            <Modal show={this.state.isOpen} onHide={this.closeModal}>
+                                <Modal.Header closeButton style={{ color: "#bb1717" }}>
+                                    <Modal.Title style={{ padding: "3rem 11rem" }}>Confirm</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body style={{ textAlign: "center" }}>Please confirm your configuration.</Modal.Body>
+
+                                <Modal.Footer style={{ borderTop: "3px" }} style={{ justifyContent: "center" }}>
+                                    <Button variant="btn btn-secondary" onClick={this.closeModal}>
+                                        ON</Button>
+
+                                    <Button variant="primary" onClick={this.openModal}>
+                                        YES</Button>
+
+                                </Modal.Footer>
+
+                            </Modal>
+
+
+                        </div>
                     </div>
 
                 </div>
+
             </div>
+            {/* </div> */}
         </>
         );
 
     }
 }
 
-export default ActionsWork;
+export default ActionsProject;
