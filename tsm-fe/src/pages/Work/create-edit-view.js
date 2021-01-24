@@ -334,8 +334,7 @@ class ActionsWork extends React.Component {
                                                         >
                                                             {this.projectList}
                                                         </Select>
-                                                        {/* </div> */}
-                                                        {/* <div className="row form-group"> */}
+
                                                         <div className="col-2" style={{ textAlign: 'right' }}><label for="ddlJobType">Job Type <span style={{ color: 'red' }}>*</span></label></div>
                                                         <Select
                                                             showSearch
@@ -371,11 +370,11 @@ class ActionsWork extends React.Component {
                                                         <div className="col-3" style={{ textAlign: 'right' }}><label for="txtManHours">Man hours <span style={{ color: 'red' }}>*</span></label></div>
                                                         <input type="text" class="form-control col-1" id="txtManHours" />
                                                         <div class="col-2">
-                                                            <button type="button" class="btn btn-custom-color" style={{ marginRight:20 }} onClick={this.calManHours}>Calculate</button></div>
-                                                    {/* </div> */}
+                                                            <button type="button" class="btn btn-custom-color" style={{ marginRight: 20 }} onClick={this.calManHours}>Calculate</button></div>
+                                                        {/* </div> */}
 
-                                                    {/* Url */}
-                                                    {/* <div className="row form-group"> */}
+                                                        {/* Url */}
+                                                        {/* <div className="row form-group"> */}
                                                         <div className="col-1" style={{ textAlign: 'right' }}><label for="txtUrl">Url <span style={{ color: 'red' }}>*</span></label></div>
                                                         <input type="text" class="form-control col-2" id="txtUrl" />
 
@@ -406,33 +405,15 @@ class ActionsWork extends React.Component {
                                     <div>
                                         <button type="button" class="btn btn-add-work" onClick={this.handleAddData}><span className="btn-add-work-icon"><PlusOutlined /></span></button>
                                     </div>
-                                </div>
-                                <div className="row form-group">
-                                    <div className="col-12" style={{ textAlign: 'right' }}>
-                                        {this.state.params.action !== 'view' ?
+                                    <div className="row form-group">
+                                        <div className="col-12" style={{ textAlign: 'right' }}>
                                             <Link to='/work'>
-                                                <button type="button" class="btn btn-secondary" style={{ marginRight: 20 }} onClick={this.handleReset}>CANCEL</button>
-                                            </Link> : null}
-                                        <button type="button" class="btn btn-custom-color" style={{ marginRight: 70 }} onClick={this.openModal}>CREATE</button>
+                                                <button class="btn-custom btn-reset" style={{ marginRight: 20 }}>CANCEL</button>
+                                            </Link>
+                                            <button class="btn-custom btn-search" style={{ marginRight: 70 }} onClick={this.openModal}>{this.state.params.action === 'edit' ? 'UPDATE' : 'CREATE'}</button>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <Modal show={this.state.isOpen} onHide={this.closeModal}>
-                                    <Modal.Header closeButton style={{ color: "#bb1717" }}>
-                                        <Modal.Title style={{ padding: "3rem 11rem" }}>Confirm</Modal.Title>
-                                    </Modal.Header>
-                                    <Modal.Body style={{ textAlign: "center" }}>Please confirm your configuration.</Modal.Body>
-
-                                    <Modal.Footer style={{ borderTop: "3px" }} style={{ justifyContent: "center" }}>
-                                        <Button variant="btn btn-secondary" onClick={this.closeModal}>
-                                            ON</Button>
-
-                                        <Button variant="primary" onClick={this.openModal}>
-                                            YES</Button>
-
-                                    </Modal.Footer>
-
-                                </Modal>
 
 
                             </div>

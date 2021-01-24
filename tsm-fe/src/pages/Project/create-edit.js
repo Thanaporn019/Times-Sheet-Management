@@ -74,9 +74,6 @@ class ActionsProject extends React.Component {
         // console.log("ActionsWork -> componentDidMount -> s", this.state.data)
         this.getTypeList();
         this.getProjectList();
-        this.setDdlTime();
-
-
     }
 
     getProjectList() {
@@ -163,46 +160,6 @@ class ActionsProject extends React.Component {
                 projectId: temp.projectId
             }
         });
-    }
-
-    setDdlTime() {
-        // let maxMin = 60;
-        // let maxHours = 24;
-
-        // let tmpMin = []
-        // let tmpHours = []
-        // for (let i = 0; i < maxHours; i++) {
-        //     tmpMin.push()
-        // }
-
-
-        // TODO :: get hours
-        var hours = []; // time array
-        var th = 0; // start time
-        //loop to increment the time and push results in array
-        for (var i = 0; th < 24 * 60; i++) {
-            var hh = Math.floor(th / 60); // gething hours of day in 0-24 format
-            var mm = (th % 60); // gething minutes of the hour in 0-55 format
-            hours[i] = ("0" + (hh)).slice(-2); // pushing data in array in [00:00 - 12:00 AM/PM format]
-            th++;
-        }
-        hours = _.uniq(hours)
-        console.log("ActionsWork -> setDdlTime -> hours", hours)
-        // timeHours
-        // timeMin
-
-        // TODO :: get min
-        // var min = []; // time array
-        // var tm = 0;
-        // for (var j = 0; th < 60 *60; j++) {
-        //     // var hh = Math.floor(th / 60); // gething hours of day in 0-24 format
-        //     var mm = (tm % 60); // gething minutes of the hour in 0-55 format
-        //     min[i] = ("0" + (mm)).slice(-2); // pushing data in array in [00:00 - 12:00 AM/PM format]
-        //     tm +=10;
-        // }
-        // min = _.uniq(min)
-        // console.log("ActionsWork -> setDdlTime -> min", min)
-        // timeHours
     }
 
     // TODO :: Select
@@ -301,160 +258,116 @@ class ActionsProject extends React.Component {
                         <div className="wrap-content">
                             <div className="box-action">
                                 <div className="box-title-search">
+                                    <div className="box-action-content">
+                                        {this.state.params.action === 'create' ? <p className="font-size-search">Create Project</p> : null}
+                                        {this.state.params.action === 'edit' ? <p className="font-size-search">Update Project</p> : null}
+                                        {this.state.params.action === 'view' ? <p className="font-size-search">Detail Project</p> : null}
 
-
-                                </div>
-                                {/* <div className="box-content">
-                                    <div className="box-action-date">
+                                        {/* Start Date */}
                                         <div className="row form-group">
-                                            <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlDate">Date : <span style={{ color: 'red' }}>*</span></label></div>
-                                            <div className="col-5" style={{ paddingLeft: 0, paddingRight: 0 }}>
+                                            <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="ddlStartDate">Start Date {this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
+                                            <div className="col-4" style={{ paddingLeft: 0, paddingRight: 0 }}>
                                                 <DateBox
                                                     value={null}
                                                     type="date" />
                                             </div>
                                         </div>
-                                    </div> */}
-                                {/* <hr className="hr-action"></hr> */}
-                                <div style={{ textAlign: 'right' }}>
-                                    {/* <p><span style={{ color: 'red' }}>*</span> Items marked with an asterisk are required</p> */}
+
+                                        {/* End Date */}
+                                        <div className="row form-group">
+                                            <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="ddlEndDate">End Date{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
+                                            <div className="col-4" style={{ paddingLeft: 0, paddingRight: 0 }}>
+                                                <DateBox
+                                                    value={null}
+                                                    type="date" />
+                                            </div> </div>
+
+                                        {/* Project */}
+                                        <div className="row form-group">
+                                            <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="ddlProject">Project{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
+                                            <input type="text" class="form-control col-4" id="txtProject" />
+
+                                        </div>
+
+                                        {/* Phase */}
+                                        <div className="row form-group">
+                                            <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="ddlPhase">Phase{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
+                                            <input type="text" class="form-control col-5" id="txtPhase" />
+                                        </div>
+
+                                        {/*Man Day */}
+                                        <div className="row form-group">
+                                            <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="txtManDay">Man Day{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}></span> : null}</label></div>
+
+                                            <input type="text" class="form-control col-5" id="txtManDay" />
+
+                                        </div>
+
+                                        {/* Detail */}
+                                        <div className="row form-group">
+                                            <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="txtDetail">Detail {this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
+                                            <textarea rows="3" type="text" class="form-control col-5" id="txtDetail" />
+
+                                        </div>
+
+                                        {/* CustomerEmail */}
+                                        <div className="row form-group">
+                                            <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="txtCustomerEmail">Customer Email<span style={{ color: 'red' }}></span></label></div>
+                                            <input type="text" class="form-control col-5" id="txtCustomerEmail" />
+
+                                        </div>
+
+                                        {/* CreateDate */}
+                                        {this.state.params.action === 'view' ? <div className="row form-group">
+                                            <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="txtCreateDate">CreateDate<span style={{ color: 'red' }}></span></label></div>
+                                            <input type="text" class="form-control col-5" id="txtCreateDate" />
+
+                                        </div> : null}
+
+                                        {/* CreateBy */}
+                                        {this.state.params.action === 'view' ? <div className="row form-group">
+                                            <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="txtCreateBy">CreateBy<span style={{ color: 'red' }}></span></label></div>
+                                            <input type="text" class="form-control col-5" id="txtCreateBy" />
+
+                                        </div> : null}
+
+                                        {/* UpdateDate */}
+                                        {this.state.params.action === 'view' ? <div className="row form-group">
+                                            <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="txtUpdateDate">UpdateDate<span style={{ color: 'red' }}></span></label></div>
+                                            <input type="text" class="form-control col-5" id="txtUpdateDate" />
+
+                                        </div> : null}
+
+                                        {/*  UpdateBy */}
+                                        {this.state.params.action === 'view' ? <div className="row form-group">
+                                            <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="txtUpdateBy">UpdateBy<span style={{ color: 'red' }}></span></label></div>
+                                            <input type="text" class="form-control col-5" id="txtUpdateBy" />
+
+                                        </div> : null}
+
+                                        {this.state.params.action !== 'view' ? <div style={{ textAlign: 'right' }}>
+                                            <p className="title-field"><span style={{ color: 'red' }}>*</span> Items marked with an asterisk are required</p>
+                                        </div> : null}
+                                    </div>
+
                                 </div>
-                                {this.state.data.map((data, i) => {
-                                    console.log("ActionsProject -> render -> data", data)
-                                    console.log("ActionsProject -> render -> i", i);
-                                    return (
-                                        <>
-                                            <div className="box-action-content text-center">
-                                                {this.state.params.action === 'create' ? <p className="font-size-search">Create Project</p> : null}
-                                                {this.state.params.action === 'edit' ? <p className="font-size-search">Update Project</p> : null}
-                                                {this.state.params.action === 'view' ? <p className="font-size-search">Detail Project</p> : null}
+                                <div className="row form-group">
+                                    <div className="col-12" style={{ textAlign: 'right' }}>
+                                        {this.state.params.action !== 'view' ?
+                                            <Link to='/project'>
+                                                <button  class="btn-custom btn-reset" style={{ marginRight: 20 }} onClick={this.handleReset}>CANCEL</button>
+                                            </Link> : null}
+                                        {this.state.params.action !== 'view' ? <button class="btn-custom btn-search" style={{ marginRight: 20 }} onClick={() => {
+                                            // this.this.state.params.action === 'edit'
+                                            this.setState({ isOpen: true, isTypeShowConfirm: 'save', isTextMsg: 'Please confirm your configuration.', isDataPopUp: this.state.data })
 
-                                                {/* Start Date */}
-                                                <div className="row form-group">
-                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlStartDate">Start Date {this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
-                                                    <div className="col-4" style={{ paddingLeft: 0, paddingRight: 0 }}>
-                                                        <DateBox
-                                                            value={null}
-                                                            type="date" />
-                                                    </div>
-
-                                                    {/* <Select
-                                                            showSearch
-                                                            style={{ width: 200 }}
-                                                            placeholder="Please selete project"
-                                                            optionFilterProp="children"
-                                                            onChange={(e) => { this.handleChangeProject(e, i) }}
-                                                            onFocus={(e) => { this.handleFocusProject(e, i) }}
-                                                            onBlur={(e) => { this.handleBlurProject(e, i) }}
-                                                            filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                                                            value={data.projectId}
-                                                        >
-                                                            {this.projectList}
-                                                        </Select> */}
-                                                </div>
-
-                                                {/* End Date */}
-                                                <div className="row form-group">
-                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlEndDate">End Date{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
-                                                    <div className="col-4" style={{ paddingLeft: 0, paddingRight: 0 }}>
-                                                        <DateBox
-                                                            value={null}
-                                                            type="date" />
-                                                    </div> </div>
-
-                                                {/* Project */}
-                                                <div className="row form-group">
-                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlProject">Project{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
-                                                    <input type="text" class="form-control col-4" id="txtProject" />
-
-                                                </div>
-
-                                                {/* Phase */}
-                                                <div className="row form-group">
-                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlPhase">Phase{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
-                                                    <input type="text" class="form-control col-5" id="txtPhase" />
-                                                </div>
-
-                                                {/*Man Day */}
-                                                <div className="row form-group">
-                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="txtManDay">Man Day{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}></span> : null}</label></div>
-
-                                                    <input type="text" class="form-control col-5" id="txtManDay" />
-
-                                                </div>
-
-                                                {/* Detail */}
-                                                <div className="row form-group">
-                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="txtDetail">Detail {this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
-                                                    <textarea rows="3" type="text" class="form-control col-5" id="txtDetail" />
-
-                                                </div>
-
-                                                {/* CustomerEmail */}
-                                                <div className="row form-group">
-                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="txtCustomerEmail">Customer Email<span style={{ color: 'red' }}></span></label></div>
-                                                    <input type="text" class="form-control col-5" id="txtCustomerEmail" />
-
-                                                </div>
-
-                                                {/* CreateDate */}
-                                                {this.state.params.action === 'view' ? <div className="row form-group">
-                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="txtCreateDate">CreateDate<span style={{ color: 'red' }}></span></label></div>
-                                                    <input type="text" class="form-control col-5" id="txtCreateDate" />
-
-                                                </div> : null}
-
-                                                {/* CreateBy */}
-                                                {this.state.params.action === 'view' ? <div className="row form-group">
-                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="txtCreateBy">CreateBy<span style={{ color: 'red' }}></span></label></div>
-                                                    <input type="text" class="form-control col-5" id="txtCreateBy" />
-
-                                                </div> : null}
-
-                                                {/* UpdateDate */}
-                                                {this.state.params.action === 'view' ? <div className="row form-group">
-                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="txtUpdateDate">UpdateDate<span style={{ color: 'red' }}></span></label></div>
-                                                    <input type="text" class="form-control col-5" id="txtUpdateDate" />
-
-                                                </div> : null}
-
-                                                {/*  UpdateBy */}
-                                                {this.state.params.action === 'view' ? <div className="row form-group">
-                                                    <div className="col-4" style={{ textAlign: 'right' }}><label for="txtUpdateBy">UpdateBy<span style={{ color: 'red' }}></span></label></div>
-                                                    <input type="text" class="form-control col-5" id="txtUpdateBy" />
-
-                                                </div> : null}
-
-                                                {this.state.params.action !== 'view' ? <div style={{ textAlign: 'right' }}>
-                                                    <p><span style={{ color: 'red' }}>*</span> Items marked with an asterisk are required</p>
-                                                </div> : null}
-                                            </div>
-
-                                            <div className="row form-group">
-                                                <div className="col-12" style={{ textAlign: 'right' }}>
-                                                    {this.state.params.action !== 'view' ?
-                                                        <Link to='/project'>
-                                                            <button type="button" class="btn btn-secondary" style={{ marginRight: 20 }} onClick={this.handleReset}>CANCEL</button>
-                                                        </Link> : null}
-                                                    {this.state.params.action !== 'view' ? <button type="button" class="btn btn-custom-color" style={{ marginRight: 20 }} onClick={() => {
-                                                        // this.this.state.params.action === 'edit'
-                                                        this.setState({isOpen: true, isTypeShowConfirm: 'save', isTextMsg: 'Please confirm your configuration.' , isDataPopUp: this.state.data})
-                            
-                                                    }}>{this.state.params.action === 'edit' ? 'UPDATE' : 'CREATE'}</button> : null}
-                                                    {this.state.params.action === 'view' ?
-                                                        <Link to='/project'>
-                                                            <button type="button" class="btn btn-custom-color" style={{ marginRight: 20 }} >BACK</button>
-                                                        </Link>
-                                                        : null}
-                                                </div>
-                                            </div>
-                                        </>
-                                    )
-
-                                })}
-                                <br />
-                                <div>
-
+                                        }}>{this.state.params.action === 'edit' ? 'UPDATE' : 'CREATE'}</button> : null}
+                                        {this.state.params.action === 'view' ?
+                                            <Link to='/project'>
+                                                <button class="btn-custom btn-search " style={{ marginRight: 20 }} >BACK</button>
+                                            </Link>
+                                            : null}
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -66,7 +66,7 @@ const ConfirmPopup = (props) => {
                     <div style={{ textAlign: 'center', position: 'relative', top: 20 }}>
                         <div className="row">
                             <div className="col-6" style={{textAlign:'end'}}>
-                                <Button style={{ background: '#DCE1DE', color: '#111' }} className="btn-popup-custom success" htmlType="submit" onClick={() => { props.clearActive() }} >
+                                <Button style={{ background: '#8A817C', color: '#111' }} className="btn-popup-custom success" htmlType="submit" onClick={() => { props.clearActive() }} >
                                     No
                         </Button>
                             </div>
