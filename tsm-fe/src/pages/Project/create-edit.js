@@ -9,7 +9,8 @@ import { Breadcrumb, TimePicker, Select } from 'antd';
 import { HomeOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-
+import AlertPopUp from "../../components/popup/alert_popup";
+import ConfirmPopup from "../../components/popup/confirm_popup";
 const format = 'HH:mm';
 const Option = Select.Option;
 
@@ -45,6 +46,13 @@ class ActionsProject extends React.Component {
 
         super(props);
         this.state = {
+            isPopupSuccess: false, // alert success case
+            isPopupError: false,  // alert error case
+            isPopupMsg: 'Please contact your administrator.',  // alert msg
+            isOpen: false, // open popup confirm
+            isTypeShowConfirm: 'del', // ประเภทของ popup : save , del
+            isDataPopUp: {}, // ข้อมูลที่ใช้
+            isTextMsg: 'Are you sure you want to delete this?', // msg ของ Popup
             data: [{
                 projectId: null,
                 typeId: null,
@@ -282,11 +290,11 @@ class ActionsProject extends React.Component {
                                 <span className="breadcrum-custom">project</span>
                             </Breadcrumb.Item>
                             {/* <Breadcrumb.Item href="#"> */}
-                                {this.state.params.action === 'create' ? <span className="breadcrum-custom">Create project</span> : null}
-                                {this.state.params.action === 'edit' ? <span className="breadcrum-custom">  Update project</span> : null}
-                                {this.state.params.action === 'view' ? <span className="breadcrum-custom">  Detail project</span> : null}
+                            {this.state.params.action === 'create' ? <span className="breadcrum-custom">Create project</span> : null}
+                            {this.state.params.action === 'edit' ? <span className="breadcrum-custom">  Update project</span> : null}
+                            {this.state.params.action === 'view' ? <span className="breadcrum-custom">  Detail project</span> : null}
 
-                             {/* </Breadcrumb.Item> */}
+                            {/* </Breadcrumb.Item> */}
                         </Breadcrumb>
 
 
@@ -370,9 +378,9 @@ class ActionsProject extends React.Component {
                                                 {/*Man Day */}
                                                 <div className="row form-group">
                                                     <div className="col-4" style={{ textAlign: 'right' }}><label for="txtManDay">Man Day{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}></span> : null}</label></div>
-                                                  
-                                                        <input type="text" class="form-control col-5" id="txtManDay" />
-                                                   
+
+                                                    <input type="text" class="form-control col-5" id="txtManDay" />
+
                                                 </div>
 
                                                 {/* Detail */}
@@ -403,15 +411,15 @@ class ActionsProject extends React.Component {
 
                                                 </div> : null}
 
-                                                  {/* UpdateDate */}
-                                                  {this.state.params.action === 'view' ? <div className="row form-group">
+                                                {/* UpdateDate */}
+                                                {this.state.params.action === 'view' ? <div className="row form-group">
                                                     <div className="col-4" style={{ textAlign: 'right' }}><label for="txtUpdateDate">UpdateDate<span style={{ color: 'red' }}></span></label></div>
                                                     <input type="text" class="form-control col-5" id="txtUpdateDate" />
 
                                                 </div> : null}
 
-                                                  {/*  UpdateBy */}
-                                                  {this.state.params.action === 'view' ? <div className="row form-group">
+                                                {/*  UpdateBy */}
+                                                {this.state.params.action === 'view' ? <div className="row form-group">
                                                     <div className="col-4" style={{ textAlign: 'right' }}><label for="txtUpdateBy">UpdateBy<span style={{ color: 'red' }}></span></label></div>
                                                     <input type="text" class="form-control col-5" id="txtUpdateBy" />
 
@@ -428,7 +436,11 @@ class ActionsProject extends React.Component {
                                                         <Link to='/project'>
                                                             <button type="button" class="btn btn-secondary" style={{ marginRight: 20 }} onClick={this.handleReset}>CANCEL</button>
                                                         </Link> : null}
-                                                    {this.state.params.action !== 'view' ? <button type="button" class="btn btn-custom-color" style={{ marginRight: 20 }} onClick={this.openModal}>{this.state.params.action === 'edit' ? 'UPDATE' : 'CREATE'}</button> : null}
+                                                    {this.state.params.action !== 'view' ? <button type="button" class="btn btn-custom-color" style={{ marginRight: 20 }} onClick={() => {
+                                                        // this.this.state.params.action === 'edit'
+                                                        this.setState({isOpen: true, isTypeShowConfirm: 'save', isTextMsg: 'Please confirm your configuration.' , isDataPopUp: this.state.data})
+                            
+                                                    }}>{this.state.params.action === 'edit' ? 'UPDATE' : 'CREATE'}</button> : null}
                                                     {this.state.params.action === 'view' ?
                                                         <Link to='/project'>
                                                             <button type="button" class="btn btn-custom-color" style={{ marginRight: 20 }} >BACK</button>
@@ -445,39 +457,27 @@ class ActionsProject extends React.Component {
 
                                 </div>
                             </div>
-                            {/* <div className="row form-group">
-                                <div className="col-12" style={{ textAlign: 'right' }}>
-                                    <button type="button" class="btn btn-secondary" style={{ marginRight: 20 }} onClick={this.handleReset}>CANCEL</button>
-
-                                    <button type="button" class="btn btn-custom-color" style={{ marginRight: 70 }} onClick={this.openModal}>CREATE</button>
-                                </div>
-                            </div> */}
-
-                            <Modal show={this.state.isOpen} onHide={this.closeModal}>
-                                <Modal.Header closeButton style={{ color: "#bb1717" }}>
-                                    <Modal.Title style={{ padding: "3rem 11rem" }}>Confirm</Modal.Title>
-                                </Modal.Header>
-                                <Modal.Body style={{ textAlign: "center" }}>Please confirm your configuration.</Modal.Body>
-
-                                <Modal.Footer style={{ borderTop: "3px" }} style={{ justifyContent: "center" }}>
-                                    <Button variant="btn btn-secondary" onClick={this.closeModal}>
-                                        ON</Button>
-
-                                    <Button variant="primary" onClick={this.openModal}>
-                                        YES</Button>
-
-                                </Modal.Footer>
-
-                            </Modal>
-
-
                         </div>
                     </div>
 
                 </div>
 
             </div>
-            {/* </div> */}
+
+            {/* POPUP */}
+            <AlertPopUp successStatus={this.state.isPopupSuccess} errorStatus={this.state.isPopupError} message={this.state.isPopupMsg}
+                clearActive={() => {
+                    this.setState({ isPopupError: false })
+                    this.setState({ isPopupSuccess: false })
+                }} />
+
+            <ConfirmPopup open={this.state.isOpen} type={this.state.isTypeShowConfirm} text={this.state.isTextMsg} data={this.state.isDataPopUp} del={false}
+                onClose={() => { this.setState({ isOpen: false }) }}
+                clearActive={(e) => { this.setState({ isOpen: false }) }}
+                confirmActive={(e) => {
+                    console.log("Work -> render -> e", e)
+                }}
+            />
         </>
         );
 
