@@ -42,16 +42,16 @@ const ConfirmPopup = (props) => {
                         <div style={{ textAlign: 'center', position: 'relative', top: 20 }}>
                             <div className="row">
                                 <div className="col-6" style={{textAlign:'end'}}>
-                                    <Button style={{ background: '#DCE1DE', color: '#111' }} className="btn-popup-custom success" htmlType="submit" onClick={() => { props.clearActive() }} >
+                                    <button className="btn-custom btn-reset" htmlType="submit" onClick={() => { props.clearActive() }} >
                                         No
-                            </Button>
+                            </button>
                                 </div>
                                 <div className="col-6" style={{textAlign:'start'}}>
-                                    <Button className="btn-popup-custom success" style={{ background: '#38B000' }} onClick={() => {
+                                    <button className="btn-custom success" style={{ background: '#38B000' }} onClick={() => {
                                         confirmActive()
                                     }}>
                                         Yes
-                            </Button>
+                            </button>
                                 </div>
                             </div>
 
@@ -66,12 +66,12 @@ const ConfirmPopup = (props) => {
                     <div style={{ textAlign: 'center', position: 'relative', top: 20 }}>
                         <div className="row">
                             <div className="col-6" style={{textAlign:'end'}}>
-                                <Button style={{ background: '#8A817C', color: '#111' }} className="btn-popup-custom success" htmlType="submit" onClick={() => { props.clearActive() }} >
+                                <Button className="btn-custom  btn-reset"  onClick={() => { props.clearActive() }} >
                                     No
                         </Button>
                             </div>
                             <div className="col-6" style={{textAlign:'start'}}>
-                                <Button className="btn-popup-custom error" style={{ background: 'red' }} onClick={() => {
+                                <Button htmlType="submit" className="btn-custom error" style={{ background: 'red' }} onClick={() => {
                                     confirmActive()
                                 }}>
                                     Yes

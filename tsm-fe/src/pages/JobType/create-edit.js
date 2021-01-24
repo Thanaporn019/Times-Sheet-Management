@@ -9,7 +9,11 @@ import { Breadcrumb, TimePicker, Select } from 'antd';
 import { HomeOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-
+import AlertPopUp from "../../components/popup/alert_popup";
+import ConfirmPopup from "../../components/popup/confirm_popup";
+import configService from '../../config';
+const msgAlertTitle = configService.msgAlert;
+const msgPopupTitle = configService.msgConfirm;
 class ActionJobType extends React.Component {
     state = {
         isOpen: false
@@ -26,6 +30,13 @@ class ActionJobType extends React.Component {
         console.log("ActionJobType -> constructor -> param", param)
         super(props);
         this.state = {
+            isPopupSuccess: false, // alert success case
+            isPopupError: false,  // alert error case
+            isPopupMsg: '',  // alert msg
+            isOpen: false, // open popup confirm
+            isTypeShowConfirm: '', // ประเภทของ popup : save , del
+            isDataPopUp: {}, // ข้อมูลที่ใช้
+            isTextMsg: '', // msg ของ Popup
             data: [{
                 jobtypeId: null,
                 codeId: null,
@@ -93,7 +104,11 @@ class ActionJobType extends React.Component {
                                                 <button  class="btn-custom btn-reset" style={{ marginRight: 20 }} onClick={this.handleReset}>CANCEL</button>
                                             </Link> : null}
 
-                                        {this.state.params.action !== 'view' ? <button class="btn-custom btn-search" style={{ marginRight: 20 }} onClick={this.openModal}>{this.state.params.action === 'edit' ? 'UPDATE' : 'CREATE'}</button> : null}
+                                        {this.state.params.action !== 'view' ? <button class="btn-custom btn-search" style={{ marginRight: 20 }} onClick={() => {
+                                            this.setState({ isOpen: true, isTypeShowConfirm: 'save', isTextMsg: msgPopupTitle.saved, isDataPopUp: this.state.data })
+                                        }}>
+                                            {this.state.params.action === 'edit' ? 'UPDATE' : 'CREATE'}
+                                            </button> : null}
 
                                     </div>
                                 </div>
@@ -102,6 +117,25 @@ class ActionJobType extends React.Component {
                     </div>
                 </div>
             </div>
+
+             {/* POPUP */}
+             <AlertPopUp successStatus={this.state.isPopupSuccess} errorStatus={this.state.isPopupError} message={this.state.isPopupMsg}
+                clearActive={() => {
+                    this.setState({ isPopupError: false })
+                    this.setState({ isPopupSuccess: false })
+                }} />
+
+            <ConfirmPopup open={this.state.isOpen} type={this.state.isTypeShowConfirm} text={this.state.isTextMsg} data={this.state.isDataPopUp} del={false}
+                onClose={() => { this.setState({ isOpen: false }) }}
+                clearActive={(e) => { this.setState({ isOpen: false }) }}
+                confirmActive={(e) => {
+                    this.setState({ isOpen: false })
+                    this.setState({ isPopupError: false })
+                    this.setState({ isPopupSuccess: true })
+                    this.setState({ isPopupMsg: this.state.params.action === 'edit'? msgAlertTitle.updated: msgAlertTitle.saved })
+                    console.log("Work -> render -> e", e)
+                }}
+                />
         </>
         );
     }

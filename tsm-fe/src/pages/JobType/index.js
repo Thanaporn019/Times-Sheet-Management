@@ -1,14 +1,4 @@
 import React, { Component } from 'react';
-// import 'bootstrap/dist/css/bootstrap.min.css';
-import { BsFillCalendarFill } from "react-icons/bs";
-import { BsFillTrashFill } from "react-icons/bs";
-import { FaClipboardList } from "react-icons/fa";
-import { AiOutlineStepBackward } from "react-icons/ai";
-import { AiFillStepForward } from "react-icons/ai";
-import { Modal, Button } from "react-bootstrap";
-// import 'devextreme/dist/css/dx.common.css';
-// import 'devextreme/dist/css/dx.light.css';
-import DateBox from 'devextreme-react/date-box';
 import { IoAddOutline } from "react-icons/io5";
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import AspNetData from 'devextreme-aspnet-data-nojquery';
@@ -16,8 +6,12 @@ import _ from "lodash";
 import { Breadcrumb } from 'antd';
 import { HomeOutlined, EyeOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons';
 import DataGrid, { Column, Pager, Paging } from 'devextreme-react/data-grid';
-
+import configService from '../../config';
+import AlertPopUp from "../../components/popup/alert_popup";
+import ConfirmPopup from "../../components/popup/confirm_popup";
 const url = 'https://js.devexpress.com/Demos/Mvc/api/TreeListTasks';
+const msgAlertTitle = configService.msgAlert;
+const msgPopupTitle = configService.msgConfirm;
 
 const tasksData = AspNetData.createStore({
   key: 'Task_ID',
@@ -57,9 +51,13 @@ class JobType extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      width: 0,
-      height: 0,
-      itembar: [false, false, false],
+      isPopupSuccess: false, // alert success case
+      isPopupError: false,  // alert error case
+      isPopupMsg: 'Please contact your administrator.',  // alert msg
+      isOpen: false, // open popup confirm
+      isTypeShowConfirm: 'del', // ประเภทของ popup : save , del
+      isDataPopUp: {}, // ข้อมูลที่ใช้
+      isTextMsg: 'Are you sure you want to delete this?', // msg ของ Popup
       filter: {
         dateFrom: new Date(),
         dateTo: new Date(),
@@ -211,17 +209,22 @@ class JobType extends React.Component {
   }
 
 
+  delCellRender = (data) => {
+    console.log("JobType -> DelcellRender -> data", data)
+    return <a onClick={() => {
+      this.setState({ isOpen: true, isTypeShowConfirm: 'del', isTextMsg: msgPopupTitle.deleted, isDataPopUp: data.data.typeId })
+    }}><span style={{ color: '#111', fontSize: '16pt' }}><DeleteOutlined /></span></a>;
+  }
+  editCellRender = (data) => {
+    return <Link to={"/jobtype" + `/{"action":"edit","jobTypeId":"${data.data.typeId}"}`}>
+      <span style={{ color: 'black', fontSize: '16pt' }}><FormOutlined /></span>
+    </Link>
+  }
+  noCellRender = (data) => {
+    return <span style={{ color: 'black', fontSize: '16pt' }}>  {data.component.pageIndex() * data.component.pageSize() + data.rowIndex + 1}</span>
 
+  }
   render() {
-
-
-    function initNewRow(e) {
-      e.data.Task_Status = 'Not Started';
-      e.data.Task_Start_Date = new Date();
-      e.data.Task_Due_Date = new Date();
-    }
-
-
 
     return (<>
 
@@ -302,11 +305,11 @@ class JobType extends React.Component {
                       showNavigationButtons={true}
                     />
 
-                    <Column width="100" caption="No" alignment="center" cellRender={noCellRender} dataType="string" />
+                    <Column width="100" caption="No" alignment="center" cellRender={this.noCellRender} dataType="string" />
                     <Column caption="Job Type" dataField="typeName" dataType="string" />
                     <Column caption="Code" dataField="typeCode" dataType="string" />
-                    <Column width="100" alignment="center" caption="Edit" cellRender={editCellRender} />
-                    <Column width="100" alignment="center" cellRender={delCellRender} caption="Delete" />
+                    <Column width="100" alignment="center" caption="Edit" cellRender={this.editCellRender} />
+                    <Column width="100" alignment="center" cellRender={this.delCellRender} caption="Delete" />
 
                   </DataGrid>
                 </div>
@@ -321,27 +324,30 @@ class JobType extends React.Component {
 
         </div>
       </div>
+
+      {/* POPUP */}
+      <AlertPopUp successStatus={this.state.isPopupSuccess} errorStatus={this.state.isPopupError} message={this.state.isPopupMsg}
+        clearActive={() => {
+          this.setState({ isPopupError: false })
+          this.setState({ isPopupSuccess: false })
+        }} />
+
+      <ConfirmPopup open={this.state.isOpen} type={this.state.isTypeShowConfirm} text={this.state.isTextMsg} data={this.state.isDataPopUp} del={false}
+        onClose={() => { this.setState({ isOpen: false }) }}
+        clearActive={(e) => { this.setState({ isOpen: false }) }}
+        confirmActive={(e) => {
+          this.setState({ isOpen: false })
+          this.setState({ isPopupError: false })
+          this.setState({ isPopupSuccess: true })
+          this.setState({ isPopupMsg: msgAlertTitle.deleted })
+          console.log("Work -> render -> e", e)
+        }}
+      />
+
     </>
     );
 
   }
 }
-
-function delCellRender(data) {
-  console.log("JobType -> DelcellRender -> data", data)
-  return <a onClick={() => {
-    console.log("JobType -> DelcellRender -> data", data.data.typeId)
-  }}><span style={{ color: '#111', fontSize: '16pt' }}><DeleteOutlined /></span></a>;
-}
-function editCellRender(data) {
-  return <Link to={"/jobtype" + `/{"action":"edit","jobTypeId":"${data.data.typeId}"}`}>
-    <span style={{ color: 'black', fontSize: '16pt' }}><FormOutlined /></span>
-  </Link>
-}
-function noCellRender(data) {
-  return <span style={{ color: 'black', fontSize: '16pt' }}>  {data.component.pageIndex() * data.component.pageSize() + data.rowIndex + 1}</span>
-
-}
-
 
 export default JobType;

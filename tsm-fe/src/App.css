@@ -2854,7 +2854,7 @@ html {
 .ant-btn:focus,
 .ant-btn:active {
   text-decoration: none;
-  background     : #fff;
+  /* background     : #fff; */
 }
 
 .ant-btn>span {
@@ -2963,21 +2963,21 @@ html {
 .ant-btn-primary:hover,
 .ant-btn-primary:focus {
   color           : #ffffff !important;
-  background-color: #038fde !important;
-  border-color    : #038fde !important;
+  background-color: #6428b0  !important;
+  border-color    : #6428b0  !important;
 }
 
 .ant-btn-primary.disabled,
 .ant-btn-primary:disabled {
-  background-color: #038fde !important;
-  border-color    : #038fde !important;
+  background-color: #5d4280  !important;
+  border-color    : #5d4280  !important;
 }
 
 .ant-btn-primary:not([disabled]):not(.disabled):active,
 .ant-btn-primary:not([disabled]):not(.disabled).active {
   color           : #ffffff;
-  background-color: #038fde !important;
-  border-color    : #038fde !important;
+  background-color: #6428b0  !important;
+  border-color    : #6428b0  !important;
 }
 
 .ant-btn-group .ant-btn-primary:not(:first-child):not(:last-child) {
@@ -7397,6 +7397,7 @@ _:-ms-fullscreen .ant-picker-range-wrapper .ant-picker-year-panel .ant-picker-ce
   padding         : 0;
   background      : transparent;
   border          : 0;
+  
 }
 
 .ant-picker-input>input::-moz-placeholder {
@@ -7405,6 +7406,7 @@ _:-ms-fullscreen .ant-picker-range-wrapper .ant-picker-year-panel .ant-picker-ce
 
 .ant-picker-input>input::placeholder {
   color: #bfbfbf;
+  
 }
 
 .ant-picker-input>input:placeholder-shown {
@@ -47860,7 +47862,7 @@ textarea.gx-chat-textarea {
 }
 
 a:hover {
-  color          : #fff !important;
+  color          : #fff ;
   text-decoration: none !important;
 }
 
@@ -47887,13 +47889,16 @@ a:hover {
   background   : green !important;
   text-align   : center !important;
   padding      : 10px 10px 10px 10px !important;
+  width: 50px;
+  height: 50px
 }
 
 .btn-add-work-icon {
-  color      : #fff !important;
-  position   : relative !important;
-  top        : -8px !important;
-  font-weight: bolder !important;
+  color: #fff !important;
+  position: relative !important;
+  top: -14px !important;
+  font-weight: 900;
+  font-size: 20pt;
 }
 
 .popup-icon-success {
@@ -47963,9 +47968,15 @@ a:hover {
 }
 
 .success {
-  background: #38B000;
+  background: #38B000 !important;
+}
+.success:hover {
+  background: #38B000 !important;
 }
 .error {
+  background: red !important;
+}
+.error:hoverS {
   background: red !important;
 }
 
@@ -48006,6 +48017,12 @@ font-size: 16pt;
   background: #8A817C !important;
 }
 .btn-search {
+  background: #6528b1 !important;
+}
+.btn-calculate {
+  margin-right: 20px !important;
+  width: 115px !important;
+  height: 45px !important;
   background: #6528b1 !important;
 }
 
@@ -48061,4 +48078,84 @@ font-size: 16pt;
 
 .dx-icon-form {
   color: black !important;
+}
+
+.ant-select {
+  width: 100% !important;
+  height: 26pt !important;
+  font-size: 16pt !important;
+}
+
+.ant-select-selector {
+  height: 34pt !important;
+}
+
+.ant-select-arrow {
+  user-select: none;
+    font-size: 16pt !important;
+}
+
+.ant-select-arrow {
+    right: 20px !important;
+}
+
+.ant-select-item-option-content {
+  font-size: 16pt !important;
+}
+
+.ant-picker-suffix {
+    position: relative !important;
+    top: -4px !important;
+}
+
+.ant-picker-input {
+  position: relative;
+  display: inline-flex;
+  width: 100%;
+  font-size: 16pt !important;
+}
+
+.ant-picker {
+  width: 100% !important;
+  font-size: 16pt !important;
+}
+
+.ant-picker-time-panel-cell {
+  font-size: 16pt !important;
+}
+
+.ant-btn-sm {
+    font-size: 16pt !important;
+    background: #6428b0 !important;
+    height: 35px;
+}
+.ant-btn-primary {
+    font-size: 16pt !important;
+    background: #6428b0 !important;
+    height: 35px;
+}
+
+.font-16pt {
+  font-size: 16pt !important;
+}
+
+.ant-picker-now-btn {
+  color: blue !important;
+  font-size: 16pt !important;
+}
+
+.ant-picker-now-btn:hover {
+  color: blue !important;
+  font-size: 16pt !important;
+}
+.color-red {
+  color: red !important;
+  background: rgba(171, 106, 63, 0.29)
+}
+.color-blue {
+  color: blue !important;
+}
+.color-black {
+  color: black !important;
+  background: rgba(214, 162, 214, 0.63)
 }

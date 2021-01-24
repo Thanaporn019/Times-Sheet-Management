@@ -8,9 +8,12 @@ import _ from "lodash";
 import { Breadcrumb, TimePicker, Select } from 'antd';
 import { HomeOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route,  Link } from 'react-router-dom';
 import AlertPopUp from "../../components/popup/alert_popup";
 import ConfirmPopup from "../../components/popup/confirm_popup";
+import configService from '../../config';
+const msgAlertTitle = configService.msgAlert;
+const msgPopupTitle = configService.msgConfirm;
 const format = 'HH:mm';
 const Option = Select.Option;
 
@@ -48,11 +51,11 @@ class ActionsProject extends React.Component {
         this.state = {
             isPopupSuccess: false, // alert success case
             isPopupError: false,  // alert error case
-            isPopupMsg: 'Please contact your administrator.',  // alert msg
+            isPopupMsg: '',  // alert msg
             isOpen: false, // open popup confirm
-            isTypeShowConfirm: 'del', // ประเภทของ popup : save , del
+            isTypeShowConfirm: '', // ประเภทของ popup : save , del
             isDataPopUp: {}, // ข้อมูลที่ใช้
-            isTextMsg: 'Are you sure you want to delete this?', // msg ของ Popup
+            isTextMsg: '', // msg ของ Popup
             data: [{
                 projectId: null,
                 typeId: null,
@@ -355,11 +358,11 @@ class ActionsProject extends React.Component {
                                     <div className="col-12" style={{ textAlign: 'right' }}>
                                         {this.state.params.action !== 'view' ?
                                             <Link to='/project'>
-                                                <button  class="btn-custom btn-reset" style={{ marginRight: 20 }} onClick={this.handleReset}>CANCEL</button>
+                                                <button  class="btn-custom btn-reset" style={{ marginRight: 20 }}>CANCEL</button>
                                             </Link> : null}
                                         {this.state.params.action !== 'view' ? <button class="btn-custom btn-search" style={{ marginRight: 20 }} onClick={() => {
                                             // this.this.state.params.action === 'edit'
-                                            this.setState({ isOpen: true, isTypeShowConfirm: 'save', isTextMsg: 'Please confirm your configuration.', isDataPopUp: this.state.data })
+                                            this.setState({ isOpen: true, isTypeShowConfirm: 'save', isTextMsg: this.state.params.action === 'edit' ? msgPopupTitle.saved: msgPopupTitle.saved, isDataPopUp: this.state.data })
 
                                         }}>{this.state.params.action === 'edit' ? 'UPDATE' : 'CREATE'}</button> : null}
                                         {this.state.params.action === 'view' ?
@@ -388,6 +391,10 @@ class ActionsProject extends React.Component {
                 onClose={() => { this.setState({ isOpen: false }) }}
                 clearActive={(e) => { this.setState({ isOpen: false }) }}
                 confirmActive={(e) => {
+                    this.setState({ isOpen: false })
+                    this.setState({ isPopupError: false })
+                    this.setState({ isPopupSuccess: true })
+                    this.setState({ isPopupMsg: this.state.params.action === 'edit' ?msgAlertTitle.updated :msgAlertTitle.saved })
                     console.log("Work -> render -> e", e)
                 }}
             />

@@ -9,7 +9,12 @@ import { Breadcrumb, TimePicker, Select } from 'antd';
 import { HomeOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-const format = 'HH:mm';
+import AlertPopUp from "../../components/popup/alert_popup";
+import ConfirmPopup from "../../components/popup/confirm_popup";
+import configService from '../../config';
+const msgAlertTitle = configService.msgAlert;
+const msgPopupTitle = configService.msgConfirm;
+const format = 'HH:mm A';
 const Option = Select.Option;
 
 let data = [{
@@ -44,6 +49,14 @@ class ActionsWork extends React.Component {
 
         super(props);
         this.state = {
+            isPopupSuccess: false, // alert success case
+            isPopupError: false,  // alert error case
+            isPopupMsg: '',  // alert msg
+            isOpen: false, // open popup confirm
+            isTypeShowConfirm: '', // ประเภทของ popup : save , del
+            isDataPopUp: {}, // ข้อมูลที่ใช้
+            isTextMsg: '', // msg ของ Popup
+            isDelete: false, // ใช้เช็คว่าเป็นการลบไหม
             data: [{
                 projectId: null,
                 typeId: null,
@@ -280,11 +293,8 @@ class ActionsWork extends React.Component {
                                 <HomeOutlined />
                                 <span className="breadcrum-custom"> work</span>
                             </Breadcrumb.Item>
-                            {/* <Breadcrumb.Item href="#"> */}
                             {this.state.params.action === 'create' ? <span className="breadcrum-custom">  Create work</span> : null}
                             {this.state.params.action === 'edit' ? <span className="breadcrum-custom">  Update work</span> : null}
-                            {/* {this.state.params.action === 'view' ? <span className="breadcrum-custom">  View</span> : null} */}
-                            {/* </Breadcrumb.Item> */}
                         </Breadcrumb>
 
                         <div className="wrap-content">
@@ -292,14 +302,12 @@ class ActionsWork extends React.Component {
                                 <div className="box-title-search">
                                     {this.state.params.action === 'create' ? <p className="font-size-search">Create Work</p> : null}
                                     {this.state.params.action === 'edit' ? <p className="font-size-search">Update Work</p> : null}
-                                    {/* {this.state.params.action === 'view' ? <p className="font-size-search">View Work</p> : null} */}
-
                                 </div>
-                                <div className="box-content">
+                                <div className="box-content" style={{ marginBottom: 0 }}>
                                     <div className="box-action-date">
                                         <div className="row form-group">
-                                            <div className="col-3" style={{ textAlign: 'right' }}><label for="ddlDate">Date : <span style={{ color: 'red' }}>*</span></label></div>
-                                            <div className="col-5" style={{ paddingLeft: 0, paddingRight: 0 }}>
+                                            <div className="col-3" style={{ textAlign: 'right' }}><label className="title-field" for="ddlDate">Date : <span style={{ color: 'red' }}>*</span></label></div>
+                                            <div className="col-4" style={{ paddingLeft: 0, paddingRight: 0 }}>
                                                 <DateBox
                                                     value={null}
                                                     type="date" />
@@ -308,7 +316,7 @@ class ActionsWork extends React.Component {
                                     </div>
                                     <hr className="hr-action"></hr>
                                     <div style={{ textAlign: 'right' }}>
-                                        <p><span style={{ color: 'red' }}>*</span> Items marked with an asterisk are required</p>
+                                        <p className="title-field"><span style={{ color: 'red' }}>*</span> Items marked with an asterisk are required</p>
                                     </div>
                                     {this.state.data.map((data, i) => {
                                         console.log("ActionsWork -> render -> data", data)
@@ -317,82 +325,122 @@ class ActionsWork extends React.Component {
                                             <>
                                                 <div className="box-action-content">
                                                     <div className="row form-group">
-                                                        <div className="col-3" style={{ textAlign: 'right' }}>
-                                                            <label for="ddlProjectName">Project Name <span style={{ color: 'red' }}>*</span></label>
+                                                        <div className="col-6">
+                                                            <div className="row">
+                                                                <div className="col-4" style={{ textAlign: 'right' }}>
+                                                                    <label className="title-field" for="ddlProjectName">Project Name <span style={{ color: 'red' }}>*</span></label>
+                                                                </div>
+                                                                <div className="col-8" >
+                                                                    <Select
+                                                                        showSearch
+                                                                        style={{ width: 200 }}
+                                                                        placeholder="Please selete project"
+                                                                        optionFilterProp="children"
+                                                                        onChange={(e) => { this.handleChangeProject(e, i) }}
+                                                                        onFocus={(e) => { this.handleFocusProject(e, i) }}
+                                                                        onBlur={(e) => { this.handleBlurProject(e, i) }}
+                                                                        filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                                                        value={data.projectId}
+                                                                    >
+                                                                        {this.projectList}
+                                                                    </Select>
+                                                                </div>
+                                                            </div>
                                                         </div>
-
-                                                        <Select
-                                                            showSearch
-                                                            style={{ width: 200 }}
-                                                            placeholder="Please selete project"
-                                                            optionFilterProp="children"
-                                                            onChange={(e) => { this.handleChangeProject(e, i) }}
-                                                            onFocus={(e) => { this.handleFocusProject(e, i) }}
-                                                            onBlur={(e) => { this.handleBlurProject(e, i) }}
-                                                            filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                                                            value={data.projectId}
-                                                        >
-                                                            {this.projectList}
-                                                        </Select>
-
-                                                        <div className="col-2" style={{ textAlign: 'right' }}><label for="ddlJobType">Job Type <span style={{ color: 'red' }}>*</span></label></div>
-                                                        <Select
-                                                            showSearch
-                                                            style={{ width: 200 }}
-                                                            placeholder="Please selete Type"
-                                                            optionFilterProp="children"
-                                                            onChange={(e) => { this.handleChangeType(e, i) }}
-                                                            onFocus={(e) => { this.handleFocusType(e, i) }}
-                                                            onBlur={(e) => { this.handleBlurType(e, i) }}
-                                                            filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                                                            value={data.typeId}
-                                                        >
-                                                            {this.typeList}
-                                                        </Select>
-                                                        {/* </div> */} </div>
+                                                        <div className="col-6">
+                                                            <div className="row">
+                                                                <div className="col-4" style={{ textAlign: 'right' }}>
+                                                                    <label className="title-field" for="ddlJobType">Job Type <span style={{ color: 'red' }}>*</span></label>
+                                                                </div>
+                                                                <div className="col-8" >
+                                                                    <Select
+                                                                        showSearch
+                                                                        style={{ width: 200 }}
+                                                                        placeholder="Please selete Type"
+                                                                        optionFilterProp="children"
+                                                                        onChange={(e) => { this.handleChangeType(e, i) }}
+                                                                        onFocus={(e) => { this.handleFocusType(e, i) }}
+                                                                        onBlur={(e) => { this.handleBlurType(e, i) }}
+                                                                        filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                                                        value={data.typeId}
+                                                                    >
+                                                                        {this.typeList}
+                                                                    </Select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
                                                     {/* Time in */}
                                                     <div className="row form-group">
-                                                        <div className="col-3" style={{ textAlign: 'right' }}><label for="ddlTimeIn">Time in <span style={{ color: 'red' }}>*</span></label></div>
-
-                                                        <TimePicker placeholder="Select time in" format={format} value={data.workTimeIn} showNow={true} onChange={(time, timestring) => { this.onChangeTimeIn(time, timestring, i) }} />
-                                                        {/* </div> */}
+                                                        <div className="col-6">
+                                                            <div className="row">
+                                                                <div className="col-4" style={{ textAlign: 'right' }}>
+                                                                    <label className="title-field" for="ddlTimeIn">Time in <span style={{ color: 'red' }}>*</span></label></div>
+                                                                <div className="col-8" >
+                                                                    <TimePicker showNow={true} className="font-16pt" style={{ fontSize: '16pt' }} use12Hours placeholder="Select time in" format={format} value={data.workTimeIn} showNow={true} onChange={(time, timestring) => { this.onChangeTimeIn(time, timestring, i) }} />
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
                                                         {/* Time out */}
-                                                        {/* <div className="row form-group"> */}
-                                                        <div className="col-3" style={{ textAlign: 'right' }}><label for="ddlTimeOut">Time out <span style={{ color: 'red' }}>*</span></label></div>
-
-                                                        <TimePicker placeholder="Select Time out" format={format} value={data.workTimeOut} showNow={true} onChange={(time, timestring) => { this.onChangeTimeOut(time, timestring, i) }} />
+                                                        <div className="col-6">
+                                                            <div className="row">
+                                                                <div className="col-4" style={{ textAlign: 'right' }}>
+                                                                    <label className="title-field" for="ddlTimeOut">Time out <span style={{ color: 'red' }}>*</span></label></div>
+                                                                <div className="col-8" >
+                                                                    <TimePicker showNow={true} className="font-16pt" style={{ fontSize: '16pt' }} use12Hours placeholder="Select Time out" format={format} value={data.workTimeOut} showNow={true} onChange={(time, timestring) => { this.onChangeTimeOut(time, timestring, i) }} />
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
 
                                                     {/* Man hours */}
                                                     <div className="row form-group">
-                                                        <div className="col-3" style={{ textAlign: 'right' }}><label for="txtManHours">Man hours <span style={{ color: 'red' }}>*</span></label></div>
-                                                        <input type="text" class="form-control col-1" id="txtManHours" />
-                                                        <div class="col-2">
-                                                            <button type="button" class="btn btn-custom-color" style={{ marginRight: 20 }} onClick={this.calManHours}>Calculate</button></div>
-                                                        {/* </div> */}
+                                                        <div className="col-6">
+                                                            <div className="row">
+                                                                <div className="col-4" style={{ textAlign: 'right' }}>
+                                                                    <label className="title-field" for="txtManHours">Man hours <span style={{ color: 'red' }}>*</span></label></div>
+                                                                <div className="col-4" >
+                                                                    <input type="text" class="form-control" id="txtManHours" />
+
+                                                                </div>
+                                                                <div className="col-3" >
+
+                                                                    <button class="btn-custom btn-calculate" onClick={this.calManHours}>Calculate</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
                                                         {/* Url */}
-                                                        {/* <div className="row form-group"> */}
-                                                        <div className="col-1" style={{ textAlign: 'right' }}><label for="txtUrl">Url <span style={{ color: 'red' }}>*</span></label></div>
-                                                        <input type="text" class="form-control col-2" id="txtUrl" />
+                                                        <div className="col-6">
+                                                            <div className="row">
+                                                                <div className="col-4" style={{ textAlign: 'right' }}>
+                                                                    <label className="title-field" for="txtUrl">Url <span style={{ color: 'red' }}>*</span></label></div>
+                                                                <div className="col-8" >
+                                                                    <input type="text" class="form-control" id="txtUrl" />
 
-                                                    </div>
+                                                                </div>  </div>  </div> </div>
 
                                                     {/* Detail */}
                                                     <div className="row form-group">
-                                                        <div className="col-3" style={{ textAlign: 'right' }}><label for="txtDetail">Detail <span style={{ color: 'red' }}>*</span></label></div>
-                                                        <textarea rows="3" type="text" class="form-control col-6" id="txtDetail" />
+                                                        <div className="col-12">
+                                                            <div className="row">
+                                                                <div className="col-2" style={{ textAlign: 'right' }}>
+                                                                    <label className="title-field" for="txtDetail">Detail <span style={{ color: 'red' }}>*</span></label></div>
+                                                                <div className="col-10">
+                                                                    <textarea rows="3" type="text" class="form-control" id="txtDetail" />
 
-                                                    </div>
+                                                                </div> </div> </div> </div>
 
 
                                                 </div>
                                                 {this.state.data.length > 1 ? <div style={{ textAlign: 'end', marginTop: 20, marginBottom: 10 }}>
                                                     <button type="button" style={{ background: 'red', color: '#fff', width: 300 }} className="btn btn-popup-custom error" onClick={() => {
                                                         console.log("ActionsWork -> render -> d");
+                                                        this.setState({ isOpen: true, isTypeShowConfirm: 'del', isTextMsg: msgPopupTitle.deleted, isDataPopUp: this.state.data, isDelete: true })
                                                     }} >
+                                                    
                                                         Delete
                                                     </button>
                                                 </div> : null}
@@ -405,13 +453,16 @@ class ActionsWork extends React.Component {
                                     <div>
                                         <button type="button" class="btn btn-add-work" onClick={this.handleAddData}><span className="btn-add-work-icon"><PlusOutlined /></span></button>
                                     </div>
-                                    <div className="row form-group">
-                                        <div className="col-12" style={{ textAlign: 'right' }}>
-                                            <Link to='/work'>
-                                                <button class="btn-custom btn-reset" style={{ marginRight: 20 }}>CANCEL</button>
-                                            </Link>
-                                            <button class="btn-custom btn-search" style={{ marginRight: 70 }} onClick={this.openModal}>{this.state.params.action === 'edit' ? 'UPDATE' : 'CREATE'}</button>
-                                        </div>
+                                </div>
+                                <div className="row form-group">
+                                    <div className="col-12" style={{ textAlign: 'right' }}>
+                                        <Link to='/work'>
+                                            <button class="btn-custom btn-reset" style={{ marginRight: 20 }}>CANCEL</button>
+                                        </Link>
+                                        <button class="btn-custom btn-search" style={{ marginRight: 70 }} onClick={() => {
+                                            this.setState({ isOpen: true, isTypeShowConfirm: 'save', isTextMsg: msgPopupTitle.saved, isDataPopUp: this.state.data, isDelete: false })
+                                        }}> 
+                                        {this.state.params.action === 'edit' ? 'UPDATE' : 'CREATE'}</button>
                                     </div>
                                 </div>
 
@@ -423,6 +474,26 @@ class ActionsWork extends React.Component {
 
                 </div>
             </div>
+            {/* POPUP */}
+            <AlertPopUp successStatus={this.state.isPopupSuccess} errorStatus={this.state.isPopupError} message={this.state.isPopupMsg}
+                clearActive={() => {
+                    this.setState({ isPopupError: false })
+                    this.setState({ isPopupSuccess: false })
+                   
+                   
+                }} />
+
+            <ConfirmPopup open={this.state.isOpen} type={this.state.isTypeShowConfirm} text={this.state.isTextMsg} data={this.state.isDataPopUp} del={false}
+                onClose={() => { this.setState({ isOpen: false }) }}
+                clearActive={(e) => { this.setState({ isOpen: false }) }}
+                confirmActive={(e) => {
+                    this.setState({ isOpen: false })
+                    this.setState({ isPopupError: false })
+                    this.setState({ isPopupSuccess: true })
+                    this.setState({ isPopupMsg: this.state.isDelete === false && this.state.params.action === 'edit' ? msgAlertTitle.updated : this.state.isDelete === false ? msgAlertTitle.saved : msgAlertTitle.deleted })
+                    console.log("Work -> render -> e", e)
+                }}
+            />
         </>
         );
 

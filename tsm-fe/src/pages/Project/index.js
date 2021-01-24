@@ -16,6 +16,11 @@ import _ from "lodash";
 import { Breadcrumb } from 'antd';
 import { HomeOutlined, EyeOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons';
 import DataGrid, { Column, Pager, Paging } from 'devextreme-react/data-grid';
+import AlertPopUp from "../../components/popup/alert_popup";
+import ConfirmPopup from "../../components/popup/confirm_popup";
+import configService from '../../config';
+const msgAlertTitle = configService.msgAlert;
+const msgPopupTitle = configService.msgConfirm;
 
 const url = 'https://js.devexpress.com/Demos/Mvc/api/TreeListTasks';
 
@@ -57,9 +62,13 @@ class Project extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      width: 0,
-      height: 0,
-      itembar: [false, false, false],
+      isPopupSuccess: false, // alert success case
+      isPopupError: false,  // alert error case
+      isPopupMsg: '',  // alert msg
+      isOpen: false, // open popup confirm
+      isTypeShowConfirm: '', // ประเภทของ popup : save , del
+      isDataPopUp: {}, // ข้อมูลที่ใช้
+      isTextMsg: '', // msg ของ Popup
       filter: {
         dateFrom: new Date(),
         dateTo: new Date(),
@@ -227,17 +236,29 @@ class Project extends React.Component {
   }
 
 
+  delCellRender = (data) => {
+    console.log("project -> DelcellRender -> data", data)
+    return <a onClick={() => {
+      console.log("project -> DelcellRender -> data", data.data.typeId)
+      this.setState({ isOpen: true, isTypeShowConfirm: 'del', isTextMsg: msgPopupTitle.deleted, isDataPopUp: this.state.data })
+    }}><span style={{ color: '#111', fontSize: '16pt' }}><DeleteOutlined /></span></a>;
+  }
+
+  editCellRender = (data) => {
+    return <Link to={"/project" + `/{"action":"edit","projectId":"${data.data.typeId}"}`}>
+      <span style={{ color: 'black', fontSize: '16pt' }}><FormOutlined /></span>
+    </Link>
+  }
+  viewCellRender = (data) => {
+    return <Link to={"/project" + `/{"action":"view","projectId":"${data.data.typeId}"}`}>
+      <span style={{ color: 'black', fontSize: '16pt' }}><EyeOutlined /></span>
+    </Link>
+  }
+  noCellRender = (data) => {
+    return <span style={{ color: 'black', fontSize: '16pt' }}>  {data.component.pageIndex() * data.component.pageSize() + data.rowIndex + 1}</span>
+  }
 
   render() {
-
-
-    function initNewRow(e) {
-      e.data.Task_Status = 'Not Started';
-      e.data.Task_Start_Date = new Date();
-      e.data.Task_Due_Date = new Date();
-    }
-
-
 
     return (<>
 
@@ -316,12 +337,12 @@ class Project extends React.Component {
                       showNavigationButtons={true}
                     />
 
-                    <Column width="100" caption="No" alignment="center" cellRender={noCellRender} dataType="string" />
+                    <Column width="100" caption="No" alignment="center" cellRender={this.noCellRender} dataType="string" />
                     <Column caption="Project Name" dataField="projectName" dataType="string" />
                     <Column caption="Phase" dataField="projectPhase" dataType="string" />
-                    <Column width="100" alignment="center" caption="View" cellRender={viewCellRender} />
-                    <Column width="100" alignment="center" caption="Edit" cellRender={editCellRender} />
-                    <Column width="100" alignment="center" cellRender={delCellRender} caption="Delete" />
+                    <Column width="100" alignment="center" caption="View" cellRender={this.viewCellRender} />
+                    <Column width="100" alignment="center" caption="Edit" cellRender={this.editCellRender} />
+                    <Column width="100" alignment="center" cellRender={this.delCellRender} caption="Delete" />
 
                   </DataGrid>
                 </div>
@@ -337,31 +358,29 @@ class Project extends React.Component {
 
         </div>
       </div>
+      {/* POPUP */}
+      <AlertPopUp successStatus={this.state.isPopupSuccess} errorStatus={this.state.isPopupError} message={this.state.isPopupMsg}
+        clearActive={() => {
+          this.setState({ isPopupError: false })
+          this.setState({ isPopupSuccess: false })
+        }} />
+
+      <ConfirmPopup open={this.state.isOpen} type={this.state.isTypeShowConfirm} text={this.state.isTextMsg} data={this.state.isDataPopUp} del={false}
+        onClose={() => { this.setState({ isOpen: false }) }}
+        clearActive={(e) => { this.setState({ isOpen: false }) }}
+        confirmActive={(e) => {
+          this.setState({ isOpen: false })
+          this.setState({ isPopupError: false })
+          this.setState({ isPopupSuccess: true })
+          this.setState({ isPopupMsg: msgAlertTitle.deleted })
+          console.log("Work -> render -> e", e)
+        }}
+      />
+
     </>
     );
 
   }
-}
-
-function delCellRender(data) {
-  console.log("project -> DelcellRender -> data", data)
-  return <a onClick={() => {
-    console.log("project -> DelcellRender -> data", data.data.typeId)
-  }}><span style={{ color: '#111', fontSize: '16pt' }}><DeleteOutlined /></span></a>;
-}
-function editCellRender(data) {
-  return <Link to={"/project" + `/{"action":"edit","projectId":"${data.data.typeId}"}`}>
-    <span style={{ color: 'black', fontSize: '16pt' }}><FormOutlined /></span>
-  </Link>
-}
-function viewCellRender(data) {
-  return <Link to={"/project" + `/{"action":"view","projectId":"${data.data.typeId}"}`}>
-    <span style={{ color: 'black', fontSize: '16pt' }}><EyeOutlined /></span>
-  </Link>
-}
-function noCellRender(data) {
-  return <span style={{ color: 'black', fontSize: '16pt' }}>  {data.component.pageIndex() * data.component.pageSize() + data.rowIndex + 1}</span>
-
 }
 
 export default Project;
