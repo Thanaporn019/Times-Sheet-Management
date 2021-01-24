@@ -269,8 +269,8 @@ class ActionJobType extends React.Component {
                                 <span className="breadcrum-custom">Job Type</span>
                             </Breadcrumb.Item>
                             {/* <Breadcrumb.Item href="#"> */}
-                                {this.state.params.action === 'create' ? <span className="breadcrum-custom">  Create Job Type</span> : null}
-                                {this.state.params.action === 'edit' ? <span className="breadcrum-custom">  Update Job Type</span> : null}
+                                {this.state.params.action === 'create' ? <span className="breadcrum-custom">  Create Job type</span> : null}
+                                {this.state.params.action === 'edit' ? <span className="breadcrum-custom">  Update Job type</span> : null}
 
                             {/* </Breadcrumb.Item> */}
                         </Breadcrumb>
@@ -286,8 +286,8 @@ class ActionJobType extends React.Component {
                                         return (
                                             <>
                                                 <div className="box-action-content">
-                                                    {this.state.params.action === 'create' ? <p className="font-size-search">Create Job Type</p> : null}
-                                                    {this.state.params.action === 'edit' ? <p className="font-size-search">Update Job Type</p> : null}
+                                                    {this.state.params.action === 'create' ? <p className="font-size-search">Create Job type</p> : null}
+                                                    {this.state.params.action === 'edit' ? <p className="font-size-search">Update Job type</p> : null}
                                                     <div className="row form-group">
                                                         <div className="col-4" style={{ textAlign: 'right' }}>
 

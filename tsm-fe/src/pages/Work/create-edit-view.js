@@ -281,9 +281,9 @@ class ActionsWork extends React.Component {
                                 <span className="breadcrum-custom"> work</span>
                             </Breadcrumb.Item>
                             {/* <Breadcrumb.Item href="#"> */}
-                                {this.state.params.action === 'create' ? <span className="breadcrum-custom">  Create work</span> : null}
-                                {this.state.params.action === 'edit' ? <span className="breadcrum-custom">  Edit</span> : null}
-                                {/* {this.state.params.action === 'view' ? <span className="breadcrum-custom">  View</span> : null} */}
+                            {this.state.params.action === 'create' ? <span className="breadcrum-custom">  Create work</span> : null}
+                            {this.state.params.action === 'edit' ? <span className="breadcrum-custom">  Update work</span> : null}
+                            {/* {this.state.params.action === 'view' ? <span className="breadcrum-custom">  View</span> : null} */}
                             {/* </Breadcrumb.Item> */}
                         </Breadcrumb>
 
@@ -291,14 +291,14 @@ class ActionsWork extends React.Component {
                             <div className="box-action">
                                 <div className="box-title-search">
                                     {this.state.params.action === 'create' ? <p className="font-size-search">Create Work</p> : null}
-                                    {this.state.params.action === 'edit' ? <p className="font-size-search">Edit Work</p> : null}
+                                    {this.state.params.action === 'edit' ? <p className="font-size-search">Update Work</p> : null}
                                     {/* {this.state.params.action === 'view' ? <p className="font-size-search">View Work</p> : null} */}
 
                                 </div>
                                 <div className="box-content">
                                     <div className="box-action-date">
                                         <div className="row form-group">
-                                            <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlDate">Date : <span style={{ color: 'red' }}>*</span></label></div>
+                                            <div className="col-3" style={{ textAlign: 'right' }}><label for="ddlDate">Date : <span style={{ color: 'red' }}>*</span></label></div>
                                             <div className="col-5" style={{ paddingLeft: 0, paddingRight: 0 }}>
                                                 <DateBox
                                                     value={null}
@@ -317,7 +317,7 @@ class ActionsWork extends React.Component {
                                             <>
                                                 <div className="box-action-content">
                                                     <div className="row form-group">
-                                                        <div className="col-4" style={{ textAlign: 'right' }}>
+                                                        <div className="col-3" style={{ textAlign: 'right' }}>
                                                             <label for="ddlProjectName">Project Name <span style={{ color: 'red' }}>*</span></label>
                                                         </div>
 
@@ -334,9 +334,9 @@ class ActionsWork extends React.Component {
                                                         >
                                                             {this.projectList}
                                                         </Select>
-                                                    </div>
-                                                    <div className="row form-group">
-                                                        <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlJobType">Job Type <span style={{ color: 'red' }}>*</span></label></div>
+                                                        {/* </div> */}
+                                                        {/* <div className="row form-group"> */}
+                                                        <div className="col-2" style={{ textAlign: 'right' }}><label for="ddlJobType">Job Type <span style={{ color: 'red' }}>*</span></label></div>
                                                         <Select
                                                             showSearch
                                                             style={{ width: 200 }}
@@ -350,48 +350,50 @@ class ActionsWork extends React.Component {
                                                         >
                                                             {this.typeList}
                                                         </Select>
-                                                    </div>
+                                                        {/* </div> */} </div>
 
-                                                    {/* WorkIn */}
+                                                    {/* Time in */}
                                                     <div className="row form-group">
-                                                        <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlTimeIn">Time in <span style={{ color: 'red' }}>*</span></label></div>
+                                                        <div className="col-3" style={{ textAlign: 'right' }}><label for="ddlTimeIn">Time in <span style={{ color: 'red' }}>*</span></label></div>
 
                                                         <TimePicker placeholder="Select time in" format={format} value={data.workTimeIn} showNow={true} onChange={(time, timestring) => { this.onChangeTimeIn(time, timestring, i) }} />
-                                                    </div>
+                                                        {/* </div> */}
 
-                                                    {/* WorkOut */}
-                                                    <div className="row form-group">
-                                                        <div className="col-4" style={{ textAlign: 'right' }}><label for="ddlTimeOut">Time out <span style={{ color: 'red' }}>*</span></label></div>
+                                                        {/* Time out */}
+                                                        {/* <div className="row form-group"> */}
+                                                        <div className="col-3" style={{ textAlign: 'right' }}><label for="ddlTimeOut">Time out <span style={{ color: 'red' }}>*</span></label></div>
 
                                                         <TimePicker placeholder="Select Time out" format={format} value={data.workTimeOut} showNow={true} onChange={(time, timestring) => { this.onChangeTimeOut(time, timestring, i) }} />
                                                     </div>
 
-                                                    {/* man hours */}
+                                                    {/* Man hours */}
                                                     <div className="row form-group">
-                                                        <div className="col-4" style={{ textAlign: 'right' }}><label for="txtManHours">Man hours <span style={{ color: 'red' }}>*</span></label></div>
-                                                        <input type="text" class="form-control col-3" id="txtManHours" />
-                                                        <div class="col-3">
-                                                            <button type="button" class="btn btn-custom-color" style={{ marginRight: 20 }} onClick={this.calManHours}>Calculate</button></div>
+                                                        <div className="col-3" style={{ textAlign: 'right' }}><label for="txtManHours">Man hours <span style={{ color: 'red' }}>*</span></label></div>
+                                                        <input type="text" class="form-control col-1" id="txtManHours" />
+                                                        <div class="col-2">
+                                                            <button type="button" class="btn btn-custom-color" style={{ marginRight:20 }} onClick={this.calManHours}>Calculate</button></div>
+                                                    {/* </div> */}
+
+                                                    {/* Url */}
+                                                    {/* <div className="row form-group"> */}
+                                                        <div className="col-1" style={{ textAlign: 'right' }}><label for="txtUrl">Url <span style={{ color: 'red' }}>*</span></label></div>
+                                                        <input type="text" class="form-control col-2" id="txtUrl" />
+
                                                     </div>
 
                                                     {/* Detail */}
                                                     <div className="row form-group">
-                                                        <div className="col-4" style={{ textAlign: 'right' }}><label for="txtDetail">Detail <span style={{ color: 'red' }}>*</span></label></div>
+                                                        <div className="col-3" style={{ textAlign: 'right' }}><label for="txtDetail">Detail <span style={{ color: 'red' }}>*</span></label></div>
                                                         <textarea rows="3" type="text" class="form-control col-6" id="txtDetail" />
 
                                                     </div>
 
-                                                    {/* Url */}
-                                                    <div className="row form-group">
-                                                        <div className="col-4" style={{ textAlign: 'right' }}><label for="txtUrl">Url <span style={{ color: 'red' }}>*</span></label></div>
-                                                        <input type="text" class="form-control col-6" id="txtUrl" />
 
-                                                    </div>
                                                 </div>
-                                                { this.state.data.length > 1 ? <div style={{textAlign: 'end', marginTop: 20, marginBottom: 10}}>
+                                                {this.state.data.length > 1 ? <div style={{ textAlign: 'end', marginTop: 20, marginBottom: 10 }}>
                                                     <button type="button" style={{ background: 'red', color: '#fff', width: 300 }} className="btn btn-popup-custom error" onClick={() => {
-                                                    console.log("ActionsWork -> render -> d");
-                                                     }} >
+                                                        console.log("ActionsWork -> render -> d");
+                                                    }} >
                                                         Delete
                                                     </button>
                                                 </div> : null}
@@ -407,10 +409,10 @@ class ActionsWork extends React.Component {
                                 </div>
                                 <div className="row form-group">
                                     <div className="col-12" style={{ textAlign: 'right' }}>
-                                    {this.state.params.action !== 'view' ?
-                                    <Link to='/work'>
-                                        <button type="button" class="btn btn-secondary" style={{ marginRight: 20 }} onClick={this.handleReset}>CANCEL</button>
-                                        </Link> : null}
+                                        {this.state.params.action !== 'view' ?
+                                            <Link to='/work'>
+                                                <button type="button" class="btn btn-secondary" style={{ marginRight: 20 }} onClick={this.handleReset}>CANCEL</button>
+                                            </Link> : null}
                                         <button type="button" class="btn btn-custom-color" style={{ marginRight: 70 }} onClick={this.openModal}>CREATE</button>
                                     </div>
                                 </div>
