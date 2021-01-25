@@ -266,22 +266,23 @@ class Work extends React.Component {
     let name = `DATE : ${data.value}  ${day}`
     let now = moment().format('DD/MM/YYYY');
     console.log("groupRender -> name", name)
-    return <div className="row">
-      <div style={{fontSize: '14pt'}}className={`col-6 ${day === 'Sunday' || day === 'Saturday' ? 'color-red' : data.value === now ? 'color-blue' : 'color-black'}`}>
+    return (<div className="row">
+      <div style={{ fontSize: '12pt' }} className={`col-6 ${day === 'Sunday' || day === 'Saturday' ? 'color-red' : data.value === now ? 'color-blue' : 'color-black'}`}>
         {name}
       </div>
 
       <div className="col-6" style={{ textAlign: 'end' }}>
         <Link to={"/work" + `/{"action":"edit","workId":"${id}"}`}>
-          <span style={{ color: 'black', fontSize: '16pt', marginRight: 15 }}><FormOutlined /></span>
+          <span style={{ color: 'black', fontSize: '12pt', marginRight: 15 }}><FormOutlined /></span>
         </Link>
         <a onClick={() => {
           this.setState({ isOpen: true, isTypeShowConfirm: 'del', isTextMsg: msgPopupTitle.deleted, isDataPopUp: this.state.data })
           console.log("project -> DelcellRender -> data", id)
-        }}><span style={{ color: '#111', fontSize: '16pt' }}><DeleteOutlined /></span></a>
+        }}><span style={{ color: '#111', fontSize: '12pt' }}><DeleteOutlined /></span></a>
       </div>
 
     </div>
+    )
 
 
 
@@ -428,13 +429,14 @@ class Work extends React.Component {
                     <Column type="buttons" caption="EDIT DELETE" width={110}>
                       <DropDownButton
                         text="..."
-                        icon=""
+                        icon="print"
                         dropDownOptions={{ width: 230 }}
                         items={['edit', 'delete']}
                         onItemClick={this.onItemClick}
                       />
-                      <Button name="edit" />
-                      <Button name="delete" />
+                      {/* <Button ... /> */}
+                      {/* <Button name="edit" />
+                      <Button name="delete" /> */}
                     </Column>
                     <Column className="color-red" dataField="workDate" groupIndex={0} groupCellRender={this.groupRender} />
                   </DataGrid>
@@ -468,13 +470,7 @@ class Work extends React.Component {
           console.log("Work -> render -> e", e)
         }}
       />
-
-
-      />
-
-    </>
-    );
-
+    </>);
   }
 }
 
