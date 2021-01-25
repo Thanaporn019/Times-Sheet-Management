@@ -94,7 +94,7 @@
 .box-search {
     background: rgb(255, 255, 255);
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    width: 80%;
+    width: 85%;
     display: block;
     justify-content: center;
     border-radius: 10px;
@@ -103,7 +103,7 @@
 .box-action {
     background: white !important;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    width: 80%;
+    width: 85%;
     display: block;
     justify-content: center;
     border-radius: 10px;
@@ -46334,6 +46334,7 @@ a:hover {
     color: white !important;
     font-size: 13pt !important;
     background: #4b2474;
+    height: 40px !important;
 }
 
 .dx-datagrid-headers {
@@ -46345,7 +46346,6 @@ a:hover {
 }
 
 .dx-row {
-    height: 40px;
     vertical-align: middle;
     font-family: 'Inter', sans-serif;
 }
@@ -46376,7 +46376,7 @@ a:hover {
     padding: .375rem .75rem;
     line-height: 1.5;
     border-radius: .25rem;
-    font-size: 12pt !important;
+    font-size: 13pt !important;
     width: 170px;
     font-weight: 500 !important;
     color: white !important;
@@ -46388,6 +46388,8 @@ a:hover {
 .title-field {
     font-size: 12pt;
     font-weight: 600;
+    top: 5px !important;
+    position: relative;
 }
 
 .form-control {
@@ -46398,12 +46400,12 @@ a:hover {
     font-size: 24pt;
     font-weight: bolder;
     position: relative;
-    top: -12px;
+    top: -17px;
 }
 
 .btn-txt-icon {
     position: relative;
-    top: -12px;
+    top: -19px;
     font-family: 'Inter', sans-serif;
 }
 
@@ -46501,4 +46503,33 @@ a:hover {
 .color-black {
     color: black !important;
     background: rgba(214, 162, 214, 0.63)
+}
+
+.dx-button-mode-outlined {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    color: #333;
+}
+
+.dx-icon-spindown {
+    color: transparent !important;
+}
+
+.dx-button .dx-button-content {
+    padding: 0px !important;
+}
+
+.dx-button-text {
+    font-size: 20pt !important;
+    position: relative !important;
+    top: -10px !important;
+}
+
+.dx-datagrid-content .dx-datagrid-table .dx-row > td, .dx-datagrid-content .dx-datagrid-table .dx-row > tr > td {
+    vertical-align: initial !important;
+}
+
+.custom-icon-group {
+    position: relative !important;
+    top: -6px !important;
 }

@@ -7,9 +7,14 @@ import { IoAddOutline } from "react-icons/io5";
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import { HomeOutlined, EyeOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons';
 import DropDownButton from 'devextreme-react/drop-down-button';
+import Toolbar, { Item } from 'devextreme-react/toolbar';
 import moment from 'moment';
 import AlertPopUp from "../../components/popup/alert_popup";
 import ConfirmPopup from "../../components/popup/confirm_popup";
+import {
+  SimpleItem,
+  GroupItem
+} from 'devextreme-react/form';
 import DataGrid, {
   Column,
   Grouping,
@@ -18,15 +23,18 @@ import DataGrid, {
   SearchPanel,
   Editing,
   Pager,
+  Scrolling,
+  Form,
   Button
 } from 'devextreme-react/data-grid';
 import AspNetData from 'devextreme-aspnet-data-nojquery';
 import _ from "lodash";
-import { Breadcrumb } from 'antd';
+import { Breadcrumb, Modal, TimePicker, Select } from 'antd';
 import configService from '../../config';
 const msgAlertTitle = configService.msgAlert;
 const msgPopupTitle = configService.msgConfirm;
 const url = 'https://js.devexpress.com/Demos/Mvc/api/TreeListTasks';
+const format = "HH:mm A";
 {/* <span role="img" aria-label="delete" class="anticon anticon-delete"><svg viewBox="64 64 896 896" focusable="false" data-icon="delete" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M360 184h-8c4.4 0 8-3.6 8-8v8h304v-8c0 4.4 3.6 8 8 8h-8v72h72v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80h72v-72zm504 72H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM731.3 840H292.7l-24.2-512h487l-24.2 512z"></path></svg></span> */ }
 
 const tasksData = AspNetData.createStore({
@@ -54,8 +62,6 @@ const statusesData = [
   'Deferred',
   'Completed'
 ];
-
-
 
 class Work extends React.Component {
 
@@ -157,8 +163,18 @@ class Work extends React.Component {
           'createBy': 'joon',
           'groupId': 3,
           'id': 4
-        }]
+        }],
+      popOver: {
+        workId: '',
+        visible: false
+      },
+      popupEditVisable: false
     };
+
+    this.dataPopup = [
+      { id: 1, name: 'Edit', icon: 'edit' },
+      { id: 2, name: 'Delete', icon: 'trash' },
+    ];
   }
 
   componentDidMount() {
@@ -273,18 +289,72 @@ class Work extends React.Component {
 
       <div className="col-6" style={{ textAlign: 'end' }}>
         <Link to={"/work" + `/{"action":"edit","workId":"${id}"}`}>
-          <span style={{ color: 'black', fontSize: '12pt', marginRight: 15 }}><FormOutlined /></span>
+          <span className="custom-icon-group" style={{ color: 'black', fontSize: '12pt', marginRight: 20 }}><FormOutlined /></span>
         </Link>
-        <a onClick={() => {
+        <a className="custom-icon-group" onClick={() => {
           this.setState({ isOpen: true, isTypeShowConfirm: 'del', isTextMsg: msgPopupTitle.deleted, isDataPopUp: this.state.data })
           console.log("project -> DelcellRender -> data", id)
-        }}><span style={{ color: '#111', fontSize: '12pt' }}><DeleteOutlined /></span></a>
+        }}><span style={{ color: '#111', fontSize: '12pt', marginRight: 20 }}><DeleteOutlined /></span></a>
       </div>
 
     </div>
     )
+  }
 
+  handleVisibleChange = (id, visible) => {
+    console.log(`Work -> handleVisibleChange -> visible`, visible)
+    console.log(`Work -> handleVisibleChange -> id`, id)
+    this.setState({
+      popOver: {
+        workId: id,
+        visible: visible
+      }
+    });
+  };
 
+  actionRender = (data) => {
+    console.log(`Work -> actionRender -> data`, data)
+    let a = false;
+    return (<>
+      <DropDownButton
+        text="..."
+        dropDownOptions={{ width: 100 }}
+        items={this.dataPopup}
+        displayExpr="name"
+        keyExpr="id"
+        onItemClick={(e) => { this.onItemClick(e, data) }}
+      />
+      {/* <Popover
+        content={
+          <div>
+            <span style={{ color: 'black', fontSize: '12pt', marginRight: 20 }}><FormOutlined /></span>
+            <span style={{ color: '#111', fontSize: '12pt', marginRight: 20 }}><DeleteOutlined /></span>
+          </div>
+        }
+        // <a onClick={this.hide}>Close</a>
+        // title=""
+        trigger="click"
+        visible={this.state.popOver.id === data.data.id ? this.state.popOver.visible : false}
+        onVisibleChange={(e) => {
+          console.log(`Work -> actionRender -> e`, e)
+          this.handleVisibleChange(data.data.workId, e)
+        }}
+      >
+        <button >...</button>
+      </Popover> */}
+    </>)
+  }
+
+  onItemClick = (e, data) => {
+    console.log(`Work -> onItemClick -> e`, e, data)
+    if (e.itemData.name === 'Edit') {
+      this.setState({ popupEditVisable: true })
+    } else if (e.itemData.name === 'Delete') {
+      // call function delete
+    }
+  }
+
+  calManHours = () => {
 
   }
 
@@ -391,23 +461,25 @@ class Work extends React.Component {
               <div className="box-search" style={{ padding: 30 }}>
                 <div style={{ textAlign: 'end', padding: 15 }}>
                   <Link to='/work/{"action":"create"}'>
-                    <button className="btn-custom btn-search " style={{ width: 250 }}><span className="btn-icon"><IoAddOutline /></span> <span className="btn-txt-icon">Create Work</span></button>
+                    <button className="btn-custom btn-search " style={{ width: 185 }}><span className="btn-icon"><IoAddOutline /></span> <span className="btn-txt-icon">Create Work</span></button>
 
                   </Link>
                 </div>
-                <div style={{ padding: 20 }}>
+                <div style={{ padding: 20 }} className="table-responsive">
                   <DataGrid
                     dataSource={this.state.data}
                     allowColumnReordering={false}
                     showBorders={true}
+                  // columnWidth={100}
                   >
-                    <Editing
+                    <Scrolling columnRenderingMode="virtual" />
+                    {/* <Editing
                       allowUpdating={true}
                       allowDeleting={true}
                       // allowAdding={false}
                       mode="form"
                       useIcons={true}
-                    />
+                    ></Editing> */}
                     <GroupPanel visible={false} />
                     <SearchPanel visible={false} />
                     <Grouping autoExpandAll={true} />
@@ -419,24 +491,15 @@ class Work extends React.Component {
                       showNavigationButtons={true}
                     />
 
-                    <Column dataField="projectName" caption="PROJECT" dataType="string" />
-                    <Column dataField="projectPhase" caption="PHASE" dataType="string" />
-                    <Column dataField="typeName" caption="TYPE" dataType="string" />
-                    <Column dataField="workDetail" caption="DETAIL" dataType="string" />
-                    <Column dataField="workManhour" caption="MANHOURS" dataType="string" />
-                    <Column dataField="workTimeIn" caption="TIMEIN" dataType="string" />
-                    <Column dataField="workTimeOut" caption="TIMEOUT" dataType="string" />
-                    <Column type="buttons" caption="EDIT DELETE" width={110}>
-                      <DropDownButton
-                        text="..."
-                        icon="print"
-                        dropDownOptions={{ width: 230 }}
-                        items={['edit', 'delete']}
-                        onItemClick={this.onItemClick}
-                      />
-                      {/* <Button ... /> */}
-                      {/* <Button name="edit" />
-                      <Button name="delete" /> */}
+                    <Column dataField="projectName" caption="Project" dataType="string" />
+                    <Column dataField="projectPhase" caption="Phase" dataType="string" />
+                    <Column dataField="typeName" caption="Type" dataType="string" />
+                    <Column dataField="workDetail" caption="Detail" dataType="string" />
+                    <Column dataField="workManhour" caption="Man Hours" dataType="string" />
+                    <Column dataField="workTimeIn" caption="Time In" dataType="string" />
+                    <Column dataField="workTimeOut" caption="Time Out" dataType="string" />
+                    <Column caption="Edit Delete" alignment="center" width={110} cellRender={this.actionRender}>
+
                     </Column>
                     <Column className="color-red" dataField="workDate" groupIndex={0} groupCellRender={this.groupRender} />
                   </DataGrid>
@@ -470,6 +533,305 @@ class Work extends React.Component {
           console.log("Work -> render -> e", e)
         }}
       />
+
+      <Modal centered
+        footer={null}
+        header={null}
+        visible={this.state.popupEditVisable}
+        width={650}
+        closable={false}
+        onOk={() => {
+          this.setState({ popupEditVisable: false })
+        }}
+      >
+        {this.state.popupEditVisable ? <div className="wrap-content">
+          <div className="box-action">
+            <div className="box-title-search">
+              <p className="font-size-search"> Update Work </p>
+            </div>
+
+            <div className="box-action-content">
+              <div className="row form-group">
+                <div className="col-6">
+                  <div className="row">
+                    <div
+                      className="col-4"
+                      style={{ textAlign: "right" }}
+                    >
+                      <label
+                        className="title-field"
+                        for="ddlProjectName"
+                      >
+
+                        Project Name
+                                      <span style={{ color: "red" }}> * </span>
+                      </label>
+                    </div>
+                    <div className="col-8">
+                      <Select
+                        showSearch
+                        style={{ width: 200 }}
+                        placeholder="Please selete project"
+                        optionFilterProp="children"
+                        onChange={(e) => {
+                          // this.handleChangeProject(e, i);
+                        }}
+                        onFocus={(e) => {
+                          // this.handleFocusProject(e, i);
+                        }}
+                        onBlur={(e) => {
+                          // this.handleBlurProject(e, i);
+                        }}
+                        filterOption={(input, option) =>
+                          option.props.children
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
+                      // value={data.projectId}
+                      >
+
+                        {/* {this.projectList} */}
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-6">
+                  <div className="row">
+                    <div
+                      className="col-4"
+                      style={{ textAlign: "right" }}
+                    >
+                      <label
+                        className="title-field"
+                        for="ddlJobType"
+                      >
+
+                        Job Type
+                                      <span style={{ color: "red" }}> * </span>
+                      </label>
+                    </div>
+                    <div className="col-8">
+                      <Select
+                        showSearch
+                        style={{ width: 200 }}
+                        placeholder="Please selete Type"
+                        optionFilterProp="children"
+                        onChange={(e) => {
+                          // this.handleChangeType(e, i);
+                        }}
+                        onFocus={(e) => {
+                          // this.handleFocusType(e, i);
+                        }}
+                        onBlur={(e) => {
+                          // this.handleBlurType(e);
+                        }}
+                        filterOption={(input, option) =>
+                          option.props.children
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
+                        // value={ }
+                      >
+
+                        {/* {this.typeList} */}
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* Time in */}
+              <div className="row form-group">
+                <div className="col-6">
+                  <div className="row">
+                    <div
+                      className="col-4"
+                      style={{ textAlign: "right" }}
+                    >
+                      <label
+                        className="title-field"
+                        for="ddlTimeIn"
+                      >
+
+                        Time in
+                                      <span style={{ color: "red" }}> * </span>
+                      </label>
+                    </div>
+                    <div className="col-8">
+                      <TimePicker
+                        showNow={true}
+                        className="font-12pt"
+                        style={{ fontSize: "12pt" }}
+                        use12Hours
+                        placeholder="Select time in"
+                        format={format}
+                        // value={ }
+                        showNow={true}
+                        onChange={(time, timestring) => {
+                          // this.onChangeTimeIn(
+                          //   time,
+                          //   timestring,
+                          //   i
+                          // );
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                {/* Time out */}
+                <div className="col-6">
+                  <div className="row">
+                    <div
+                      className="col-4"
+                      style={{ textAlign: "right" }}
+                    >
+                      <label
+                        className="title-field"
+                        for="ddlTimeOut"
+                      >
+
+                        Time out
+                                      <span style={{ color: "red" }}> * </span>
+                      </label>
+                    </div>
+                    <div className="col-8">
+                      <TimePicker
+                        showNow={true}
+                        className="font-12pt"
+                        style={{ fontSize: "12pt" }}
+                        use12Hours
+                        placeholder="Select Time out"
+                        format={format}
+                        // value={data.workTimeOut}
+                        showNow={true}
+                        onChange={(time, timestring) => {
+                          // this.onChangeTimeOut(
+                          //   time,
+                          //   timestring,
+                          //   i
+                          // );
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* Man hours */}
+              <div className="row form-group">
+                <div className="col-6">
+                  <div className="row">
+                    <div
+                      className="col-4"
+                      style={{ textAlign: "right" }}
+                    >
+                      <label
+                        className="title-field"
+                        for="txtManHours"
+                      >
+                        Man hours
+                                      <span style={{ color: "red" }}> * </span>
+                      </label>
+                    </div>
+                    <div className="col-4">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="txtManHours"
+                      />
+                    </div>
+                    <div className="col-3">
+                      <button
+                        class="btn-custom btn-calculate"
+                        onClick={this.calManHours}
+                      >
+
+                        Calculate
+                                    </button>
+                    </div>
+                  </div>
+                </div>
+                {/* Url */}
+                <div className="col-6">
+                  <div className="row">
+                    <div
+                      className="col-4"
+                      style={{ textAlign: "right" }}
+                    >
+                      <label className="title-field" for="txtUrl">
+
+                        Url
+                                      <span style={{ color: "red" }}> * </span>
+                      </label>
+                    </div>
+                    <div className="col-8">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="txtUrl"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* Detail */}
+              <div className="row form-group">
+                <div className="col-12">
+                  <div className="row">
+                    <div
+                      className="col-2"
+                      style={{ textAlign: "right" }}
+                    >
+                      <label
+                        className="title-field"
+                        for="txtDetail"
+                      >
+
+                        Detail
+                                      <span style={{ color: "red" }}> * </span>
+                      </label>
+                    </div>
+                    <div className="col-10">
+                      <textarea
+                        rows="3"
+                        type="text"
+                        class="form-control"
+                        id="txtDetail"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row form-group">
+            <div className="col-12" style={{ textAlign: "right" }}>
+              <button
+                class="btn-custom btn-reset"
+                style={{ marginRight: 20 }}
+              >
+
+                CANCEL
+                        </button>
+              <button
+                class="btn-custom btn-search"
+                style={{ marginRight: 70 }}
+              // onClick={() => {
+              //   this.setState({
+              //     isOpen: true,
+              //     isTypeShowConfirm: "save",
+              //     isTextMsg: msgPopupTitle.saved,
+              //     isDataPopUp: this.state.data,
+              //     isDelete: false,
+              //   });
+              // }}
+              >
+                UPDATE
+                   </button>
+            </div>
+          </div>
+        </div>
+ : null}
+        
+      </Modal>
     </>);
   }
 }

@@ -57,6 +57,7 @@ code {
     text-align: center;
     padding: 20px;
     background: white;
+    border-radius: 10px;
 }
 
 .breadcrumb {
