@@ -4,6 +4,9 @@ import Navbar from "react-bootstrap/Navbar";
 import Form from "react-bootstrap/Form";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { NavLink, Link } from 'react-router-dom'
+import { GrWorkshop } from "react-icons/gr";
+import { AiOutlineFundProjectionScreen } from "react-icons/ai";
+import { VscGroupByRefType } from "react-icons/vsc";
 
 class Head extends Component {
   render() {
@@ -29,15 +32,23 @@ class Head extends Component {
 
                 <ul class="gx-header-notifications gx-ml-auto">
                   <li class="gx-notify" style={{fontSize: '20pt'}}>
-                <Link to="/work" >
+                  <Link to="/work" >
                     <span class="gx-pointer gx-d-block">
+
+              {/* Icon */}
+                    <span> <GrWorkshop/>  </span>
                       Work
                     </span>
+
                 </Link>
                   </li>
                   <li class="gx-msg" style={{fontSize: '20pt'}}>
                   <Link to="/project" >
                     <span class="gx-pointer gx-status-pos gx-d-block">
+                     
+            {/* Icon  Project*/}
+            <span> <AiOutlineFundProjectionScreen/>  </span>
+            
                       Project
                     </span>
                     </Link>
@@ -45,6 +56,10 @@ class Head extends Component {
                   <li class="gx-msg">
                   <Link to="/jobtype" style={{fontSize: '20pt'}}>
                     <span class="gx-pointer gx-status-pos gx-d-block">
+
+          {/* Icon Job type */}
+                    <span> <VscGroupByRefType/>  </span>
+                    
                       Job type
                     </span>
                     </Link>

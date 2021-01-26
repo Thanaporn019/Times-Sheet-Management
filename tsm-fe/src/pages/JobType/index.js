@@ -295,7 +295,8 @@ class JobType extends React.Component {
 
                                                         <label for="txtJobType" className="title-field">
 
-                                                            Job Type <span style={{ color: "red" }}> * </span>
+                                                            Job Type 
+                                                            {/* <span style={{ color: "red" }}> * </span> */}
                                                         </label>
                                                     </div>
                                                     <input
@@ -310,7 +311,8 @@ class JobType extends React.Component {
 
                                                         <label for="txtCode" className="title-field">
 
-                                                            Code <span style={{ color: "red" }}> * </span>
+                                                            Code 
+                                                            {/* <span style={{ color: "red" }}> * </span> */}
                                                         </label>
                                                     </div>
                                                     <input

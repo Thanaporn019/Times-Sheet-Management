@@ -336,7 +336,7 @@ class Project extends React.Component {
                                                         >
 
                                                             Project Name
-                                                            <span style={{ color: "red" }}> * </span>
+                                                            {/* <span style={{ color: "red" }}> * </span> */}
                                                         </label>
                                                     </div>
                                                     <input

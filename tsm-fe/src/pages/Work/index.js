@@ -537,24 +537,25 @@ class Work extends React.Component {
         footer={null}
         header={null}
         visible={this.state.popupEditVisable}
-        width={650}
+        width={800}
         closable={false}
         onOk={() => {
           this.setState({ popupEditVisable: false })
         }}
       >
-        {this.state.popupEditVisable ? <div className="wrap-content">
-          <div className="box-action">
+        {this.state.popupEditVisable ? 
+        // <div className="wrap-content">
+          // <div className=" col-12 box-action">
             <div className="box-title-search">
               <p className="font-size-search"> Update Work </p>
-            </div>
+            {/* </div> */}
 
             <div className="box-action-content">
               <div className="row form-group">
                 <div className="col-6">
                   <div className="row">
                     <div
-                      className="col-4"
+                      className="col-5"
                       style={{ textAlign: "right" }}
                     >
                       <label
@@ -566,7 +567,7 @@ class Work extends React.Component {
                                       <span style={{ color: "red" }}> * </span>
                       </label>
                     </div>
-                    <div className="col-8">
+                    <div className="col-6">
                       <Select
                         showSearch
                         style={{ width: 200 }}
@@ -609,7 +610,7 @@ class Work extends React.Component {
                                       <span style={{ color: "red" }}> * </span>
                       </label>
                     </div>
-                    <div className="col-8">
+                    <div className="col-6">
                       <Select
                         showSearch
                         style={{ width: 200 }}
@@ -629,7 +630,7 @@ class Work extends React.Component {
                             .toLowerCase()
                             .indexOf(input.toLowerCase()) >= 0
                         }
-                      // value={ }
+                        // value={ }
                       >
 
                         {/* {this.typeList} */}
@@ -639,11 +640,11 @@ class Work extends React.Component {
                 </div>
               </div>
               {/* Time in */}
-              <div className="row form-group">
-                <div className="col-6">
+              <div className="row form-group" >
+                <div className="col-6"> 
                   <div className="row">
                     <div
-                      className="col-4"
+                      className="col-5"
                       style={{ textAlign: "right" }}
                     >
                       <label
@@ -655,7 +656,7 @@ class Work extends React.Component {
                                       <span style={{ color: "red" }}> * </span>
                       </label>
                     </div>
-                    <div className="col-8">
+                    <div className="col-6">
                       <TimePicker
                         showNow={true}
                         className="font-12pt"
@@ -692,7 +693,7 @@ class Work extends React.Component {
                                       <span style={{ color: "red" }}> * </span>
                       </label>
                     </div>
-                    <div className="col-8">
+                    <div className="col-6">
                       <TimePicker
                         showNow={true}
                         className="font-12pt"
@@ -719,7 +720,7 @@ class Work extends React.Component {
                 <div className="col-6">
                   <div className="row">
                     <div
-                      className="col-4"
+                      className="col-5"
                       style={{ textAlign: "right" }}
                     >
                       <label
@@ -737,7 +738,7 @@ class Work extends React.Component {
                         id="txtManHours"
                       />
                     </div>
-                    <div className="col-3">
+                    <div className="col-2">
                       <button
                         class="btn-custom btn-calculate"
                         onClick={this.calManHours}
@@ -758,10 +759,10 @@ class Work extends React.Component {
                       <label className="title-field" for="txtUrl">
 
                         Url
-                                      <span style={{ color: "red" }}> * </span>
+                                      <span style={{ color: "red" }}>  </span>
                       </label>
                     </div>
-                    <div className="col-8">
+                    <div className="col-6">
                       <input
                         type="text"
                         class="form-control"
@@ -773,14 +774,14 @@ class Work extends React.Component {
               </div>
               {/* Detail */}
               <div className="row form-group">
-                <div className="col-12">
+                <div className="col-6">
                   <div className="row">
                     <div
-                      className="col-2"
+                      className="col-5"
                       style={{ textAlign: "right" }}
                     >
                       <label
-                        className="title-field"
+                        className=" title-field"
                         for="txtDetail"
                       >
 
@@ -788,31 +789,32 @@ class Work extends React.Component {
                                       <span style={{ color: "red" }}> * </span>
                       </label>
                     </div>
-                    <div className="col-10">
+                    <div className="col-7">
                       <textarea
                         rows="3"
                         type="text"
                         class="form-control"
                         id="txtDetail"
                       />
-                    </div>
+                    {/* </div> */}
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div className="row form-group">
-            <div className="col-12" style={{ textAlign: "right" }}>
+            <div className="col-12" style={{ textAlign: "right", padding: 20 }}>
               <button
                 class="btn-custom btn-reset"
                 style={{ marginRight: 20 }}
               >
 
+
                 CANCEL
                         </button>
               <button
                 class="btn-custom btn-search"
-                style={{ marginRight: 70 }}
+                style={{ marginRight: 0 }}  
               // onClick={() => {
               //   this.setState({
               //     isOpen: true,
@@ -828,7 +830,7 @@ class Work extends React.Component {
             </div>
           </div>
         </div>
-          : null}
+ : null}
 
       </Modal>
     </>);
