@@ -83,3 +83,11 @@ code {
 .dx-link {
     color: black !important
 }
+
+.icon-header {
+        color: white;
+}
+
+.has-error-input {
+        border-color: red !important;
+}
