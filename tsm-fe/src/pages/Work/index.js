@@ -87,14 +87,13 @@ class Work extends React.Component {
       isTextMsg: '', // msg ของ Popup
       data: [
         {
-          'id': 1,
           'workId': '0001',
           'projectId': '0001',
           'projectName': 'test1',
           'projectPhase': '1',
           'typeId': '0001',
           'typeName': 'test1',
-          'workDate': '20/12/2020',
+          'workDate': '01/01/2021',
           'workDetail': '....',
           'workUrl': '-',
           'workManhour': '8',
@@ -103,8 +102,6 @@ class Work extends React.Component {
           'updateDate': null,
           'updateBy': null,
           'createDate': '20/11/2020',
-          'createBy': 'joon',
-          'groupId': 0
         }, {
           'workId': '0002',
           'projectId': '0002',
@@ -112,7 +109,7 @@ class Work extends React.Component {
           'projectPhase': '1',
           'typeId': '0002',
           'typeName': 'test2',
-          'workDate': '25/01/2021',
+          'workDate': '02/01/2021',
           'workDetail': '....',
           'workUrl': '-',
           'workManhour': '8',
@@ -122,8 +119,6 @@ class Work extends React.Component {
           'updateBy': null,
           'createDate': '20/11/2020',
           'createBy': 'joon',
-          'groupId': 0,
-          'id': 2
         }, {
           'workId': '0003',
           'projectId': '0003',
@@ -131,7 +126,7 @@ class Work extends React.Component {
           'projectPhase': '1',
           'typeId': '0003',
           'typeName': 'test3',
-          'workDate': '20/11/2020',
+          'workDate': '03/01/2021',
           'workDetail': '....',
           'workUrl': '-',
           'workManhour': '8',
@@ -141,8 +136,6 @@ class Work extends React.Component {
           'updateBy': null,
           'createDate': '20/11/2020',
           'createBy': 'joon',
-          'groupId': 0,
-          'id': 3
         }, {
           'workId': '0003',
           'projectId': '0003',
@@ -150,7 +143,7 @@ class Work extends React.Component {
           'projectPhase': '1',
           'typeId': '0003',
           'typeName': 'test3',
-          'workDate': '20/02/2020',
+          'workDate': '03/01/2021',
           'workDetail': '....',
           'workUrl': '-',
           'workManhour': '8',
@@ -160,8 +153,6 @@ class Work extends React.Component {
           'updateBy': null,
           'createDate': '20/11/2020',
           'createBy': 'joon',
-          'groupId': 3,
-          'id': 4
         }],
       popOver: {
         workId: '',
@@ -174,11 +165,65 @@ class Work extends React.Component {
       { id: 1, name: 'Edit', icon: 'edit' },
       { id: 2, name: 'Delete', icon: 'trash' },
     ];
+
+    // ปั้นวันที่ตามเดือนปัจจุบัน start
+    this.dateOfCurrentMouth = []
+    for (let i = 0; i < moment().daysInMonth(); i++) {
+      this.dateOfCurrentMouth.push({ workDate: `${(i + 1) >= 10 ? i + 1 : '0' + (i + 1)}/${moment().format('MM')}/${moment().format('YYYY')}` })
+    }
+
+    // this.keyDelete = [];
+    // ปั้นวันที่ตามเดือนปัจจุบัน end
   }
 
   componentDidMount() {
     this.getProjectList()
     this.getJobtypeList()
+    this.fnSetDefaultDate()
+  }
+
+  fnSetDefaultDate() {
+    let temp = _.cloneDeep(this.dateOfCurrentMouth)
+    for (const item of this.state.data) {
+      temp.push(item)
+    }
+    console.log("TCL: fnSetDefaultDate -> temp", temp)
+
+
+    this.setState({ data: temp })
+
+    // for (let i = 0; i < this.dateOfCurrentMouth.length; i++) {
+    //   const r = this.dateOfCurrentMouth[i];
+    //   this.dateOfCurrentMouth[i].data = [];
+    //   for (let j = 0; j < this.state.data.length; j++) {
+    //     const rr = this.state.data[j];
+    //     if (r.key === rr.workDate) {
+    //       console.log("TCL: fnSetDefaultDate -> r", r)
+    //       this.dateOfCurrentMouth[i].data.push(rr);
+    //     }
+    //   }
+    // }
+    // console.log("TCL: fnSetDefaultDate -> this.dateOfCurrentMouth", this.dateOfCurrentMouth)
+
+    // let tempDate = this.state.data.filter(p => {
+    //   let temp = []
+    //   for (let i = 0; i < moment().daysInMonth(); i++) {
+    //     let dateTemp = `${(i + 1) >= 10 ? i + 1 : '0' + (i + 1)}/${moment().format('MM')}/${moment().format('YYYY')}`
+    //     if (dateTemp === p.workDate) {
+
+    //       console.log("TCL: constructor -> same", p)
+    //       temp.push(p)
+    //     } else {
+    //       console.log("TCL: constructor -> not same",)
+    //       temp.push({ workDate: dateTemp })
+    //     }
+
+    //   }
+    //   console.log("TCL: constructor -> temp", temp)
+
+    //   return temp
+    // })
+    // console.log("TCL: constructor -> tempDate", tempDate)
   }
 
   getProjectList() {
@@ -205,7 +250,7 @@ class Work extends React.Component {
         typeName: 'test2'
       }]
     })
-    console.log("Work -> getJobtypeList -> this.state.jobtypeList", this.state.jobtypeList)
+    // console.log("Work -> getJobtypeList -> this.state.jobtypeList", this.state.jobtypeList)
   }
 
   handleProjectChange = (event) => {
@@ -260,7 +305,7 @@ class Work extends React.Component {
   }
 
   handleReset = () => {
-    console.log("Work -> handleReset -> this.state.filter", this.state.filter)
+    // console.log("Work -> handleReset -> this.state.filter", this.state.filter)
     this.setState({
       filter: {
         dateFrom: new Date(),
@@ -270,20 +315,22 @@ class Work extends React.Component {
       }
     })
     setTimeout(() => {
-      console.log("Work -> handleReset -> ll", this.state.filter)
+      // console.log("Work -> handleReset -> ll", this.state.filter)
     }, 100);
   }
 
   groupRender = (data) => {
-    console.log("groupRender -> data", data)
+    // console.log("groupRender -> data", data)
+    // ข้อความ ดำ > บันทึกแล้ว
+    // ข้อความ แดง > ไม่บันทึก / ส - อ
+    // ข้อความ น้ำเงิน > ปัจจุบัน
     let day = moment(data.value, 'DD/MM/YYYY').format('dddd')
     let id = data.data.items && data.data.items.length > 0 ? data.data.items[0].workId : data.data.collapsedItems && data.data.collapsedItems.length > 0 ? data.data.collapsedItems[0].workId : null
     let name = `DATE : ${data.value}  ${day}`
     let now = moment().format('DD/MM/YYYY');
-    console.log("groupRender -> name", name)
     return (<div className="row">
-      <div style={{ fontSize: '12pt' }} className={`col-6 ${day === 'Sunday' || day === 'Saturday' ? 'color-red' : data.value === now ? 'color-blue' : 'color-black'}`}>
-        {name}
+      <div style={{ fontSize: '12pt' }} className={`col-6 ${day === 'Sunday' || day === 'Saturday'  ? 'color-red' : data.value === now ? 'color-blue' : 'color-black'}`}>
+        {name}   
       </div>
 
       <div className="col-6" style={{ textAlign: 'end' }}>
@@ -292,7 +339,6 @@ class Work extends React.Component {
         </Link>
         <a className="custom-icon-group" onClick={() => {
           this.setState({ isOpen: true, isTypeShowConfirm: 'del', isTextMsg: msgPopupTitle.deleted, isDataPopUp: this.state.data })
-          console.log("project -> DelcellRender -> data", id)
         }}><span style={{ color: '#111', fontSize: '12pt', marginRight: 20 }}><DeleteOutlined /></span></a>
       </div>
 
@@ -300,19 +346,9 @@ class Work extends React.Component {
     )
   }
 
-  handleVisibleChange = (id, visible) => {
-    console.log(`Work -> handleVisibleChange -> visible`, visible)
-    console.log(`Work -> handleVisibleChange -> id`, id)
-    this.setState({
-      popOver: {
-        workId: id,
-        visible: visible
-      }
-    });
-  };
 
   actionRender = (data) => {
-    console.log(`Work -> actionRender -> data`, data)
+    // console.log(`Work -> actionRender -> data`, data)
     let a = false;
     return (<>
       <DropDownButton
@@ -323,29 +359,10 @@ class Work extends React.Component {
         keyExpr="id"
         onItemClick={(e) => { this.onItemClick(e, data) }}
       />
-      {/* <Popover
-        content={
-          <div>
-            <span style={{ color: 'black', fontSize: '12pt', marginRight: 20 }}><FormOutlined /></span>
-            <span style={{ color: '#111', fontSize: '12pt', marginRight: 20 }}><DeleteOutlined /></span>
-          </div>
-        }
-        // <a onClick={this.hide}>Close</a>
-        // title=""
-        trigger="click"
-        visible={this.state.popOver.id === data.data.id ? this.state.popOver.visible : false}
-        onVisibleChange={(e) => {
-          console.log(`Work -> actionRender -> e`, e)
-          this.handleVisibleChange(data.data.workId, e)
-        }}
-      >
-        <button >...</button>
-      </Popover> */}
     </>)
   }
 
   onItemClick = (e, data) => {
-    console.log(`Work -> onItemClick -> e`, e, data)
     if (e.itemData.name === 'Edit') {
       this.setState({ popupEditVisable: true })
     } else if (e.itemData.name === 'Delete') {
@@ -355,6 +372,38 @@ class Work extends React.Component {
 
   calManHours = () => {
 
+  }
+
+  onEditorPreparing(e) {
+    console.log("TCL: onEditorPreparing -> e ===> ", e)
+    if (e.parentType === 'dataRow' && e.dataField === 'Position') {
+      e.editorOptions.readOnly = this.isChief(e.value);
+    }
+  }
+  onEditorPrepared(e) {
+    console.log("TCL: onEditorPrepared -> e ===> ", e)
+  }
+  onInitNewRow(e) {
+    console.log("TCL: onInitNewRow -> e ===> ", e)
+  }
+  onRowPrepared(e) {
+    console.log("TCL: onRowPrepared -> e ===> ", e)
+    if (e.rowType === 'group') {
+      let day = moment(e.key[0], 'DD/MM/YYYY').format('dddd')
+      if (day !== 'Sunday' && day !== 'Saturday') {
+        e.rowElement.style.backgroundColor = 'rgb(232 211 255)';  
+      } else {
+        e.rowElement.style.backgroundColor = '#ddd';  
+      }
+
+    } else if (e.rowType === 'data') {
+      if (e.data && !e.data.workId) {
+        console.log("TCL: onRowPrepared -> e.rowIndex", e.rowIndex)
+        // e.component.deleteRow(e.rowIndex);  
+      }
+    }
+    // แถบสี ม่วง > จ-ศ
+    // แถบสี เทา > ส-อ
   }
 
   render() {
@@ -389,7 +438,7 @@ class Work extends React.Component {
                             <select class="form-control col-7" id="ddlProjectName" value={this.state.filter.projectId} onChange={this.handleProjectChange}>
                               {
                                 this.state.projectList.map(r => {
-                                  console.log(r, r.projectId == this.state.filter.projectId)
+                                  // console.log(r, r.projectId == this.state.filter.projectId)
                                   return <option value={r.projectId} selected={r.projectId == this.state.filter.projectId}>{r.projectName}</option>
 
                                 })
@@ -403,7 +452,7 @@ class Work extends React.Component {
                             <select class="form-control col-7" id="ddlJobType" value={this.state.filter.typeId} onChange={this.handleTypeChange}>
                               {
                                 this.state.jobtypeList.map(r => {
-                                  console.log("Work -> render -> r", r)
+                                  // console.log("Work -> render -> r", r)
                                   return <option value={r.typeId} selected={r.typeId == this.state.filter.typeId}>{r.typeName}</option>
                                 })
                               }
@@ -469,23 +518,24 @@ class Work extends React.Component {
                     dataSource={this.state.data}
                     allowColumnReordering={false}
                     showBorders={true}
+                    onEditorPreparing={this.onEditorPreparing}
+                    onEditorPrepared={this.onEditorPrepared}
+                    onInitNewRow={this.onInitNewRow}
+                    onRowPrepared={this.onRowPrepared}
                   // columnWidth={100}
                   >
+                    <Editing
+                      mode="row"
+                      confirmDelete={false}
+                    />
                     <Scrolling columnRenderingMode="virtual" />
-                    {/* <Editing
-                      allowUpdating={true}
-                      allowDeleting={true}
-                      // allowAdding={false}
-                      mode="form"
-                      useIcons={true}
-                    ></Editing> */}
                     <GroupPanel visible={false} />
                     <SearchPanel visible={false} />
                     <Grouping autoExpandAll={true} />
                     <Paging defaultPageSize={10} />
                     <Pager
                       showPageSizeSelector={true}
-                      allowedPageSizes={[5, 10, 20]}
+                      allowedPageSizes={[5, 10, 100]}
                       showInfo={true}
                       showNavigationButtons={true}
                     />
@@ -529,7 +579,7 @@ class Work extends React.Component {
           this.setState({ isPopupError: false })
           this.setState({ isPopupSuccess: true })
           this.setState({ isPopupMsg: msgAlertTitle.deleted })
-          console.log("Work -> render -> e", e)
+          // console.log("Work -> render -> e", e)
         }}
       />
 
@@ -543,11 +593,11 @@ class Work extends React.Component {
           this.setState({ popupEditVisable: false })
         }}
       >
-        {this.state.popupEditVisable ? 
-        // <div className="wrap-content">
+        {this.state.popupEditVisable ?
+          // <div className="wrap-content">
           // <div className=" col-12 box-action">
-            <div className="box-title-search">
-              <p className="font-size-search"> Update Work </p>
+          <div className="box-title-search">
+            <p className="font-size-search"> Update Work </p>
             {/* </div> */}
 
             <div className="box-action-content">
@@ -630,7 +680,7 @@ class Work extends React.Component {
                             .toLowerCase()
                             .indexOf(input.toLowerCase()) >= 0
                         }
-                        // value={ }
+                      // value={ }
                       >
 
                         {/* {this.typeList} */}
@@ -641,7 +691,7 @@ class Work extends React.Component {
               </div>
               {/* Time in */}
               <div className="row form-group" >
-                <div className="col-6"> 
+                <div className="col-6">
                   <div className="row">
                     <div
                       className="col-5"
@@ -795,42 +845,46 @@ class Work extends React.Component {
                         type="text"
                         class="form-control"
                         id="txtDetail"
+                        style={{ width: '29.2rem' }}
                       />
-                    {/* </div> */}
+                      {/* </div> */}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="row form-group">
-            <div className="col-12" style={{ textAlign: "right", padding: 20 }}>
-              <button
-                class="btn-custom btn-reset"
-                style={{ marginRight: 20 }}
-              >
+            <div className="row form-group">
+              <div className="col-12" style={{ textAlign: "right", padding: 20 }}>
+                <button
+                  class="btn-custom btn-reset"
+                  style={{ marginRight: 20 }}
+                  onClick={() => {
+                    this.setState({ popupEditVisable: false })
+                  }}
+                >
 
 
-                CANCEL
+                  CANCEL
                         </button>
-              <button
-                class="btn-custom btn-search"
-                style={{ marginRight: 0 }}  
-              // onClick={() => {
-              //   this.setState({
-              //     isOpen: true,
-              //     isTypeShowConfirm: "save",
-              //     isTextMsg: msgPopupTitle.saved,
-              //     isDataPopUp: this.state.data,
-              //     isDelete: false,
-              //   });
-              // }}
-              >
-                UPDATE
+                <button
+                  class="btn-custom btn-search"
+                  style={{ marginRight: 0 }}
+                // onClick={() => {
+                //   this.setState({
+                //     isOpen: true,
+                //     isTypeShowConfirm: "save",
+                //     isTextMsg: msgPopupTitle.saved,
+                //     isDataPopUp: this.state.data,
+                //     isDelete: false,
+                //   });
+                // }}
+                >
+                  UPDATE
                    </button>
+              </div>
             </div>
           </div>
-        </div>
- : null}
+          : null}
 
       </Modal>
     </>);

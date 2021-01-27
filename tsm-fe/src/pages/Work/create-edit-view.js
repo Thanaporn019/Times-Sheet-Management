@@ -348,7 +348,7 @@ class ActionsWork extends React.Component {
                                                 </div>
                                             </div>
                                         </div>
-                                        <hr className="hr-action"> </hr>
+                                        <hr className="hr-action" />
                                         <div style={{ textAlign: "right" }}>
                                             <p className="title-field">
 
@@ -556,7 +556,7 @@ class ActionsWork extends React.Component {
                                                                         >
 
                                                                             Calculate
-                                    </button>
+                                                                        </button>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -570,7 +570,7 @@ class ActionsWork extends React.Component {
                                                                         <label className="title-field" for="txtUrl">
 
                                                                             Url
-                                      <span style={{ color: "red" }}> * </span>
+                                                                        <span style={{ color: "red" }}> * </span>
                                                                         </label>
                                                                     </div>
                                                                     <div className="col-8">
@@ -643,7 +643,7 @@ class ActionsWork extends React.Component {
                               </button>
                                                         </div>
                                                     ) : null}
-                                                    <hr className="hr-action"> </hr>
+                                                    <hr className="hr-action" />
                                                 </>
                                             );
                                         })}

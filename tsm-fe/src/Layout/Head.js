@@ -36,7 +36,7 @@ class Head extends Component {
                     <span class="gx-pointer gx-d-block">
 
               {/* Icon */}
-                    <span> <GrWorkshop/>  </span>
+                        <span className="icon-header"> <GrWorkshop style={{color: '#fff'}}/>  </span>
                       Work
                     </span>
 
@@ -47,7 +47,7 @@ class Head extends Component {
                     <span class="gx-pointer gx-status-pos gx-d-block">
                      
             {/* Icon  Project*/}
-            <span> <AiOutlineFundProjectionScreen/>  </span>
+            <span className="icon-header"> <AiOutlineFundProjectionScreen/>  </span>
             
                       Project
                     </span>
@@ -58,7 +58,7 @@ class Head extends Component {
                     <span class="gx-pointer gx-status-pos gx-d-block">
 
           {/* Icon Job type */}
-                    <span> <VscGroupByRefType/>  </span>
+                    <span className="icon-header"> <VscGroupByRefType/>  </span>
                     
                       Job type
                     </span>
