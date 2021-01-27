@@ -5,7 +5,7 @@ import 'devextreme/dist/css/dx.light.css';
 import DateBox from 'devextreme-react/date-box';
 import { IoAddOutline } from "react-icons/io5";
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import { HomeOutlined, EyeOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons';
+import { HomeOutlined, EyeOutlined,PlusOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons';
 import DropDownButton from 'devextreme-react/drop-down-button';
 import Toolbar, { Item } from 'devextreme-react/toolbar';
 import moment from 'moment';
@@ -182,8 +182,19 @@ class Work extends React.Component {
     this.fnSetDefaultDate()
   }
 
+  // fnSetDefaultDate() {
+  //   let temp = _.cloneDeep(this.dateOfCurrentMouth)
+  //   for (const item of this.state.data) {
+  //     temp.push(item)
+  //   }
+  //   console.log("TCL: fnSetDefaultDate -> temp", temp)
+
+
+  //   this.setState({ data: temp })
   fnSetDefaultDate() {
     let temp = _.cloneDeep(this.dateOfCurrentMouth)
+    let dataWorkDate  = this.state.data.map(r=>r.workDate) 
+    temp  = temp.filter(r=> dataWorkDate.indexOf(r.workDate) === -1 )
     for (const item of this.state.data) {
       temp.push(item)
     }
@@ -320,7 +331,7 @@ class Work extends React.Component {
   }
 
   groupRender = (data) => {
-    // console.log("groupRender -> data", data)
+    console.log("groupRender -> data", data)
     // ข้อความ ดำ > บันทึกแล้ว
     // ข้อความ แดง > ไม่บันทึก / ส - อ
     // ข้อความ น้ำเงิน > ปัจจุบัน
@@ -329,20 +340,45 @@ class Work extends React.Component {
     let name = `DATE : ${data.value}  ${day}`
     let now = moment().format('DD/MM/YYYY');
     return (<div className="row">
-      <div style={{ fontSize: '12pt' }} className={`col-6 ${day === 'Sunday' || day === 'Saturday'  ? 'color-red' : data.value === now ? 'color-blue' : 'color-black'}`}>
+      <div style={{ fontSize: '12pt' }} className={`col-6 ${day === 'Sunday' || day === 'Saturday' ? 'color-red' : data.value === now ? 'color-blue' : 'color-black'}`}>
         {name}   
       </div>
+      
+  {/* ปุ่มบวก : */}
+ 
+{/* {data.data.items[0].workId} */}
+      {data.data.items.length === 0 || data.data.items[0].workId === undefined ? 
+    
 
-      <div className="col-6" style={{ textAlign: 'end' }}>
-        <Link to={"/work" + `/{"action":"edit","workId":"${id}"}`}>
-          <span className="custom-icon-group" style={{ color: 'black', fontSize: '12pt', marginRight: 20 }}><FormOutlined /></span>
-        </Link>
+
+      <div>
+                         
+                    <div className="col-6" style={{ textAlign: 'right' }}>
+        <Link to='/work/{"action":"create"}'>
+                                            <button
+                                                type="button"
+                                                class="btn btn-add-work"
+                                                onClick={this.handleAddData}
+                                            >
+
+                                                <span className="btn-add-work-icon">
+
+                                                    <PlusOutlined />
+                                                </span>
+                                            </button> </Link>
+                                      </div> </div> : 
+                    <div className="col-6" style={{ textAlign: 'end' }}>
+                <Link to={"/work" + `/{"action":"edit","workId":"${id}"}`}>
+              <span className="custom-icon-group" style={{ color: 'black', fontSize: '12pt', marginRight: 20 }}><FormOutlined /></span>
+            </Link>
         <a className="custom-icon-group" onClick={() => {
           this.setState({ isOpen: true, isTypeShowConfirm: 'del', isTextMsg: msgPopupTitle.deleted, isDataPopUp: this.state.data })
         }}><span style={{ color: '#111', fontSize: '12pt', marginRight: 20 }}><DeleteOutlined /></span></a>
-      </div>
+      </div> } 
 
-    </div>
+     
+
+    </div> 
     )
   }
 
@@ -535,7 +571,7 @@ class Work extends React.Component {
                     <Paging defaultPageSize={10} />
                     <Pager
                       showPageSizeSelector={true}
-                      allowedPageSizes={[5, 10, 100]}
+                      allowedPageSizes={[100, 250, 500, 1000]}
                       showInfo={true}
                       showNavigationButtons={true}
                     />

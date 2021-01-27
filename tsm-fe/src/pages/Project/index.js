@@ -399,7 +399,7 @@ class Project extends React.Component {
                                             <Paging defaultPageSize={3} />
                                             <Pager
                                                 showPageSizeSelector={true}
-                                                allowedPageSizes={[5, 10, 20]}
+                                                allowedPageSizes={[10, 20, 50, 100, 250]}
                                                 showInfo={true}
                                                 showNavigationButtons={true}
                                             />
