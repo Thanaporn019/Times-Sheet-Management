@@ -285,7 +285,7 @@ class ActionsWork extends React.Component {
             return
         }
 
-        if (!this.checkGreaterTime('one', index)) {
+        if (this.checkGreaterTime('one', index) === false) {
             console.log("TCL: ActionsWork -> calManHours -> ", 'time out > time in')
             return
         }
@@ -604,7 +604,7 @@ class ActionsWork extends React.Component {
                                                     </label>
                                                 </div>
                                                 <div className={`col-4`} style={{ textAlign: 'start', padding: 0 }}>
-                                                    <DateBox value={null} type="date" value={this.state.work}
+                                                    <DateBox value={null} type="date" value={this.state.workDate}
                                                         type="date" onValueChanged={(e) => {
                                                             this.handleChangeDate(e)
                                                         }}
