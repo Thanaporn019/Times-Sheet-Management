@@ -8,21 +8,22 @@ import _ from "lodash";
 import { Breadcrumb, TimePicker, Select } from 'antd';
 import { HomeOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { BrowserRouter as Router, Switch, Route, Link, Redirect  } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
 import AlertPopUp from "../../components/popup/alert_popup";
 import ConfirmPopup from "../../components/popup/confirm_popup";
 import configService from '../../config';
 const msgAlertTitle = configService.msgAlert;
 const msgPopupTitle = configService.msgConfirm;
+const msgValid = configService.validDateFill;
 
 class ActionJobType extends React.Component {
     state = {
         isOpen: false
     };
-    
+
     openModal = () => this.setState({ isOpen: true });
     closeModal = () => this.setState({ isOpen: false });
-    
+
     constructor(props) {
         console.log("Actionsjobtype -> constructor -> props", props)
         let query = _.cloneDeep(props.match.params.query);
@@ -38,7 +39,6 @@ class ActionJobType extends React.Component {
             isTypeShowConfirm: '', // ประเภทของ popup : save , del
             isDataPopUp: {}, // ข้อมูลที่ใช้
             isTextMsg: '', // msg ของ Popup
-            routeStatus: null, // msg ของ Popup
             data: {
                 typeName: null,
                 typeCode: null,
@@ -55,7 +55,7 @@ class ActionJobType extends React.Component {
 
         this.onTypeNameChange = this.onTypeNameChange.bind(this);
         this.onTypeCodeChange = this.onTypeCodeChange.bind(this);
-        
+
     }
 
     onTypeNameChange(event) {
@@ -85,22 +85,24 @@ class ActionJobType extends React.Component {
     }
 
     checkValidate = () => {
-        console.log("TCL: ActionJobType -> checkValidate -> this.state.data", this.state.data)
         if (this.state.data.typeName && this.state.data.typeCode) {
             this.setState({ isOpen: true, isTypeShowConfirm: 'save', isTextMsg: msgPopupTitle.saved, isDataPopUp: this.state.data, valid_typeName: false, valid_typeCode: false })
         } else {
             if (!this.state.data.typeName) {
-                console.log("TCL: ActionJobType -> checkValidate -> this.state.data.typeName", this.state.data.typeName)
                 this.setState({ valid_typeName: true })
-                // this.state.valid_typeName = true
             }
             if (!this.state.data.typeCode) {
-                console.log("TCL: ActionJobType -> checkValidate -> this.state.data.typeCode", this.state.data.typeCode)
                 this.setState({ valid_typeCode: true })
-                // this.state.valid_typeCode = true
             }
-            console.log("TCL: ActionJobType -> checkValidate -> this.state.valid_typeName", this.state.valid_typeName, this.state.isSubmit)
         }
+    }
+
+    confirmSave = (data) => {
+        console.log("TCL: ActionJobType -> confirmSave -> data", data)
+        this.setState({ isOpen: false })
+        this.setState({ isPopupError: true })
+        this.setState({ isPopupSuccess: false })
+        this.setState({ isPopupMsg: this.state.params.action === 'edit' ? msgAlertTitle.updated : msgAlertTitle.saved })
     }
 
     render() {
@@ -133,15 +135,20 @@ class ActionJobType extends React.Component {
                                         {/* Job Type Name */}
                                         <div className="row form-group">
                                             <div className={`col-5`} style={{ textAlign: 'right' }}><label className="title-field" for="txtJob Type Name">Job Type Name<span style={{ color: 'red' }}>*</span></label></div>
-                                            <input type="text" class={`form-control col-3 ${this.state.valid_typeName && this.state.isSubmit ? 'has-error-input' : ''}`} id="txtJob Type Name" value={this.state.data.typeName} onChange={this.onTypeNameChange} />
+                                            <div className="col-3" style={{ textAlign: 'start', padding: 0 }}>
+                                                <input type="text" class={`form-control ${this.state.valid_typeName && this.state.isSubmit ? 'has-error-input' : ''}`} id="txtJob Type Name" value={this.state.data.typeName} onChange={this.onTypeNameChange} />
+                                                {this.state.valid_typeName && this.state.isSubmit ? <span className="color-red">{msgValid.req}</span> : null}
+                                            </div>
                                         </div>
 
 
                                         {/* Code */}
                                         <div className="row form-group">
                                             <div className="col-5" style={{ textAlign: 'right' }}><label className="title-field" for="txtCode">Code <span style={{ color: 'red' }}>*</span></label></div>
-                                            <input type="text" class={`form-control col-3 ${this.state.valid_typeCode && this.state.isSubmit ? 'has-error-input' : ''}`} id="txtCode" value={this.state.data.typeCode} onChange={this.onTypeCodeChange} />
-
+                                            <div className="col-3" style={{ textAlign: 'start', padding: 0 }}>
+                                                <input type="text" class={`form-control  ${this.state.valid_typeCode && this.state.isSubmit ? 'has-error-input' : ''}`} id="txtCode" value={this.state.data.typeCode} onChange={this.onTypeCodeChange} />
+                                                {this.state.valid_typeCode && this.state.isSubmit ? <span className="color-red">{msgValid.req}</span> : null}
+                                            </div>
                                         </div>
 
                                         <div style={{ textAlign: 'right' }}>
@@ -176,35 +183,22 @@ class ActionJobType extends React.Component {
             </div>
 
             {/* POPUP */}
-            <AlertPopUp successStatus={this.state.isPopupSuccess} errorStatus={this.state.isPopupError} message={this.state.isPopupMsg} routeStatus={this.state.routeStatus}
+            <AlertPopUp successStatus={this.state.isPopupSuccess} errorStatus={this.state.isPopupError} message={this.state.isPopupMsg}
                 clearActive={() => {
-                    
-                    this.setState({ routeStatus: this.state.isPopupSuccess ? 'success' : 'error' });
-                    // if (this.state.isPopupSuccess) {
-                    //     console.log("TCL: this.state.isPopupSuccess", this.state.isPopupSuccess)
-                    //     // <Route to='/jobtype' />
-                        this.setState({ isPopupError: false });
-                        this.setState({ isPopupSuccess: false });
-                    //         // <Route path="/jobtype" />
-                    //     // <Link to={`/jobtype`} activeClassName="active"></Link>
-                    //     // return <Redirect push to="/jobtype" />;
-                    //     return <Redirect to={'/jobtype'} />
-                        
-                    //     // history.push("/jobtype");
-                    // } else {
-                    //     return
-                    // }
+                    if (this.state.isPopupSuccess) {
+                        this.props.history.push('/jobtype')
+                    }
+                    this.setState({ isPopupError: false });
+                    this.setState({ isPopupSuccess: false });
                 }} />
 
             <ConfirmPopup open={this.state.isOpen} type={this.state.isTypeShowConfirm} text={this.state.isTextMsg} data={this.state.isDataPopUp} del={false}
                 onClose={() => { this.setState({ isOpen: false }) }}
                 clearActive={(e) => { this.setState({ isOpen: false }) }}
                 confirmActive={(e) => {
-                    this.setState({ isOpen: false })
-                    this.setState({ isPopupError: false })
-                    this.setState({ isPopupSuccess: true })
-                    this.setState({ isPopupMsg: this.state.params.action === 'edit' ? msgAlertTitle.updated : msgAlertTitle.saved })
                     console.log("Work -> render -> e", e)
+                    this.confirmSave(e)
+
                 }}
             />
         </>

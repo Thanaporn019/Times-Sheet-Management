@@ -61,13 +61,9 @@ class JobType extends React.Component {
             isDataPopUp: {}, // ข้อมูลที่ใช้
             isTextMsg: "Are you sure you want to delete this?", // msg ของ Popup
             filter: {
-                dateFrom: new Date(),
-                dateTo: new Date(),
-                projectId: null,
-                typeId: null,
+                typeName: null,
+                typeCode: null,
             },
-            projectList: [],
-            jobtypeList: [],
             data: [
                 {
                     typeId: "0001",
@@ -119,109 +115,35 @@ class JobType extends React.Component {
     }
 
     componentDidMount() {
-        this.getProjectList();
-        this.getJobtypeList();
     }
 
-    getProjectList() {
-        this.setState({
-            projectList: [
-                {
-                    projectId: "001",
-                    projectName: "test1",
-                },
-                {
-                    projectId: "002",
-                    projectName: "test2",
-                },
-            ],
-        });
-    }
-
-    getJobtypeList() {
-        this.setState({
-            jobtypeList: [
-                {
-                    typeId: "001",
-                    typeName: "test1",
-                },
-                {
-                    typeId: "002",
-                    typeName: "test2",
-                },
-            ],
-        });
-        console.log(
-            "Work -> getJobtypeList -> this.state.jobtypeList",
-            this.state.jobtypeList
-        );
-    }
-
-    handleProjectChange = (event) => {
-        let temp = _.cloneDeep(this.state.filter);
-        temp.projectId = event.target.value;
+    onTypeNameChange = (event) => {
+        console.log("TCL: JobType -> handleReset -> ", this.state.filter)
+        console.log("TCL: JobType -> onTypeNameChange -> event.target.value", event.target.value)
         this.setState({
             filter: {
-                dateFrom: temp.dateFrom,
-                dateTo: temp.dateTo,
-                typeId: temp.typeId,
-                projectId: event.target.value,
-            },
+                ...this.state.filter,
+                typeName: event.target.value
+            }
         });
-    };
-    handleTypeChange = (event) => {
-        let temp = _.cloneDeep(this.state.filter);
-        temp.typeId = event.target.value;
+    }
+    onTypeCodeChange = (event) => {
         this.setState({
             filter: {
-                dateFrom: temp.dateFrom,
-                dateTo: temp.dateTo,
-                typeId: temp.typeId,
-                projectId: temp.projectId,
-            },
+                ...this.state.filter,
+                typeCode: event.target.value
+            }
         });
-    };
-
-    handleChangeDate = (event, type) => {
-        let temp = _.cloneDeep(this.state.filter);
-        if (type === "from") {
-            this.setState({
-                filter: {
-                    dateFrom: event.value,
-                    dateTo: temp.dateTo,
-                    typeId: temp.typeId,
-                    projectId: temp.projectId,
-                },
-            });
-        } else {
-            this.setState({
-                filter: {
-                    dateFrom: temp.dateFrom,
-                    dateTo: event.value,
-                    typeId: temp.typeId,
-                    projectId: temp.projectId,
-                },
-            });
-        }
-    };
+    }
 
     handleReset = () => {
-        console.log("Work -> handleReset -> this.state.filter", this.state.filter);
+        console.log("TCL: JobType -> handleReset -> ", this.state.filter)
         this.setState({
-            filter: {
-                dateFrom: new Date(),
-                dateTo: new Date(),
-                projectId: null,
-                typeId: null,
-            },
+            filter: { typeName: '', typeCode: '' }
         });
-        setTimeout(() => {
-            console.log("Work -> handleReset -> ll", this.state.filter);
-        }, 100);
     };
 
     delCellRender = (data) => {
-        console.log("JobType -> DelcellRender -> data", data);
         return (
             <a
                 onClick={() => {
@@ -241,6 +163,7 @@ class JobType extends React.Component {
             </a>
         );
     };
+
     editCellRender = (data) => {
         return (
             <Link
@@ -253,6 +176,7 @@ class JobType extends React.Component {
             </Link>
         );
     };
+
     noCellRender = (data) => {
         return (
             <span style={{ color: "black", fontSize: "12pt" }}>
@@ -263,6 +187,24 @@ class JobType extends React.Component {
             </span>
         );
     };
+
+    onSearch = () => {
+        console.log("TCL: JobType -> onSearch -> ")
+    };
+
+    onDeleteData = (data) => {
+        console.log("TCL: JobType -> onDeleteData -> data", data)
+        this.setState({ isOpen: false });
+        this.setState({ isPopupError: false });
+        this.setState({ isPopupSuccess: true });
+        this.setState({ isPopupMsg: msgAlertTitle.deleted });
+
+        // ต้อง call api -------------------
+        let tempDel = this.state.data.filter(r => data.indexOf(r.typeId) === -1)
+        // console.log("TCL: JobType -> onDeleteData -> delete", tempDel)
+        this.setState({ data: tempDel })
+        // ต้อง call api -------------------
+    }
     render() {
         return (
             <>
@@ -293,32 +235,30 @@ class JobType extends React.Component {
                                                 <div className="row form-group">
                                                     <div className="col-4" style={{ textAlign: "right" }}>
 
-                                                        <label for="txtJobType" className="title-field">
-
-                                                            Job Type 
-                                                            {/* <span style={{ color: "red" }}> * </span> */}
+                                                        <label for="txtTypeName" className="title-field">
+                                                            Job Type
                                                         </label>
                                                     </div>
                                                     <input
                                                         type="text"
                                                         class="form-control col-3"
-                                                        id="txtJobType"
+                                                        id="txtTypeName"
+                                                        value={this.state.filter.typeName} onChange={this.onTypeNameChange}
                                                     />
                                                 </div>
                                                 {/* Code */}
                                                 <div className="row form-group">
                                                     <div className="col-4" style={{ textAlign: "right" }}>
 
-                                                        <label for="txtCode" className="title-field">
-
-                                                            Code 
-                                                            {/* <span style={{ color: "red" }}> * </span> */}
+                                                        <label for="txtTypeCode" className="title-field">
+                                                            Code
                                                         </label>
                                                     </div>
                                                     <input
                                                         type="text"
                                                         class="form-control col-3"
-                                                        id="txtCode"
+                                                        id="txtTypeCode"
+                                                        value={this.state.filter.typeCode} onChange={this.onTypeCodeChange}
                                                     />
                                                 </div>
                                             </form>
@@ -329,11 +269,9 @@ class JobType extends React.Component {
                                                         style={{ marginRight: 20 }}
                                                         onClick={this.handleReset}
                                                     >
-
                                                         RESET
                                                     </button>
-                                                    <button class="btn-custom btn-search ">
-
+                                                    <button class="btn-custom btn-search " onClick={this.onSearch}>
                                                         SEARCH
                                                     </button>
                                                 </div>
@@ -358,7 +296,7 @@ class JobType extends React.Component {
                                                 </span>
                                                 <span className="btn-txt-icon">
                                                     Create Job Type
-                        </span>
+                                            </span>
                                             </button>
                                         </Link>
                                     </div>
@@ -436,11 +374,9 @@ class JobType extends React.Component {
                         this.setState({ isOpen: false });
                     }}
                     confirmActive={(e) => {
-                        this.setState({ isOpen: false });
-                        this.setState({ isPopupError: false });
-                        this.setState({ isPopupSuccess: true });
-                        this.setState({ isPopupMsg: msgAlertTitle.deleted });
                         console.log("Work -> render -> e", e);
+                        this.onDeleteData(e)
+
                     }}
                 />
             </>

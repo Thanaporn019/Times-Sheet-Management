@@ -72,13 +72,8 @@ class Project extends React.Component {
             isDataPopUp: {}, // ข้อมูลที่ใช้
             isTextMsg: "", // msg ของ Popup
             filter: {
-                dateFrom: new Date(),
-                dateTo: new Date(),
-                projectId: null,
-                typeId: null,
+                projectName: null
             },
-            projectList: [],
-            jobtypeList: [],
             data: [
                 {
                     projectId: "0001",
@@ -141,118 +136,53 @@ class Project extends React.Component {
     }
 
     componentDidMount() {
-        this.getProjectList();
-        this.getJobtypeList();
     }
-
-    getProjectList() {
-        this.setState({
-            projectList: [
-                {
-                    projectId: "001",
-                    projectName: "test1",
-                },
-                {
-                    projectId: "002",
-                    projectName: "test2",
-                },
-            ],
-        });
-    }
-
-    getJobtypeList() {
-        this.setState({
-            jobtypeList: [
-                {
-                    typeId: "001",
-                    typeName: "test1",
-                },
-                {
-                    typeId: "002",
-                    typeName: "test2",
-                },
-            ],
-        });
-        console.log(
-            "Work -> getJobtypeList -> this.state.jobtypeList",
-            this.state.jobtypeList
-        );
-    }
-
-    handleProjectChange = (event) => {
-        let temp = _.cloneDeep(this.state.filter);
-        temp.projectId = event.target.value;
-        this.setState({
-            filter: {
-                dateFrom: temp.dateFrom,
-                dateTo: temp.dateTo,
-                typeId: temp.typeId,
-                projectId: event.target.value,
-            },
-        });
-    };
-    handleTypeChange = (event) => {
-        let temp = _.cloneDeep(this.state.filter);
-        temp.typeId = event.target.value;
-        this.setState({
-            filter: {
-                dateFrom: temp.dateFrom,
-                dateTo: temp.dateTo,
-                typeId: temp.typeId,
-                projectId: temp.projectId,
-            },
-        });
-    };
-
-    handleChangeDate = (event, type) => {
-        let temp = _.cloneDeep(this.state.filter);
-        if (type === "from") {
-            this.setState({
-                filter: {
-                    dateFrom: event.value,
-                    dateTo: temp.dateTo,
-                    typeId: temp.typeId,
-                    projectId: temp.projectId,
-                },
-            });
-        } else {
-            this.setState({
-                filter: {
-                    dateFrom: temp.dateFrom,
-                    dateTo: event.value,
-                    typeId: temp.typeId,
-                    projectId: temp.projectId,
-                },
-            });
-        }
-    };
 
     handleReset = () => {
-        console.log("Work -> handleReset -> this.state.filter", this.state.filter);
         this.setState({
             filter: {
-                dateFrom: new Date(),
-                dateTo: new Date(),
-                projectId: null,
-                typeId: null,
+                projectName: '',
             },
         });
-        setTimeout(() => {
-            console.log("Work -> handleReset -> ll", this.state.filter);
-        }, 100);
     };
+
+    onTypeNameChange = (event) => {
+        this.setState({
+            filter: {
+                projectName: event.target.value
+            }
+        });
+    }
+    onSearch = () => {
+
+        console.log("TCL: Project -> onSearch -> ",)
+
+    }
+
+    onDeleteData = (data) => {
+        console.log("TCL: Project -> onDeleteData -> data", data)
+
+        // ต้อง call api -------------------
+        let tempDel = this.state.data.filter(r => data.indexOf(r.projectId) === -1)
+        // console.log("TCL: JobType -> onDeleteData -> delete", tempDel)
+        this.setState({ data: tempDel })
+        // ต้อง call api -------------------
+        this.setState({ isOpen: false });
+        this.setState({ isPopupError: false });
+        this.setState({ isPopupSuccess: true });
+        this.setState({ isPopupMsg: msgAlertTitle.deleted });
+    }
 
     delCellRender = (data) => {
         console.log("project -> DelcellRender -> data", data);
         return (
             <a
                 onClick={() => {
-                    console.log("project -> DelcellRender -> data", data.data.typeId);
                     this.setState({
                         isOpen: true,
                         isTypeShowConfirm: "del",
                         isTextMsg: msgPopupTitle.deleted,
-                        isDataPopUp: this.state.data,
+                        isDataPopUp: data.data.projectId,
                     });
                 }}
             >
@@ -277,6 +207,7 @@ class Project extends React.Component {
             </Link>
         );
     };
+
     viewCellRender = (data) => {
         return (
             <Link
@@ -289,6 +220,7 @@ class Project extends React.Component {
             </Link>
         );
     };
+
     noCellRender = (data) => {
         return (
             <span style={{ color: "black", fontSize: "12pt" }}>
@@ -332,20 +264,19 @@ class Project extends React.Component {
 
                                                         <label
                                                             className="title-field"
-                                                            for="txtProject Name"
+                                                            for="txtProjectName"
                                                         >
-
                                                             Project Name
-                                                            {/* <span style={{ color: "red" }}> * </span> */}
                                                         </label>
                                                     </div>
                                                     <input
                                                         type="text"
                                                         class="form-control col-6"
-                                                        id="txtJob Type"
+                                                        id="txtProjectName"
+                                                        value={this.state.filter.projectName}
+                                                        onChange={this.onProjectNameChange}
                                                     />
                                                 </div>
-                                                {/* </div> */}
                                             </form>
                                             <div className="row form-group">
                                                 <div className="col-12" style={{ textAlign: "center" }}>
@@ -354,10 +285,9 @@ class Project extends React.Component {
                                                         style={{ marginRight: 20 }}
                                                         onClick={this.handleReset}
                                                     >
-
                                                         RESET
                                                     </button>
-                                                    <button class="btn-custom btn-search ">
+                                                    <button class="btn-custom btn-search " onClick={this.onSearch}>
 
                                                         SEARCH
                                                     </button>
@@ -383,7 +313,7 @@ class Project extends React.Component {
                                                 </span>
                                                 <span className="btn-txt-icon">
                                                     Create Project
-                        </span>
+                                                </span>
                                             </button>
                                         </Link>
                                     </div>
@@ -469,11 +399,8 @@ class Project extends React.Component {
                         this.setState({ isOpen: false });
                     }}
                     confirmActive={(e) => {
-                        this.setState({ isOpen: false });
-                        this.setState({ isPopupError: false });
-                        this.setState({ isPopupSuccess: true });
-                        this.setState({ isPopupMsg: msgAlertTitle.deleted });
                         console.log("Work -> render -> e", e);
+                        this.onDeleteData(e)
                     }}
                 />
             </>

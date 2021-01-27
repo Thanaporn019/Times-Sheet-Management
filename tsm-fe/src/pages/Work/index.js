@@ -5,7 +5,7 @@ import 'devextreme/dist/css/dx.light.css';
 import DateBox from 'devextreme-react/date-box';
 import { IoAddOutline } from "react-icons/io5";
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import { HomeOutlined, EyeOutlined,PlusOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons';
+import { HomeOutlined, EyeOutlined, PlusOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons';
 import DropDownButton from 'devextreme-react/drop-down-button';
 import Toolbar, { Item } from 'devextreme-react/toolbar';
 import moment from 'moment';
@@ -193,48 +193,15 @@ class Work extends React.Component {
   //   this.setState({ data: temp })
   fnSetDefaultDate() {
     let temp = _.cloneDeep(this.dateOfCurrentMouth)
-    let dataWorkDate  = this.state.data.map(r=>r.workDate) 
-    temp  = temp.filter(r=> dataWorkDate.indexOf(r.workDate) === -1 )
+    // เอาค่าของ workDate ออกมา
+    let dataWorkDate = this.state.data.map(r => r.workDate)
+    // เอาค่าที่ไม่ซ้ำของ workDate
+    temp = temp.filter(r => dataWorkDate.indexOf(r.workDate) === -1)
     for (const item of this.state.data) {
       temp.push(item)
     }
     console.log("TCL: fnSetDefaultDate -> temp", temp)
-
-
     this.setState({ data: temp })
-
-    // for (let i = 0; i < this.dateOfCurrentMouth.length; i++) {
-    //   const r = this.dateOfCurrentMouth[i];
-    //   this.dateOfCurrentMouth[i].data = [];
-    //   for (let j = 0; j < this.state.data.length; j++) {
-    //     const rr = this.state.data[j];
-    //     if (r.key === rr.workDate) {
-    //       console.log("TCL: fnSetDefaultDate -> r", r)
-    //       this.dateOfCurrentMouth[i].data.push(rr);
-    //     }
-    //   }
-    // }
-    // console.log("TCL: fnSetDefaultDate -> this.dateOfCurrentMouth", this.dateOfCurrentMouth)
-
-    // let tempDate = this.state.data.filter(p => {
-    //   let temp = []
-    //   for (let i = 0; i < moment().daysInMonth(); i++) {
-    //     let dateTemp = `${(i + 1) >= 10 ? i + 1 : '0' + (i + 1)}/${moment().format('MM')}/${moment().format('YYYY')}`
-    //     if (dateTemp === p.workDate) {
-
-    //       console.log("TCL: constructor -> same", p)
-    //       temp.push(p)
-    //     } else {
-    //       console.log("TCL: constructor -> not same",)
-    //       temp.push({ workDate: dateTemp })
-    //     }
-
-    //   }
-    //   console.log("TCL: constructor -> temp", temp)
-
-    //   return temp
-    // })
-    // console.log("TCL: constructor -> tempDate", tempDate)
   }
 
   getProjectList() {
@@ -316,7 +283,6 @@ class Work extends React.Component {
   }
 
   handleReset = () => {
-    // console.log("Work -> handleReset -> this.state.filter", this.state.filter)
     this.setState({
       filter: {
         dateFrom: new Date(),
@@ -325,9 +291,6 @@ class Work extends React.Component {
         typeId: null
       }
     })
-    setTimeout(() => {
-      // console.log("Work -> handleReset -> ll", this.state.filter)
-    }, 100);
   }
 
   groupRender = (data) => {
@@ -341,52 +304,35 @@ class Work extends React.Component {
     let now = moment().format('DD/MM/YYYY');
     return (<div className="row">
       <div style={{ fontSize: '12pt' }} className={`col-6 ${day === 'Sunday' || day === 'Saturday' ? 'color-red' : data.value === now ? 'color-blue' : 'color-black'}`}>
-        {name}   
+        {name}
       </div>
-      
-  {/* ปุ่มบวก : */}
- 
-{/* {data.data.items[0].workId} */}
-      {data.data.items.length === 0 || data.data.items[0].workId === undefined ? 
-    
 
+      {/* ปุ่มบวก : */}
 
-      <div>
-                         
-                    <div className="col-6" style={{ textAlign: 'right' }}>
-        <Link to='/work/{"action":"create"}'>
-                                            <button
-                                                type="button"
-                                                class="btn btn-add-work"
-                                                onClick={this.handleAddData}
-                                            >
+      {/* {data.data.items[0].workId} */}
+      {data.data.items.length === 0 || data.data.items[0].workId === undefined ?
+        <div className="col-6" style={{ textAlign: 'end' }}>
+          <Link to='/work/{"action":"create"}'>
+            <button className="btn-custom btn-search " style={{ width: 185 }}><span className="btn-icon"><IoAddOutline /></span> <span className="btn-txt-icon">Create Work</span></button>
 
-                                                <span className="btn-add-work-icon">
+          </Link>
+        </div> :
+        <div className="col-6" style={{ textAlign: 'end' }}>
+          <Link to={"/work" + `/{"action":"edit","workId":"${id}"}`}>
+            <span className="custom-icon-group" style={{ color: 'black', fontSize: '12pt', marginRight: 20 }}><FormOutlined /></span>
+          </Link>
+          <a className="custom-icon-group" onClick={() => {
+            this.setState({ isOpen: true, isTypeShowConfirm: 'del', isTextMsg: msgPopupTitle.deleted, isDataPopUp: this.state.data })
+          }}><span style={{ color: '#111', fontSize: '12pt', marginRight: 20 }}><DeleteOutlined /></span></a>
+        </div>}
 
-                                                    <PlusOutlined />
-                                                </span>
-                                            </button> </Link>
-                                      </div> </div> : 
-                    <div className="col-6" style={{ textAlign: 'end' }}>
-                <Link to={"/work" + `/{"action":"edit","workId":"${id}"}`}>
-              <span className="custom-icon-group" style={{ color: 'black', fontSize: '12pt', marginRight: 20 }}><FormOutlined /></span>
-            </Link>
-        <a className="custom-icon-group" onClick={() => {
-          this.setState({ isOpen: true, isTypeShowConfirm: 'del', isTextMsg: msgPopupTitle.deleted, isDataPopUp: this.state.data })
-        }}><span style={{ color: '#111', fontSize: '12pt', marginRight: 20 }}><DeleteOutlined /></span></a>
-      </div> } 
-
-     
-
-    </div> 
+    </div>
     )
   }
 
 
   actionRender = (data) => {
-    // console.log(`Work -> actionRender -> data`, data)
-    let a = false;
-    return (<>
+    return (<> {data.key && data.key.workId ?
       <DropDownButton
         text="..."
         dropDownOptions={{ width: 100 }}
@@ -394,7 +340,7 @@ class Work extends React.Component {
         displayExpr="name"
         keyExpr="id"
         onItemClick={(e) => { this.onItemClick(e, data) }}
-      />
+      /> : null}
     </>)
   }
 
@@ -422,24 +368,28 @@ class Work extends React.Component {
   onInitNewRow(e) {
     console.log("TCL: onInitNewRow -> e ===> ", e)
   }
+  onContentReady(e) {
+    console.log("TCL: onContentReady -> e ===> ", e)
+  }
   onRowPrepared(e) {
-    console.log("TCL: onRowPrepared -> e ===> ", e)
-    if (e.rowType === 'group') {
-      let day = moment(e.key[0], 'DD/MM/YYYY').format('dddd')
-      if (day !== 'Sunday' && day !== 'Saturday') {
-        e.rowElement.style.backgroundColor = 'rgb(232 211 255)';  
-      } else {
-        e.rowElement.style.backgroundColor = '#ddd';  
-      }
-
-    } else if (e.rowType === 'data') {
-      if (e.data && !e.data.workId) {
-        console.log("TCL: onRowPrepared -> e.rowIndex", e.rowIndex)
-        // e.component.deleteRow(e.rowIndex);  
-      }
-    }
     // แถบสี ม่วง > จ-ศ
     // แถบสี เทา > ส-อ
+    if (e.rowType === 'group') {
+      // console.log("TCL: onRowPrepared -> e ===> ", e)
+      let day = moment(e.key[0], 'DD/MM/YYYY').format('dddd')
+      if (day !== 'Sunday' && day !== 'Saturday') {
+        e.rowElement.style.backgroundColor = 'rgb(232 211 255)';
+      } else {
+        e.rowElement.style.backgroundColor = '#ddd';
+      }
+      if (e.cells) {
+        if (e.cells[0]) {
+          if ((e.cells[0].data.collapsedItems && e.cells[0].data.collapsedItems[0] && e.cells[0].data.collapsedItems[0].workId) || (e.cells[0].data.items && e.cells[0].data.items[0] && e.cells[0].data.items[0].workId)) {
+            // e.component.expandRow(e.component.getKeyByRowIndex(e.rowIndex));
+          }
+        }
+      }
+    }
   }
 
   render() {
@@ -558,6 +508,7 @@ class Work extends React.Component {
                     onEditorPrepared={this.onEditorPrepared}
                     onInitNewRow={this.onInitNewRow}
                     onRowPrepared={this.onRowPrepared}
+                    onContentReady={this.onContentReady}
                   // columnWidth={100}
                   >
                     <Editing
@@ -565,9 +516,10 @@ class Work extends React.Component {
                       confirmDelete={false}
                     />
                     <Scrolling columnRenderingMode="virtual" />
-                    <GroupPanel visible={false} />
+                    <GroupPanel visible={false}
+                    />
                     <SearchPanel visible={false} />
-                    <Grouping autoExpandAll={true} />
+                    <Grouping autoExpandAll={true} allowCollapsing={true} />
                     <Paging defaultPageSize={10} />
                     <Pager
                       showPageSizeSelector={true}

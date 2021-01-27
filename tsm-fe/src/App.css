@@ -2518,7 +2518,7 @@ html {
     font-feature-settings: 'tnum';
     color: #595959;
     font-size: 14px;
-    margin-bottom: 40px;
+    margin-bottom: 25px;
 }
 
 .ant-breadcrumb .anticon {
@@ -9180,7 +9180,7 @@ textarea.ant-picker-input>input {
 }
 
 .ant-form-item-has-warning .ant-select:not(.ant-select-borderless) .ant-select-selector {
-    border-color: #fa8c16 !important;
+    border-color: #fa8c16;
 }
 
 .ant-form-item-has-warning .ant-select:not(.ant-select-borderless).ant-select-open .ant-select-selector,
@@ -9277,7 +9277,7 @@ textarea.ant-picker-input>input {
 }
 
 .ant-form-item-has-error .ant-select:not(.ant-select-borderless) .ant-select-selector {
-    border-color: #f5222d !important;
+    border-color: #f5222d;
 }
 
 .ant-form-item-has-error .ant-select:not(.ant-select-borderless).ant-select-open .ant-select-selector,
@@ -20888,7 +20888,17 @@ span.ant-radio+* {
     border-radius: 6px;
     transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
     width: 100%;
-    height: 36px;
+    height: 36px !important;
+    padding: 0 11px;
+}
+.ant-select-single:not(.ant-select-customize-input) .ant-select-selector .has-error-input {
+    position: relative;
+    background-color: #fff;
+    border: 1px solid red !important;
+    border-radius: 6px;
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    width: 100%;
+    height: 37px !important;
     padding: 0 11px;
 }
 
@@ -20898,6 +20908,10 @@ span.ant-radio+* {
 
 .ant-select-show-search.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
     cursor: text;
+}
+.ant-select-show-search.ant-select-single:not(.ant-select-customize-input) .ant-select-selector .has-error-input {
+    cursor: text;
+    border: 1px solid red !important;
 }
 
 .ant-select-show-search.ant-select-single:not(.ant-select-customize-input) .ant-select-selector input {
@@ -46189,7 +46203,7 @@ textarea.gx-chat-textarea {
 .breadcrum-custom {
     position: relative;
     top: 7px;
-    font-size: 12pt;
+    font-size: 15pt;
     color: #595959;
 }
 
@@ -46515,10 +46529,11 @@ a:hover {
 
 .dx-button .dx-button-content {
     padding: 0px !important;
+    padding-top: 14px !important;
 }
 
 .dx-button-text {
-    font-size: 20pt !important;
+    font-size: 14pt !important;
     position: relative !important;
     top: -10px !important;
 }
@@ -46530,4 +46545,22 @@ a:hover {
 .custom-icon-group {
     position: relative !important;
     top: -6px !important;
+}
+
+.dx-texteditor.dx-editor-outlined .has-error-input  {
+    border: 1px solid red;
+    border-radius: 4px;
+}
+.div-select {
+    border: 1px solid transparent;
+    text-align: end !important;
+    padding: 0px !important;
+    border-radius: 0.36rem !important;
+}
+.div-select .has-error-input  {
+    border: 1px solid red;
+}
+
+.ant-select-selector {
+    text-align: start !important;
 }

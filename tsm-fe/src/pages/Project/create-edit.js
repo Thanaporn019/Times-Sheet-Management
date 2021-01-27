@@ -8,12 +8,13 @@ import _ from "lodash";
 import { Breadcrumb, TimePicker, Select } from 'antd';
 import { HomeOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { BrowserRouter as Router, Switch, Route,  Link } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import AlertPopUp from "../../components/popup/alert_popup";
 import ConfirmPopup from "../../components/popup/confirm_popup";
 import configService from '../../config';
 const msgAlertTitle = configService.msgAlert;
 const msgPopupTitle = configService.msgConfirm;
+const msgValid = configService.validDateFill;
 const format = 'HH:mm';
 const Option = Select.Option;
 
@@ -56,185 +57,275 @@ class ActionsProject extends React.Component {
             isTypeShowConfirm: '', // ประเภทของ popup : save , del
             isDataPopUp: {}, // ข้อมูลที่ใช้
             isTextMsg: '', // msg ของ Popup
-            data: [{
-                projectId: null,
-                typeId: null,
-                workDate: null,
-                workDetail: null,
-                workUrl: null,
-                workManhour: null,
-                workTimeIn: null,
-                workTimeOut: null,
-            }],
-            projectList: [],
-            typeList: [],
-            params: param
+            data: {
+                projectName: null,
+                projectPhase: null,
+                projectDetail: null,
+                projectStartDate: null,
+                projectEndDate: null,
+                projectManDays: null,
+                customerEmail: null,
+            },
+            params: param,
+            isSubmit: false,
+            isValid_startDate: false,
+            isValid_endDate: false,
+            isValid_projectName: false,
+            isValid_phase: false,
+            isValid_detail: false,
+            isValid_email: false,
+            inputDate: {
+                startDate: '',
+                endDate: ''
+            },
+            greater: {
+                startDate: '',
+                endDate: ''
+            },
+            startGreater: false,
+            endGreater: false,
         };
     }
 
     componentDidMount() {
 
-        // console.log("ActionsWork -> componentDidMount -> s", this.state.data)
-        this.getTypeList();
-        this.getProjectList();
     }
 
-    getProjectList() {
-        this.setState({
-            projectList: [{
-                projectId: '001',
-                projectName: 'test1'
-            },
-            {
-                projectId: '002',
-                projectName: 'test2'
-            }]
-        })
+    handleChangeDate = (event, type) => {
+        let temp = _.cloneDeep(this.state.data)
+        if (type === 'start') {
+            this.setState({
+                data: {
+                    ...this.state.data,
+                    projectStartDate: event.value,
+                }
+            });
+            this.setState({ isValid_startDate: false })
+        } else {
+            this.setState({
+                data: {
+                    ...this.state.data,
+                    projectEndDate: event.value,
+                }
+            });
+            this.setState({ isValid_endDate: false })
 
-        let resData = [{
-            projectId: '001',
-            projectName: 'test1'
-        },
-        {
-            projectId: '002',
-            projectName: 'test2'
-        }]
-        let temp = [];
-        for (let i = 0; i < resData.length; i++) {
-            temp.push(<Option key={resData[i].projectId}>{resData[i].projectName}</Option>);
         }
-
-        this.projectList = temp
+        this.checkGreaterValue();
+        this.checkGreaterStartDateValue();
+        this.checkGreaterStopDateValue();
     }
 
-    getTypeList() {
+    onProjectNameChange = (event) => {
         this.setState({
-            jobtypeList: [{
-                typeId: '001',
-                typeName: 'test1'
-            },
-            {
-                typeId: '002',
-                typeName: 'test2'
-            }]
-        })
-
-        let resData = [{
-            typeId: '001',
-            typeName: 'test1'
-        },
-        {
-            typeId: '002',
-            typeName: 'test2'
-        }]
-        let temp = []
-        for (let i = 0; i < resData.length; i++) {
-            temp.push(<Option key={resData[i].typeId}>{resData[i].typeName}</Option>);
-            console.log("ActionsWork -> getJobtypeList -> resData[i].typeId", resData[i].typeId)
-        }
-
-        this.typeList = temp
-    }
-
-    handleProjectChange = (value, i) => {
-        console.log("ActionsWork -> handleProjectChange -> i", i)
-        console.log("ActionsWork -> handleProjectChange -> value", value)
-
-        // let temp = _.cloneDeep(this.state.filter)
-        // temp.projectId = value
-        // this.setState({
-        //     filter: {
-        //         dateFrom: temp.dateFrom,
-        //         dateTo: temp.dateTo,
-        //         typeId: temp.typeId,
-        //         projectId: value
-        //     }
-        // });
-    }
-    handleTypeChange = (event) => {
-
-        let temp = _.cloneDeep(this.state.filter)
-        temp.typeId = event.target.value
-        this.setState({
-            filter: {
-                dateFrom: temp.dateFrom,
-                dateTo: temp.dateTo,
-                typeId: temp.typeId,
-                projectId: temp.projectId
+            data: {
+                ...this.state.data,
+                projectName: event.target.value
             }
         });
+
+        if (event.target.value !== '' || !event.target.value) {
+            this.setState({ isValid_projectName: false })
+        }
     }
 
-    // TODO :: Select
+    onProjectPhaseChange = (event) => {
+        this.setState({
+            data: {
+                ...this.state.data,
+                projectPhase: event.target.value
+            }
+        });
 
-    handleChangeProject = (value, index) => {
-        let data = [...this.state.data];
-        let item = { ...data[index] };
-        item.projectId = value;
-        data[index] = item;
-        this.setState({ data });
+        if (event.target.value !== '' || !event.target.value) {
+            this.setState({ isValid_phase: false })
+        }
+    }
+    onProjectDetailChange = (event) => {
+        this.setState({
+            data: {
+                ...this.state.data,
+                projectDetail: event.target.value
+            }
+        });
+
+        if (event.target.value !== '' || !event.target.value) {
+            this.setState({ isValid_detail: false })
+        }
+    }
+    onCustomerEmailChange = (event) => {
+        this.setState({
+            data: {
+                ...this.state.data,
+                customerEmail: event.target.value
+            }
+        });
+
+        if (!this.checkValidEmail()) {
+            this.setState({ isValid_email: true })
+        } else {
+            this.setState({ isValid_email: false })
+        }
     }
 
-    handleBlurProject = () => {
-        console.log('blur ---- ', this.typeList);
+    checkValidate = () => {
+        let vaildProjectName = this.checkValidValue('name');
+        let vaildProjectPhase = this.checkValidValue('phase');
+        let vaildProjectDetail = this.checkValidValue('detail');
+        let vaildProjectStart = this.checkValidValue('start');
+        let vaildProjectEnd = this.checkValidValue('end');
+        let vaildEmail = this.state.data.customerEmail ? this.checkValidEmail() : true;
+        if (vaildProjectStart && vaildProjectEnd) {
+            this.checkValidValue('date')
+        }
+        if (vaildProjectName && vaildProjectPhase && vaildProjectDetail && vaildProjectStart && vaildProjectEnd && !this.state.greater.startDate && !this.state.greater.endDate && !this.state.startGreater && !this.state.endGreater && vaildEmail) {
+            this.setState({ isOpen: true, isTypeShowConfirm: 'save', isTextMsg: this.state.params.action === 'edit' ? msgPopupTitle.saved : msgPopupTitle.saved, isDataPopUp: this.state.data })
+        } else {
+
+            console.log("TCL: ActionsProject -> checkValidate -> ", 'กรอกข้อมูลไม่ครบหรือ ติด valid')
+        }
     }
 
-    handleFocusProject = () => {
-        console.log('focus ....', this.typeList);
-    }
-    handleChangeType = (value, index) => {
-        let data = [...this.state.data];
-        let item = { ...data[index] };
-        item.typeId = value;
-        data[index] = item;
-        this.setState({ data });
+    checkValidValue = (type) => {
+        if (type === 'name') {
+            if (!this.state.data.projectName || this.state.data.projectName === '') {
+                this.setState({ isValid_projectName: true })
+                return false;
+            } else {
+                this.setState({ isValid_projectName: false })
+                return true;
+            }
+        } else if (type === 'phase') {
+            if (!this.state.data.projectPhase || this.state.data.projectPhase === '') {
+                this.setState({ isValid_phase: true })
+                return false;
+            } else {
+                this.setState({ isValid_phase: false })
+                return true;
+            }
+        } else if (type === 'detail') {
+            if (!this.state.data.projectDetail || this.state.data.projectDetail === '') {
+                this.setState({ isValid_detail: true })
+                return false;
+            } else {
+                this.setState({ isValid_detail: false })
+                return true;
+            }
+        } else if (type === 'start') {
+            if (!this.state.data.projectStartDate || this.state.data.projectStartDate === '') {
+                this.setState({ isValid_startDate: true })
+                return false;
+            } else {
+                this.setState({ isValid_startDate: false })
+                return true;
+            }
+        } else if (type === 'end') {
+            if (!this.state.data.projectEndDate || this.state.data.projectEndDate === '') {
+                this.setState({ isValid_endDate: true })
+                return false;
+            } else {
+                this.setState({ isValid_endDate: false })
+                return true;
+            }
+        } else if (type === 'date') {
+            this.checkGreaterValue()
+        }
     }
 
-    handleBlurType = () => {
-        console.log('blur ---- ', this.typeList);
-    }
-
-    handleFocusType = () => {
-        console.log('focus ....', this.typeList);
-    }
-
-    onChangeTimeIn = (time, timestring, index) => {
-        // console.log("ActionsWork -> onChangeTimeIn -> time, timestring, index", time, timestring, index)
-        let data = [...this.state.data];
-        let item = { ...data[index] };
-        item.workTimeIn = time;
-        data[index] = item;
-        this.setState({ data });
-    }
-    onChangeTimeOut = (time, timestring, index) => {
-        console.log("ActionsWork -> onChangeTimeOut -> time, timestring, index", time, timestring, index)
-        let data = [...this.state.data];
-        let item = { ...data[index] };
-        item.workTimeOut = time;
-        data[index] = item;
-        this.setState({ data });
-    }
-
-    calManHours = () => {
-
-    }
-
-    handleAddData = () => {
-        console.log("ActionsWork -> handleAddData -> handleAddData")
-        this.state.data.push({
-            projectId: null,
-            typeId: null,
-            workDate: null,
-            workDetail: null,
-            workUrl: null,
-            workManhour: null,
-            workTimeIn: null,
-            workTimeOut: null,
+    checkGreaterValue = () => {
+        if (!this.state.data.projectEndDate || !this.state.data.projectStartDate || this.checkNullObjectMany(this.state.inputDate)) {
+            this.setState({
+                greater: {
+                    startDate: false,
+                    endDate: false,
+                }
+            })
+        }
+        let checkGreaterCreatedDate = this.checkGreater(this.state.data.projectEndDate, this.state.data.projectStartDate);
+        console.log("TCL: ActionsProject -> checkGreaterValue -> checkGreaterCreatedDate", checkGreaterCreatedDate)
+        this.setState({
+            greater: {
+                startDate: checkGreaterCreatedDate,
+                endDate: checkGreaterCreatedDate,
+            }
         })
-        let a = this.state.data
-        this.setState({ data: a })
-        console.log("ActionsProject -> handleAddData ->  this.state.data", this.state.data)
     }
+
+    checkNullObjectMany = (dataObject) => {
+        for (let key in dataObject) {
+
+            for (let item in dataObject[key]) {
+                if (dataObject[key][item]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    checkGreater(dateFrom, dateTo) {
+        let greater;
+        if (dateFrom && dateTo) {
+            greater = dateFrom < dateTo ? true : false;
+        } else {
+            greater = false;
+        }
+        return greater;
+    }
+
+    checkGreaterStartDateValue = () => {
+        if (!this.state.data.projectStartDate || !this.state.data.projectEndDate || this.checkNullObjectMany(this.inputDate)) {
+            this.setState({ startGreater: false })
+        }
+        let checkGreaterCreatedDate = this.checkGreaterStartDate(this.state.data.projectEndDate, this.state.data.projectStartDate);
+        this.setState({ startGreater: checkGreaterCreatedDate })
+    }
+    checkGreaterStopDateValue = () => {
+        if (!this.state.data.projectStartDate || !this.state.data.projectEndDate || this.checkNullObjectMany(this.inputDate)) {
+            this.setState({ endGreater: false })
+        }
+        let checkGreaterCreatedDate = this.checkGreaterStopDate(this.state.data.projectEndDate, this.state.data.projectStartDate);
+        this.setState({ endGreater: checkGreaterCreatedDate })
+    }
+
+    checkGreaterStartDate = () => {
+        let greaterStart;
+        greaterStart = false;
+        return greaterStart;
+    }
+
+    checkGreaterStopDate = (dataFrom, dataTo) => {
+        let greaterStop;
+        let now = moment().format();
+        if (dataTo && dataFrom) {
+            let stop = moment(dataFrom).format();
+            greaterStop = stop < now ? true : false;
+        } else {
+            greaterStop = false;
+        }
+        return greaterStop;
+
+    }
+
+    confirmSave = (data) => {
+        console.log("TCL: ActionsProject -> confirmSave -> data", data)
+        this.setState({ isOpen: false })
+        this.setState({ isPopupError: false })
+        this.setState({ isPopupSuccess: true })
+        this.setState({ isPopupMsg: this.state.params.action === 'edit' ? msgAlertTitle.updated : msgAlertTitle.saved })
+    }
+
+    checkValidEmail = () => {
+        let reg = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+        const match = this.state.data.customerEmail ? this.state.data.customerEmail.match(reg) : null;
+        console.log("TCL: ActionsProject -> checkValidEmail -> match", match)
+        if (match && match.length > 0) {
+            return true
+        } else {
+            return false
+        }
+    }
+
 
     render() {
 
@@ -269,62 +360,90 @@ class ActionsProject extends React.Component {
                                         {/* Start Date */}
                                         <div className="row form-group">
                                             <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="ddlStartDate">Start Date {this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
-                                            <div className="col-4" style={{ paddingLeft: 0, paddingRight: 0 }}>
+                                            <div className={`col-4`} style={{ textAlign: 'start', padding: 0 }}>
                                                 <DateBox
-                                                    value={null}
-                                                    type="date" />
+                                                    value={this.state.data.projectStartDate}
+                                                    type="date" onValueChanged={(e) => {
+                                                        this.handleChangeDate(e, 'start')
+                                                    }}
+                                                    className={`${this.state.isValid_startDate && this.state.isSubmit || this.state.greater.startDate || this.state.startGreater ? 'has-error-input' : ''}`} />
+                                                {this.state.isValid_startDate && this.state.isSubmit ? <span className="color-red">{msgValid.req}</span> : null}
+                                                {this.state.greater.startDate || this.state.startGreater ? <span className="color-red">less end date</span> : null}
+
+
                                             </div>
                                         </div>
 
                                         {/* End Date */}
                                         <div className="row form-group">
                                             <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="ddlEndDate">End Date{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
-                                            <div className="col-4" style={{ paddingLeft: 0, paddingRight: 0 }}>
+                                            <div className={`col-4`} style={{ textAlign: 'start', padding: 0 }}>
                                                 <DateBox
-                                                    value={null}
-                                                    type="date" />
-                                            </div> </div>
+                                                    value={this.state.data.projectEndDate}
+                                                    type="date" onValueChanged={(e) => {
+                                                        this.handleChangeDate(e, 'end')
+                                                    }}
+                                                    className={`${this.state.isValid_endDate && this.state.isSubmit || this.state.greater.stopDate || this.state.endGreater || this.state.greater.startDate ? 'has-error-input' : ''}`} />
+                                                {this.state.isValid_endDate && this.state.isSubmit ? <span className="color-red">{msgValid.req}</span> : null}
+                                                {this.state.greater.stopDate || this.state.greater.startDate && !this.state.endGreater && this.state.data.projectEndDate ? <span className="color-red">must start date</span> : null}
+                                                {!this.state.greater.stopDate && this.state.endGreater && this.state.data.projectEndDate ? <span className="color-red">must now</span> : null}
+
+                                            </div>
+                                        </div>
 
                                         {/* Project */}
                                         <div className="row form-group">
                                             <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="ddlProject">Project{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
-                                            <input type="text" class="form-control col-4" id="txtProject" />
+                                            <div className="col-4" style={{ textAlign: 'start', padding: 0 }}>
+                                                <input type="text" class={`form-control  ${this.state.isValid_projectName && this.state.isSubmit ? 'has-error-input' : ''}`} id="txtProject"
+                                                    value={this.state.data.projectName} onChange={this.onProjectNameChange} />
+                                                {this.state.isValid_projectName && this.state.isSubmit ? <span className="color-red">{msgValid.req}</span> : null}
+                                            </div>
 
                                         </div>
 
                                         {/* Phase */}
                                         <div className="row form-group">
                                             <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="ddlPhase">Phase{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
-                                            <input type="text" class="form-control col-5" id="txtPhase" />
+                                            <div className="col-4" style={{ textAlign: 'start', padding: 0 }}>
+                                                <input type="text" class={`form-control  ${this.state.isValid_phase && this.state.isSubmit ? 'has-error-input' : ''}`}
+                                                    id="txtPhase" value={this.state.data.projectPhase} onChange={this.onProjectPhaseChange} />
+                                                {this.state.isValid_phase && this.state.isSubmit ? <span className="color-red">{msgValid.req}</span> : null}
+
+                                            </div>
                                         </div>
 
                                         {/*Man Day */}
                                         <div className="row form-group">
                                             <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="txtManDay">Man Day{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}></span> : null}</label></div>
-
-                                            <input type="text" class="form-control col-5" id="txtManDay" />
-
+                                            <div className="col-5" style={{ textAlign: 'start', padding: 0 }}>
+                                                <input type="text" class="form-control col-5" id="txtManDay" />
+                                            </div>
                                         </div>
 
                                         {/* Detail */}
                                         <div className="row form-group">
                                             <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="txtDetail">Detail {this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
-                                            <textarea rows="3" type="text" class="form-control col-5" id="txtDetail" />
-
+                                            <div className="col-5" style={{ textAlign: 'start', padding: 0 }}>
+                                                <textarea rows="3" type="text" class={`form-control  ${this.state.isValid_detail && this.state.isSubmit ? 'has-error-input' : ''}`}
+                                                    id="txtDetail" value={this.state.data.projectDetail} onChange={this.onProjectDetailChange} />
+                                                {this.state.isValid_detail && this.state.isSubmit ? <span className="color-red">{msgValid.req}</span> : null}
+                                            </div>
                                         </div>
 
                                         {/* CustomerEmail */}
                                         <div className="row form-group">
                                             <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="txtCustomerEmail">Customer Email<span style={{ color: 'red' }}></span></label></div>
-                                            <input type="text" class="form-control col-5" id="txtCustomerEmail" />
-
+                                            <div className="col-5" style={{ textAlign: 'start', padding: 0 }}>
+                                                <input type="text" class={`form-control  ${this.state.isValid_email ? 'has-error-input' : ''}`} id="txtCustomerEmail" value={this.state.data.customerEmail} onChange={this.onCustomerEmailChange} />
+                                                {this.state.isValid_email ? <span className="color-red">{msgValid.project.validEmail}</span> : null}
+                                            </div>
                                         </div>
 
                                         {/* CreateDate */}
                                         {this.state.params.action === 'view' ? <div className="row form-group">
                                             <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="txtCreateDate">CreateDate<span style={{ color: 'red' }}></span></label></div>
                                             <input type="text" class="form-control col-5" id="txtCreateDate" />
-
                                         </div> : null}
 
                                         {/* CreateBy */}
@@ -358,12 +477,11 @@ class ActionsProject extends React.Component {
                                     <div className="col-12" style={{ textAlign: 'right' }}>
                                         {this.state.params.action !== 'view' ?
                                             <Link to='/project'>
-                                                <button  class="btn-custom btn-reset" style={{ marginRight: 20 }}>CANCEL</button>
+                                                <button class="btn-custom btn-reset" style={{ marginRight: 20 }}>CANCEL</button>
                                             </Link> : null}
                                         {this.state.params.action !== 'view' ? <button class="btn-custom btn-search" style={{ marginRight: 20 }} onClick={() => {
-                                            // this.this.state.params.action === 'edit'
-                                            this.setState({ isOpen: true, isTypeShowConfirm: 'save', isTextMsg: this.state.params.action === 'edit' ? msgPopupTitle.saved: msgPopupTitle.saved, isDataPopUp: this.state.data })
-
+                                            this.setState({ isSubmit: true })
+                                            this.checkValidate()
                                         }}>{this.state.params.action === 'edit' ? 'UPDATE' : 'CREATE'}</button> : null}
                                         {this.state.params.action === 'view' ?
                                             <Link to='/project'>
@@ -383,6 +501,9 @@ class ActionsProject extends React.Component {
             {/* POPUP */}
             <AlertPopUp successStatus={this.state.isPopupSuccess} errorStatus={this.state.isPopupError} message={this.state.isPopupMsg}
                 clearActive={() => {
+                    if (this.state.isPopupSuccess) {
+                        this.props.history.push('/project')
+                    }
                     this.setState({ isPopupError: false })
                     this.setState({ isPopupSuccess: false })
                 }} />
@@ -391,11 +512,8 @@ class ActionsProject extends React.Component {
                 onClose={() => { this.setState({ isOpen: false }) }}
                 clearActive={(e) => { this.setState({ isOpen: false }) }}
                 confirmActive={(e) => {
-                    this.setState({ isOpen: false })
-                    this.setState({ isPopupError: false })
-                    this.setState({ isPopupSuccess: true })
-                    this.setState({ isPopupMsg: this.state.params.action === 'edit' ?msgAlertTitle.updated :msgAlertTitle.saved })
                     console.log("Work -> render -> e", e)
+                    this.confirmSave(e)
                 }}
             />
         </>
