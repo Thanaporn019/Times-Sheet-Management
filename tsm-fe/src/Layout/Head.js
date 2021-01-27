@@ -4,7 +4,9 @@ import Navbar from "react-bootstrap/Navbar";
 import Form from "react-bootstrap/Form";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { NavLink, Link } from 'react-router-dom'
-import { GrWorkshop } from "react-icons/gr";
+// import { GrWorkshop } from "react-icons/gr";
+import { PartitionOutlined, ProjectOutlined, FundProjectionScreenOutlined  } from '@ant-design/icons';
+
 import { AiOutlineFundProjectionScreen } from "react-icons/ai";
 import { VscGroupByRefType } from "react-icons/vsc";
 
@@ -35,8 +37,8 @@ class Head extends Component {
                   <Link to="/work" >
                     <span class="gx-pointer gx-d-block">
 
-              {/* Icon */}
-                        <span className="icon-header"> <GrWorkshop style={{color: '#fff'}}/>  </span>
+              {/* Icon */} 
+                        <span className="icon-header"> < PartitionOutlined style={{color: '#fff'}}/>  </span>
                       Work
                     </span>
 
@@ -47,7 +49,7 @@ class Head extends Component {
                     <span class="gx-pointer gx-status-pos gx-d-block">
                      
             {/* Icon  Project*/}
-            <span className="icon-header"> <AiOutlineFundProjectionScreen/>  </span>
+            <span className="icon-header"> < ProjectOutlined/>  </span>
             
                       Project
                     </span>
@@ -58,7 +60,7 @@ class Head extends Component {
                     <span class="gx-pointer gx-status-pos gx-d-block">
 
           {/* Icon Job type */}
-                    <span className="icon-header"> <VscGroupByRefType/>  </span>
+                    <span className="icon-header">  < FundProjectionScreenOutlined  />  </span>
                     
                       Job type
                     </span>
