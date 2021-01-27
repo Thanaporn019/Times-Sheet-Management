@@ -18,24 +18,6 @@ const msgValid = configService.validDateFill;
 const format = "HH:mm A";
 const Option = Select.Option;
 
-let data = [
-    {
-        projectId: null,
-        typeId: null,
-        workDate: null,
-        workDetail: null,
-        workUrl: null,
-        workManhour: null,
-        workTimeIn: null,
-        workTimeOut: null,
-    },
-];
-
-let projectList = [];
-let typeList = [];
-let timeHours = [];
-let timeMin = [];
-
 class ActionsWork extends React.Component {
     state = {
         isOpen: false,

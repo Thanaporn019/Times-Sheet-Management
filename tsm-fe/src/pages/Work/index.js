@@ -33,34 +33,10 @@ import { Breadcrumb, Modal, TimePicker, Select } from 'antd';
 import configService from '../../config';
 const msgAlertTitle = configService.msgAlert;
 const msgPopupTitle = configService.msgConfirm;
+const msgValid = configService.validDateFill;
 const url = 'https://js.devexpress.com/Demos/Mvc/api/TreeListTasks';
 const format = "HH:mm A";
-
-const tasksData = AspNetData.createStore({
-  key: 'Task_ID',
-  loadUrl: `${url}/Tasks`,
-  insertUrl: `${url}/InsertTask`,
-  updateUrl: `${url}/UpdateTask`,
-  deleteUrl: `${url}/DeleteTask`,
-  onBeforeSend: function (method, ajaxOptions) {
-    ajaxOptions.xhrFields = { withCredentials: true };
-  }
-});
-
-let d = <FormOutlined />
-
-const employeesData = AspNetData.createStore({
-  key: 'ID',
-  loadUrl: `${url}/TaskEmployees`
-});
-
-const statusesData = [
-  'Not Started',
-  'Need Assistance',
-  'In Progress',
-  'Deferred',
-  'Completed'
-];
+const Option = Select.Option;
 
 class Work extends React.Component {
 
@@ -85,6 +61,7 @@ class Work extends React.Component {
       isTypeShowConfirm: '', // ประเภทของ popup : save , del
       isDataPopUp: {}, // ข้อมูลที่ใช้
       isTextMsg: '', // msg ของ Popup
+      isDelete: false, // ใช้เช็คว่าเป็นการลบไหม
       data: [
         {
           'workId': '0001',
@@ -137,8 +114,8 @@ class Work extends React.Component {
           'createDate': '20/11/2020',
           'createBy': 'joon',
         }, {
-          'workId': '0003',
-          'projectId': '0003',
+          'workId': '0004',
+          'projectId': '0004',
           'projectName': 'test3',
           'projectPhase': '1',
           'typeId': '0003',
@@ -158,7 +135,20 @@ class Work extends React.Component {
         workId: '',
         visible: false
       },
-      popupEditVisable: false
+      popupEditVisable: false,
+      updateData: {
+        projectId: null,
+        typeId: null,
+        workDate: null,
+        workDetail: null,
+        workUrl: null,
+        workManhour: null,
+        workTimeIn: null,
+        workTimeOut: null,
+        projectPhase: null,
+        timeIn: null,
+        timeOut: null,
+      }
     };
 
     this.dataPopup = [
@@ -182,15 +172,6 @@ class Work extends React.Component {
     this.fnSetDefaultDate()
   }
 
-  // fnSetDefaultDate() {
-  //   let temp = _.cloneDeep(this.dateOfCurrentMouth)
-  //   for (const item of this.state.data) {
-  //     temp.push(item)
-  //   }
-  //   console.log("TCL: fnSetDefaultDate -> temp", temp)
-
-
-  //   this.setState({ data: temp })
   fnSetDefaultDate() {
     let temp = _.cloneDeep(this.dateOfCurrentMouth)
     // เอาค่าของ workDate ออกมา
@@ -215,6 +196,25 @@ class Work extends React.Component {
         projectName: 'test2'
       }]
     })
+
+    let resData = [
+      {
+        projectId: "001",
+        projectName: "test1",
+      },
+      {
+        projectId: "002",
+        projectName: "test2",
+      },
+    ];
+    let temp = [];
+    for (let i = 0; i < resData.length; i++) {
+      temp.push(
+        <Option key={resData[i].projectId}> {resData[i].projectName} </Option>
+      );
+    }
+
+    this.projectList = temp;
   }
 
   getJobtypeList() {
@@ -228,7 +228,29 @@ class Work extends React.Component {
         typeName: 'test2'
       }]
     })
-    // console.log("Work -> getJobtypeList -> this.state.jobtypeList", this.state.jobtypeList)
+
+    let resData = [
+      {
+        typeId: "001",
+        typeName: "test1",
+      },
+      {
+        typeId: "002",
+        typeName: "test2",
+      },
+    ];
+    let temp = [];
+    for (let i = 0; i < resData.length; i++) {
+      temp.push(
+        <Option key={resData[i].typeId}> {resData[i].typeName} </Option>
+      );
+      console.log(
+        "ActionsWork -> getJobtypeList -> resData[i].typeId",
+        resData[i].typeId
+      );
+    }
+
+    this.typeList = temp;
   }
 
   handleProjectChange = (event) => {
@@ -244,6 +266,7 @@ class Work extends React.Component {
       }
     });
   }
+
   handleTypeChange = (event) => {
 
     let temp = _.cloneDeep(this.state.filter)
@@ -322,14 +345,19 @@ class Work extends React.Component {
             <span className="custom-icon-group" style={{ color: 'black', fontSize: '12pt', marginRight: 20 }}><FormOutlined /></span>
           </Link>
           <a className="custom-icon-group" onClick={() => {
-            this.setState({ isOpen: true, isTypeShowConfirm: 'del', isTextMsg: msgPopupTitle.deleted, isDataPopUp: this.state.data })
+            this.setState({
+              isOpen: true,
+              isTypeShowConfirm: "del",
+              isTextMsg: msgPopupTitle.deleted,
+              isDataPopUp: [data.data, 'all'],
+              isDelete: true,
+            });
           }}><span style={{ color: '#111', fontSize: '12pt', marginRight: 20 }}><DeleteOutlined /></span></a>
         </div>}
 
     </div>
     )
   }
-
 
   actionRender = (data) => {
     return (<> {data.key && data.key.workId ?
@@ -345,15 +373,82 @@ class Work extends React.Component {
   }
 
   onItemClick = (e, data) => {
+    console.log("TCL: onItemClick -> data", data)
     if (e.itemData.name === 'Edit') {
-      this.setState({ popupEditVisable: true })
+      this.setState({
+        popupEditVisable: true, updateData: {
+          ...data.data,
+          workTimeIn: moment(data.data.workTimeIn, 'HH:mm A'),
+          workTimeOut: moment(data.data.workTimeOut, 'HH:mm A'),
+          timeIn: data.data.workTimeIn,
+          timeOut: data.data.workTimeOut,
+        }
+      })
+
     } else if (e.itemData.name === 'Delete') {
       // call function delete
+      this.setState({
+        isOpen: true,
+        isTypeShowConfirm: "del",
+        isTextMsg: msgPopupTitle.deleted,
+        isDataPopUp: [data.data, 'one'],
+        isDelete: true,
+      });
     }
   }
 
-  calManHours = () => {
+  onDeleteData = (data) => {
+    if (data[1] === 'one') {
+      let dataWorkDate = this.state.data.map(r => {
+        if (r.workDate === data[0].workDate) {
+          return r
+        }
+      })
 
+      let newData = _.without(dataWorkDate, undefined);
+
+      // ต้อง call api -------------------
+      let tempDel = this.state.data.filter(r => data[0].workId.indexOf(r.workId) === -1)
+      if (newData && newData.length <= 1) {
+        tempDel.push({ workDate: data[0].workDate })
+      }
+      this.setState({ data: tempDel })
+    } else {
+      let tempDel = _.cloneDeep(this.state.data)
+      for (let i = 0; i < data[0].items.length; i++) {
+        const element = data[0].items[i];
+        tempDel = tempDel.filter(r => element.workId.indexOf(r.workId) === -1)
+      }
+      tempDel.push({ workDate: data[0].key })
+      this.setState({ data: tempDel })
+    }
+    this.setState({ isOpen: false })
+    this.setState({ isPopupError: false })
+    this.setState({ isPopupSuccess: true })
+    this.setState({ isPopupMsg: msgAlertTitle.deleted })
+
+  }
+
+  onUpdateData = (data) => {
+    console.log("TCL: onDeleteData -> data", data)
+    let temp = _.cloneDeep(this.state.data)
+    for (let i = 0; i < temp.length; i++) {
+      const element = temp[i];
+      if (element.workId === this.state.updateData.workId) {
+        let splitTime = this.state.updateData.workManhour.split(':')
+        temp[i] = this.state.updateData
+        temp[i].workManhour = splitTime[0]
+        temp[i].workTimeIn = this.state.updateData.timeIn
+        temp[i].workTimeOut = this.state.updateData.timeOut
+      }
+    }
+
+    this.setState({ popupEditVisable: false })
+    this.setState({ data: temp })
+    this.setState({ isOpen: false })
+    this.setState({ isPopupError: false })
+    this.setState({ isPopupSuccess: true })
+    this.setState({ isPopupMsg: msgAlertTitle.updated })
   }
 
   onEditorPreparing(e) {
@@ -362,15 +457,19 @@ class Work extends React.Component {
       e.editorOptions.readOnly = this.isChief(e.value);
     }
   }
+
   onEditorPrepared(e) {
     console.log("TCL: onEditorPrepared -> e ===> ", e)
   }
+
   onInitNewRow(e) {
     console.log("TCL: onInitNewRow -> e ===> ", e)
   }
+
   onContentReady(e) {
     console.log("TCL: onContentReady -> e ===> ", e)
   }
+
   onRowPrepared(e) {
     // แถบสี ม่วง > จ-ศ
     // แถบสี เทา > ส-อ
@@ -391,6 +490,281 @@ class Work extends React.Component {
       }
     }
   }
+
+  checkValidData = () => {
+    let validProject = this.checkValid('project')
+    let validJobType = this.checkValid('job')
+    let validTimeIn = this.checkValid('in')
+    let validTimeOut = this.checkValid('out')
+    let validManHours = this.checkValid('hours')
+    let validDetail = this.checkValid('detail')
+    let validGreater = this.checkGreaterTime()
+    if (validProject && validJobType && validTimeIn && validTimeOut && validManHours && validDetail && validGreater) {
+      this.setState({
+        isOpen: true,
+        isTypeShowConfirm: "save",
+        isTextMsg: msgPopupTitle.saved,
+        isDataPopUp: this.state.updateData,
+        isDelete: false,
+      });
+    } else {
+
+      console.log("TCL: ActionsWork -> checkValidData -> ", 'กรอกข้อมูลไม่ครบ')
+    }
+  }
+
+  checkValid = (type) => {
+    let temp = _.cloneDeep(this.state.updateData)
+    let res = true;
+    if (type === 'project') {
+      const element = temp;
+      let valid = this.state.isValid_projectName;
+      if (!element.projectId || element.projectId === '') {
+        res = false;
+        valid = true;
+        this.setState({ isValid_projectName: valid });
+      }
+    } else if (type === 'job') {
+      const element = temp;
+      let valid = this.state.isValid_jobType;
+      if (!element.typeId || element.typeId === '') {
+        res = false;
+        valid = true;
+        this.setState({ isValid_jobType: valid });
+
+      }
+    } else if (type === 'in') {
+      const element = temp;
+      let valid = this.state.isValid_timeIn;
+      if (!element.workTimeIn || element.workTimeIn === '') {
+        res = false;
+        valid = true;
+        this.setState({ isValid_timeIn: valid });
+
+      }
+    } else if (type === 'out') {
+      const element = temp;
+      let valid = this.state.isValid_timeOut;
+      if (!element.workTimeOut || element.workTimeOut === '') {
+        res = false;
+        valid = true;
+        this.setState({ isValid_timeOut: valid });
+
+      }
+    } else if (type === 'hours') {
+      const element = temp;
+      let valid = this.state.isValid_manHours;
+      if (!element.workManhour || element.workManhour === '') {
+        res = false;
+        valid = true;
+        this.setState({ isValid_manHours: valid });
+
+      }
+    } else if (type === 'detail') {
+      const element = temp;
+      let valid = this.state.isValid_detail;
+      if (!element.workDetail || element.workDetail === '') {
+        res = false;
+        valid = true;
+        this.setState({ isValid_detail: valid });
+
+      }
+    }
+
+    return res;
+  }
+
+  checkGreaterTime() {
+    let res = true
+    if ((!this.state.updateData.timeIn || this.state.updateData.timeIn !== '') && (!this.state.updateData.timeOut || this.state.updateData.timeOut !== '')) {
+      var start = moment(this.state.updateData.timeIn, 'HH:mm A').format('HH:mm');
+      var end = moment(this.state.updateData.timeOut, 'HH:mm A').format('HH:mm');
+      let validTimeIn = this.state.greaterTimeIn;
+      let validTimeOut = this.state.greaterTimeOut;
+      if (start > end) {
+        validTimeIn = true;
+        validTimeOut = true;
+        this.setState({
+          greaterTimeIn: validTimeIn,
+          greaterTimeOut: validTimeOut,
+        })
+        res = false
+      }
+    }
+    return res;
+  }
+
+  confirmSave = (data) => {
+    console.log("TCL: ActionsWork -> confirmSave -> data", data)
+    this.setState({ isOpen: false });
+    this.setState({ isPopupError: false });
+    this.setState({ isPopupSuccess: true });
+    this.setState({ isPopupMsg: this.state.params.action === "edit" ? msgAlertTitle.updated : msgAlertTitle.saved });
+
+  }
+
+  onWorkManHoursChange = (event) => {
+    let temp = _.cloneDeep(this.state.updateData)
+    temp.workManhour = event.target.value
+
+    let valid = this.state.isValid_timeOut;
+    if (!event.target.value || event.target.value !== '') {
+      valid = false;
+    }
+
+    this.setState({ updateData: temp, isValid_timeOut: valid });
+  }
+
+  onWorkUrlChange = (event) => {
+    console.log("TCL: ActionsWork -> onWorkUrlChange -> event", event)
+    let temp = _.cloneDeep(this.state.updateData)
+    temp.workUrl = event.target.value
+    console.log("TCL: ActionsWork -> onWorkUrlChange -> temp", temp)
+
+    this.setState({ updateData: temp });
+  }
+
+  onWorkDetailChange = (event, index) => {
+    let temp = _.cloneDeep(this.state.updateData)
+    temp.workDetail = event.target.value
+
+    let valid = this.state.isValid_detail;
+    if (!event.target.value || event.target.value !== '') {
+      valid = false;
+    }
+    this.setState({ updateData: temp, isValid_detail: valid });
+  }
+
+  // TODO :: Select
+  // TODO :: Dropdown Project Name
+  handleChangeProject = (value, index) => {
+    let item = this.state.updateData;
+    item.projectId = value;
+    let valid = this.state.isValid_projectName;
+    console.log("TCL: ActionsWork -> handleChangeProject -> valid", valid)
+    if (!value || value !== '') {
+      valid = false;
+    }
+
+    this.setState({ updateData: item, isValid_projectName: valid });
+
+    console.log("TCL: ActionsWork -> handleChangeProject -> ", this.state)
+  };
+
+  // TODO :: Dropdown Job Type
+  handleChangeType = (value, index) => {
+    let item = this.state.updateData;
+    item.typeId = value;
+
+    let valid = this.state.isValid_jobType;
+    if (!value || value !== '') {
+      valid = false;
+    }
+
+    this.setState({ updateData: item, isValid_jobType: valid });
+  };
+
+  // TODO :: calculate man hours
+  calManHours = () => {
+
+    let temp = _.cloneDeep(this.state.updateData)
+    console.log("TCL: calManHours -> temp", temp)
+    let validIn = this.state.isValid_timeIn;
+    let validOut = this.state.isValid_timeOut;
+
+
+    if (!temp.timeIn || temp.timeIn === '' || !temp.timeOut || temp.timeOut === '') {
+      if (!temp.timeOut || temp.timeOut === '') {
+        validOut = true;
+        this.setState({ isValid_timeOut: validOut });
+      }
+      if (!temp.timeIn || temp.timeIn === '') {
+        validIn = true;
+        this.setState({ isValid_timeIn: validIn });
+      }
+      return
+    }
+
+    if (this.checkGreaterTime() === false) {
+      console.log("TCL: ActionsWork -> calManHours -> ", 'time out > time in')
+      return
+    }
+
+    var start = moment(temp.timeIn, 'HH:mm A').format('HH:mm');
+    var end = moment(temp.timeOut, 'HH:mm A').format('HH:mm');
+    let tempTime = this.fnCallDiffTime(start, end)
+    let time = '';
+    let dataTime = tempTime.split(":");
+    let tempStart = start.split(":");
+    let tempEnd = end.split(":");
+    if (start <= '12:00' && end >= '13:00') {
+      let a = parseInt(dataTime[0]) - 1
+      time = (a <= 9 ? "0" : "") + a + ":" + dataTime[1];
+    } else if (start > '12:00' && start < '13:00') {
+      if (end <= '13:00') {
+        time = '00:00'
+      } else if (end > '13:00') {
+        if (parseInt(tempStart[1]) <= parseInt(tempEnd[1])) {
+          let calHours = parseInt(dataTime[0]) - 1
+          time = (calHours <= 9 ? "0" : "") + calHours + ":" + tempEnd[1];
+        } else {
+          let calMin = parseInt(tempEnd[1])
+          let calHours = parseInt(dataTime[0])
+          time = (calHours <= 9 ? "0" : "") + calHours + ":" + (calMin <= 9 ? "0" : "") + calMin;
+        }
+      }
+    } else {
+      time = tempTime;
+    }
+
+    temp.workManhour = time
+    this.setState({ updateData: temp })
+  };
+
+  fnCallDiffTime = (start, end) => {
+    start = start.split(":");
+    end = end.split(":");
+    var startDate = new Date(0, 0, 0, start[0], start[1], 0);
+    var endDate = new Date(0, 0, 0, end[0], end[1], 0);
+    var diff = endDate.getTime() - startDate.getTime();
+    var hours = Math.floor(diff / 1000 / 60 / 60);
+    diff -= hours * 1000 * 60 * 60;
+    var minutes = Math.floor(diff / 1000 / 60);
+
+    if (hours < 0)
+      hours = hours + 24;
+
+    let time = (hours <= 9 ? "0" : "") + hours + ":" + (minutes <= 9 ? "0" : "") + minutes;
+    return time;
+  }
+
+  // TODO :: Dropdown Time In
+  onChangeTimeIn = (time, timestring) => {
+    console.log("TCL: onChangeTimeIn -> timestring", timestring)
+    console.log("TCL: onChangeTimeIn -> time", time)
+    let item = this.state.updateData;
+    item.workTimeIn = time;
+    item.timeIn = timestring;
+    let valid = this.state.isValid_timeIn;
+    if (!timestring || timestring !== '') {
+      valid = false;
+    }
+
+    this.setState({ updateData: item, isValid_timeIn: valid });
+  };
+
+  // TODO :: Dropdown Time Out
+  onChangeTimeOut = (time, timestring) => {
+    let item = this.state.updateData;
+    item.workTimeOut = time;
+    item.timeOut = timestring;
+    let valid = this.state.isValid_timeOut;
+    if (!timestring || timestring !== '') {
+      valid = false;
+    }
+
+    this.setState({ updateData: item, isValid_timeOut: valid });
+  };
 
   render() {
 
@@ -424,7 +798,6 @@ class Work extends React.Component {
                             <select class="form-control col-7" id="ddlProjectName" value={this.state.filter.projectId} onChange={this.handleProjectChange}>
                               {
                                 this.state.projectList.map(r => {
-                                  // console.log(r, r.projectId == this.state.filter.projectId)
                                   return <option value={r.projectId} selected={r.projectId == this.state.filter.projectId}>{r.projectName}</option>
 
                                 })
@@ -563,11 +936,11 @@ class Work extends React.Component {
         onClose={() => { this.setState({ isOpen: false }) }}
         clearActive={(e) => { this.setState({ isOpen: false }) }}
         confirmActive={(e) => {
-          this.setState({ isOpen: false })
-          this.setState({ isPopupError: false })
-          this.setState({ isPopupSuccess: true })
-          this.setState({ isPopupMsg: msgAlertTitle.deleted })
-          // console.log("Work -> render -> e", e)
+          if (this.state.isDelete) {
+            this.onDeleteData(e);
+          } else {
+            this.onUpdateData(e);
+          }
         }}
       />
 
@@ -575,126 +948,91 @@ class Work extends React.Component {
         footer={null}
         header={null}
         visible={this.state.popupEditVisable}
-        width={800}
+        width={1200}
         closable={false}
         onOk={() => {
           this.setState({ popupEditVisable: false })
         }}
       >
         {this.state.popupEditVisable ?
-          // <div className="wrap-content">
-          // <div className=" col-12 box-action">
-          <div className="box-title-search">
+          <div className="box-title-search" style={{ paddingBottom: 0 }}>
             <p className="font-size-search"> Update Work </p>
-            {/* </div> */}
 
             <div className="box-action-content">
               <div className="row form-group">
                 <div className="col-6">
                   <div className="row">
-                    <div
-                      className="col-5"
-                      style={{ textAlign: "right" }}
-                    >
-                      <label
-                        className="title-field"
-                        for="ddlProjectName"
-                      >
-
-                        Project Name
-                                      <span style={{ color: "red" }}> * </span>
+                    <div className="col-4" style={{ textAlign: "right" }} >
+                      <label className="title-field" for="ddlProjectName" >
+                        Project Name <span style={{ color: "red" }}> * </span>
                       </label>
                     </div>
-                    <div className="col-6">
-                      <Select
-                        showSearch
-                        style={{ width: 200 }}
-                        placeholder="Please selete project"
-                        optionFilterProp="children"
-                        onChange={(e) => {
-                          // this.handleChangeProject(e, i);
-                        }}
-                        onFocus={(e) => {
-                          // this.handleFocusProject(e, i);
-                        }}
-                        onBlur={(e) => {
-                          // this.handleBlurProject(e, i);
-                        }}
-                        filterOption={(input, option) =>
-                          option.props.children
-                            .toLowerCase()
-                            .indexOf(input.toLowerCase()) >= 0
-                        }
-                      // value={data.projectId}
-                      >
-
-                        {/* {this.projectList} */}
-                      </Select>
+                    <div className={`col-8`} style={{ textAlign: 'start', padding: 0 }}>
+                      <div className={`form-control div-select ${this.state.isValid_projectName && this.state.isSubmit ? 'has-error-input' : ''}`}>
+                        <Select
+                          showSearch
+                          style={{ width: 200 }}
+                          placeholder="Please selete project"
+                          optionFilterProp="children"
+                          onChange={(e) => {
+                            this.handleChangeProject(e);
+                          }}
+                          filterOption={(input, option) =>
+                            option.props.children[1].toLowerCase().indexOf(input.toLowerCase()) >= 0
+                          }
+                          value={this.state.updateData.projectId}>
+                          {this.projectList}
+                        </Select>
+                      </div>
+                      {this.state.isValid_projectName && this.state.isSubmit ? <span className="color-red">{msgValid.work.validProjectName}</span> : null}
                     </div>
                   </div>
                 </div>
+                {/* Job Type */}
                 <div className="col-6">
                   <div className="row">
-                    <div
-                      className="col-4"
-                      style={{ textAlign: "right" }}
-                    >
-                      <label
-                        className="title-field"
-                        for="ddlJobType"
-                      >
-
-                        Job Type
-                                      <span style={{ color: "red" }}> * </span>
+                    <div className="col-4" style={{ textAlign: "right" }} >
+                      <label className="title-field" for="ddlJobType" >
+                        Job Type <span style={{ color: "red" }}> * </span>
                       </label>
                     </div>
-                    <div className="col-6">
-                      <Select
-                        showSearch
-                        style={{ width: 200 }}
-                        placeholder="Please selete Type"
-                        optionFilterProp="children"
-                        onChange={(e) => {
-                          // this.handleChangeType(e, i);
-                        }}
-                        onFocus={(e) => {
-                          // this.handleFocusType(e, i);
-                        }}
-                        onBlur={(e) => {
-                          // this.handleBlurType(e);
-                        }}
-                        filterOption={(input, option) =>
-                          option.props.children
-                            .toLowerCase()
-                            .indexOf(input.toLowerCase()) >= 0
-                        }
-                      // value={ }
-                      >
+                    <div className={`col-8`} style={{ textAlign: 'start', padding: 0 }}>
+                      <div className={`form-control div-select ${this.state.isValid_projectName && this.state.isSubmit ? 'has-error-input' : ''}`}>
+                        <Select
+                          showSearch
+                          style={{ width: 200 }}
+                          placeholder="Please selete Type"
+                          optionFilterProp="children"
+                          onChange={(e) => {
+                            this.handleChangeType(e);
+                          }}
+                          filterOption={(input, option) =>
+                            option.props.children[1]
+                              .toLowerCase()
+                              .indexOf(input.toLowerCase()) >= 0
+                          }
+                          value={this.state.updateData.typeId}
+                        >
+                          {this.typeList}
+                        </Select>
+                      </div>
+                      {this.state.isValid_jobType && this.state.isSubmit ? <span className="color-red">{msgValid.work.validJobType}</span> : null}
 
-                        {/* {this.typeList} */}
-                      </Select>
                     </div>
                   </div>
                 </div>
               </div>
+
               {/* Time in */}
               <div className="row form-group" >
                 <div className="col-6">
                   <div className="row">
-                    <div
-                      className="col-5"
-                      style={{ textAlign: "right" }}
-                    >
-                      <label
-                        className="title-field"
-                        for="ddlTimeIn"
-                      >
-
-                        Time in
-                                      <span style={{ color: "red" }}> * </span>
+                    <div className="col-4" style={{ textAlign: "right" }} >
+                      <label className="title-field" for="ddlTimeIn" >
+                        Time in <span style={{ color: "red" }}> * </span>
                       </label>
                     </div>
-                    <div className="col-6">
+                    <div className="col-8" style={{ textAlign: 'start', padding: 0 }}>
                       <TimePicker
                         showNow={true}
                         className="font-12pt"
@@ -702,36 +1040,28 @@ class Work extends React.Component {
                         use12Hours
                         placeholder="Select time in"
                         format={format}
-                        // value={ }
+                        value={this.state.updateData.workTimeIn}
                         showNow={true}
                         onChange={(time, timestring) => {
-                          // this.onChangeTimeIn(
-                          //   time,
-                          //   timestring,
-                          //   i
-                          // );
+                          this.onChangeTimeIn(time, timestring);
                         }}
-                      />
+                        className={`${this.state.isValid_timeIn || this.state.greaterTimeIn ? 'has-error-input' : ''}`} />
+                      {this.state.isValid_timeIn && !this.state.greaterTimeIn ? <span className="color-red">{msgValid.work.validTimeIn}</span> : null}
+                      {this.state.greaterTimeIn && !this.state.isValid_timeIn ? <span className="color-red">{msgValid.work.validTimeInAndOut}</span> : null}
+
                     </div>
                   </div>
                 </div>
+
                 {/* Time out */}
                 <div className="col-6">
                   <div className="row">
-                    <div
-                      className="col-4"
-                      style={{ textAlign: "right" }}
-                    >
-                      <label
-                        className="title-field"
-                        for="ddlTimeOut"
-                      >
-
-                        Time out
-                                      <span style={{ color: "red" }}> * </span>
+                    <div className="col-4" style={{ textAlign: "right" }} >
+                      <label className="title-field" for="ddlTimeOut" >
+                        Time out <span style={{ color: "red" }}> * </span>
                       </label>
                     </div>
-                    <div className="col-6">
+                    <div className="col-8" style={{ textAlign: 'start', padding: 0 }}>
                       <TimePicker
                         showNow={true}
                         className="font-12pt"
@@ -739,109 +1069,77 @@ class Work extends React.Component {
                         use12Hours
                         placeholder="Select Time out"
                         format={format}
-                        // value={data.workTimeOut}
+                        value={this.state.updateData.workTimeOut}
                         showNow={true}
                         onChange={(time, timestring) => {
-                          // this.onChangeTimeOut(
-                          //   time,
-                          //   timestring,
-                          //   i
-                          // );
+                          this.onChangeTimeOut(time, timestring);
                         }}
-                      />
+                        className={`${this.state.isValid_timeOut || this.state.greaterTimeOut ? 'has-error-input' : ''}`} />
+                      {this.state.isValid_timeOut && !this.state.greaterTimeOut ? <span className="color-red">{msgValid.work.validTimeOut}</span> : null}
+                      {this.state.greaterTimeOut && !this.state.isValid_timeOut ? <span className="color-red">{msgValid.work.validTimeInAndOut}</span> : null}
                     </div>
                   </div>
                 </div>
               </div>
+
               {/* Man hours */}
               <div className="row form-group">
                 <div className="col-6">
                   <div className="row">
-                    <div
-                      className="col-5"
-                      style={{ textAlign: "right" }}
-                    >
-                      <label
-                        className="title-field"
-                        for="txtManHours"
-                      >
-                        Man hours
-                                      <span style={{ color: "red" }}> * </span>
+                    <div className="col-4" style={{ textAlign: "right" }} >
+                      <label className="title-field" for="txtManHours" >
+                        Man hours <span style={{ color: "red" }}> * </span>
                       </label>
                     </div>
-                    <div className="col-4">
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="txtManHours"
-                      />
+                    <div className="col-6" style={{ textAlign: 'start', padding: 0 }}>
+                      <input type="text" className={`form-control ${this.state.isValid_manHours && this.state.isSubmit ? 'has-error-input' : ''}`}
+                        id="txtManHours" value={this.state.updateData.workManhour} onChange={(event) => { this.onWorkManHoursChange(event) }} />
+                      {this.state.isValid_manHours && this.state.isSubmit ? <span className="color-red">{msgValid.work.validManHours}</span> : null}
                     </div>
                     <div className="col-2">
-                      <button
-                        class="btn-custom btn-calculate"
-                        onClick={this.calManHours}
-                      >
-
+                      <button class="btn-custom btn-calculate" onClick={this.calManHours} >
                         Calculate
-                                    </button>
+                      </button>
                     </div>
                   </div>
                 </div>
+
                 {/* Url */}
                 <div className="col-6">
                   <div className="row">
-                    <div
-                      className="col-4"
-                      style={{ textAlign: "right" }}
-                    >
+                    <div className="col-4" style={{ textAlign: "right" }} >
                       <label className="title-field" for="txtUrl">
-
                         Url
-                                      <span style={{ color: "red" }}>  </span>
                       </label>
                     </div>
-                    <div className="col-6">
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="txtUrl"
-                      />
+                    <div className="col-8" style={{ textAlign: 'start', padding: 0 }}>
+                      <input type="text" class="form-control" id="txtUrl" value={this.state.updateData.workUrl} onChange={(event) => { this.onWorkUrlChange(event) }} />
                     </div>
                   </div>
                 </div>
               </div>
+
               {/* Detail */}
               <div className="row form-group">
-                <div className="col-6">
+                <div className="col-12">
                   <div className="row">
-                    <div
-                      className="col-5"
-                      style={{ textAlign: "right" }}
-                    >
-                      <label
-                        className=" title-field"
-                        for="txtDetail"
-                      >
-
-                        Detail
-                                      <span style={{ color: "red" }}> * </span>
+                    <div className="col-2" style={{ textAlign: "right" }} >
+                      <label className=" title-field" for="txtDetail" >
+                        Detail <span style={{ color: "red" }}> * </span>
                       </label>
                     </div>
-                    <div className="col-7">
-                      <textarea
-                        rows="3"
-                        type="text"
-                        class="form-control"
-                        id="txtDetail"
-                        style={{ width: '29.2rem' }}
+                    <div className="col-10" style={{ textAlign: 'start', padding: 0 }}>
+                      <textarea rows="3" type="text" id="txtDetail"
+                        className={`form-control ${this.state.isValid_detail && this.state.isSubmit ? 'has-error-input' : ''}`}
+                        value={this.state.updateData.workDetail} onChange={(event) => { this.onWorkDetailChange(event) }}
                       />
-                      {/* </div> */}
+                      {this.state.isValid_detail && this.state.isSubmit ? <span className="color-red">{msgValid.work.validWorkDetail}</span> : null}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="row form-group">
+            <div className="row form-group" style={{ margin: 0 }}>
               <div className="col-12" style={{ textAlign: "right", padding: 20 }}>
                 <button
                   class="btn-custom btn-reset"
@@ -850,25 +1148,20 @@ class Work extends React.Component {
                     this.setState({ popupEditVisable: false })
                   }}
                 >
-
-
                   CANCEL
-                        </button>
+                </button>
                 <button
                   class="btn-custom btn-search"
                   style={{ marginRight: 0 }}
-                // onClick={() => {
-                //   this.setState({
-                //     isOpen: true,
-                //     isTypeShowConfirm: "save",
-                //     isTextMsg: msgPopupTitle.saved,
-                //     isDataPopUp: this.state.data,
-                //     isDelete: false,
-                //   });
-                // }}
+                  onClick={() => {
+                    this.setState({ isSubmit: true })
+                    this.checkValidData()
+
+                  }}
+
                 >
                   UPDATE
-                   </button>
+                </button>
               </div>
             </div>
           </div>
