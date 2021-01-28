@@ -361,6 +361,7 @@ ul ul,
 ol ul,
 ul ol {
     margin-bottom: 0;
+    
 }
 
 dt {
@@ -16602,6 +16603,8 @@ textarea.ant-input-number {
 .ant-layout,
 .ant-layout * {
     box-sizing: border-box;
+    
+   
 }
 
 .ant-layout.ant-layout-has-sider {
@@ -46429,6 +46432,7 @@ a:hover {
     font-size: 12pt !important;
     font-family: 'Inter', sans-serif;
     line-height: 1.35715;
+    
 }
 
 .dx-icon-form {

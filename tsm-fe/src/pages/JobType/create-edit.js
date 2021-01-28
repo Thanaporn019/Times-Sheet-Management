@@ -102,7 +102,7 @@ class ActionJobType extends React.Component {
         this.setState({ isOpen: false })
         this.setState({ isPopupError: true })
         this.setState({ isPopupSuccess: false })
-        this.setState({ isPopupMsg: this.state.params.action === 'edit' ? msgAlertTitle.updated : msgAlertTitle.saved })
+        this.setState({ isPopupMsg: this.state.params.action === 'edit' ? msgAlertTitle.updated :  msgAlertTitle.saved })
     }
 
     render() {

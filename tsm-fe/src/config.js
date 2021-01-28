@@ -15,14 +15,14 @@ let data = {
     validDateFill: {
         req: "Please fill in the information.",
         work: {
-            validWorkDate: "Please select a working day",
-            validProjectName: "Please select a ProjectName",
-            validJobType: "Please select a JopTypeName",
-            validTimeIn: "Please select a workTimeIn",
-            validTimeOut: "Please select a workTimeOut",
-            validManHours: "Please click a Calculater manhour",
-            validWorkDetail: "Please select a workDetail",
-            validTimeInAndOut: "Please select a WorkTimeIn and WorkTimeOut",
+            validWorkDate: "Please fill in the information.",
+            validProjectName: "Please fill in the information.",
+            validJobType: "Please fill in the information.",
+            validTimeIn: "Please fill in the information.",
+            validTimeOut: "Please fill in the information.",
+            validManHours: "Please click a time in and time out.",
+            validWorkDetail: "Please fill in the information.",
+            validTimeInAndOut: "The time in must be less than the time out.The time out must be greater than the time in.",
         },
         project: {
             validEmail: "You entered the email incorrectly.",

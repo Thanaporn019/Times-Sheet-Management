@@ -334,13 +334,13 @@ class Work extends React.Component {
 
       {/* {data.data.items[0].workId} */}
       {data.data.items.length === 0 || data.data.items[0].workId === undefined ?
-        <div className="col-6" style={{ textAlign: 'end',center: '-10px' }}>
+        <div className="col-6" style={{ textAlign: 'end' }}>
           <Link to='/work/{"action":"create"}'>
-            <button className="btn-custom btn-search " style={{ width: '40px', hight: '20px', borderRadius: '50%', }}><span className="btn-icon"><IoAddOutline /></span> </button>
+            <button className="btn-custom btn-search " style={{ width: '40px', hight: '13px', borderRadius: '50%', }}><span className="btn-icon"><IoAddOutline /></span> </button>
 
           </Link>
         </div> :
-        <div className="col-6" style={{ textAlign: 'end', left: '-10px' }}>
+        <div className="col-6" style={{ textAlign: 'end'}}>
           <Link to={"/work" + `/{"action":"edit","workId":"${id}"}`}>
             <span className="custom-icon-group" style={{ color: 'black', fontSize: '12pt', marginRight: 20 }}><FormOutlined /></span>
           </Link>
