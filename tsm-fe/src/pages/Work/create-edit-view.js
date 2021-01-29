@@ -711,7 +711,7 @@ class ActionsWork extends React.Component {
                                                                             }}
                                                                             className={`${this.state.isValid_timeIn[i] || this.state.greaterTimeIn[i] ? 'has-error-input' : ''}`} />
                                                                         {this.state.isValid_timeIn[i] && !this.state.greaterTimeIn[i] ? <span className="color-red">{msgValid.work.validTimeIn}</span> : null}
-                                                                        {this.state.greaterTimeIn[i] && !this.state.isValid_timeIn[i] ? <span className="color-red">{msgValid.work.validTimeInAndOut}</span> : null}
+                                                                        {this.state.greaterTimeIn[i] && !this.state.isValid_timeIn[i] ? <span className="color-red">{msgValid.work.validTimeInmoreTimeOut}</span> : null}
 
                                                                     </div>
                                                                 </div>
@@ -743,7 +743,7 @@ class ActionsWork extends React.Component {
                                                                             }}
                                                                             className={`${this.state.isValid_timeOut[i] || this.state.greaterTimeOut[i] ? 'has-error-input' : ''}`} />
                                                                         {this.state.isValid_timeOut[i] && !this.state.greaterTimeOut[i] ? <span className="color-red">{msgValid.work.validTimeOut}</span> : null}
-                                                                        {this.state.greaterTimeOut[i] && !this.state.isValid_timeOut[i] ? <span className="color-red">{msgValid.work.validTimeInAndOut}</span> : null}
+                                                                        {this.state.greaterTimeOut[i] && !this.state.isValid_timeOut[i] ? <span className="color-red">{msgValid.work.validTimeOutlessTimeIn}</span> : null}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -769,6 +769,7 @@ class ActionsWork extends React.Component {
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                            </div>
                                                             {/* Url */}
                                                             {/* <div className="col-6">
                                                                 <div className="row">
@@ -782,7 +783,7 @@ class ActionsWork extends React.Component {
                                                                     </div>
                                                                 </div>
                                                             </div> */}
-                                                        </div>
+                                                        
                                                         {/* Detail */}
                                                         <div className="row form-group">
                                                             <div className="col-12">
@@ -812,47 +813,32 @@ class ActionsWork extends React.Component {
                                                             <div className="col-12">
                                                                 <div className="row">
                                                                     <div className="col-2" style={{ textAlign: "right" }} >
-                                                                        <label className="title-field" for="txtDetail" >
+                                                                        <label className="title-field" for="txtLinkPlan" >
                                                                         Link Plan  
                                                                         </label>
                                                                     </div>
                                                                     <div className="col-10" style={{ textAlign: 'start', padding: 0 }}>
 
-                                                                    <input type="text" class="form-control" id="txtUrl" value={data.workUrl} onChange={(event) => { this.onWorkUrlChange(event, i) }} />
-                                                                        {/* <textarea
-                                                                           
-                                                                            type="text"
-                                                                            id="txtDetail"
-                                                                            className={`form-control ${this.state.isValid_detail[i] && this.state.isSubmit ? 'has-error-input' : ''}`}
-                                                                            value={data.workDetail} onChange={(event) => { this.onWorkDetailChange(event, i) }}
-                                                                        /> */}
-                                                                        {/* {this.state.isValid_detail[i] && this.state.isSubmit ? <span className="color-red">{msgValid.work.validWorkDetail}</span> : null} */}
-
+                                                                    <input type="text" class="form-control" id="txtLink Plan" value={data.workUrl} onChange={(event) => { this.onWorkUrlChange(event, i) }} />
+                                                                      
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
 
-                                                         {/* Ref. */}
+                                                         {/* Reference*/}
                                                         <div className="row form-group">
                                                             <div className="col-12">
                                                                 <div className="row">
                                                                     <div className="col-2" style={{ textAlign: "right" }} >
-                                                                        <label className="title-field" for="txtDetail" >
-                                                                        Ref. 
+                                                                        <label className="title-field" for="txtReference" >
+                                                                        Reference 
                                                                         </label>
                                                                     </div>
                                                                     <div className="col-10" style={{ textAlign: 'start', padding: 0 }}>
 
-                                                                    <input type="text" class="form-control" id="txtUrl" value={data.workUrl} onChange={(event) => { this.onWorkUrlChange(event, i) }} />
-                                                                        {/* <textarea
-                                                                           
-                                                                            type="text"
-                                                                            id="txtDetail"
-                                                                            className={`form-control ${this.state.isValid_detail[i] && this.state.isSubmit ? 'has-error-input' : ''}`}
-                                                                            value={data.workDetail} onChange={(event) => { this.onWorkDetailChange(event, i) }}
-                                                                        /> */}
-                                                                        {/* {this.state.isValid_detail[i] && this.state.isSubmit ? <span className="color-red">{msgValid.work.validWorkDetail}</span> : null} */}
+                                                                    <input type="text" class="form-control" id="txtReference" value={data.workReference} onChange={(event) => { this.onWorkReferenceChange(event, i) }} />
+                                                                      
 
                                                                     </div>
                                                                 </div>
@@ -929,11 +915,14 @@ class ActionsWork extends React.Component {
                     message={this.state.isPopupMsg}
                     clearActive={() => {
 
-                        if (this.state.isPopupSuccess) {
-                            this.props.history.push('/work')
+                        if(this.state.isPopupSuccess === true && this.state.isDelete === false){
+                            this.props.history.push('/work') 
                         }
+                       
+
                         this.setState({ isPopupError: false });
                         this.setState({ isPopupSuccess: false });
+                        
                     }}
                 />
                 <ConfirmPopup

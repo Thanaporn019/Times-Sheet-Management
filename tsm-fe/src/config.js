@@ -22,7 +22,8 @@ let data = {
             validTimeOut: "Please fill in the information.",
             validManHours: "Please click a time in and time out.",
             validWorkDetail: "Please fill in the information.",
-            validTimeInAndOut: "The time in must be less than the time out.The time out must be greater than the time in.",
+            validTimeInmoreTimeOut: "The TimeIn must be less than the TimeOut.",
+            validTimeOutlessTimeIn: "The TimeOut must be greater than the TimeIn.",
         },
         project: {
             validEmail: "You entered the email incorrectly.",

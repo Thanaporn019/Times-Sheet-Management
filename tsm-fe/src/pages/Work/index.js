@@ -72,7 +72,9 @@ class Work extends React.Component {
           'typeName': 'test1',
           'workDate': '01/01/2021',
           'workDetail': '....',
-          'workUrl': '-',
+         // 'workUrl': '-',
+         'workLinkPlan': 'https://bezkoder.com/node-express-sequelize-postgresql/',
+         'workReference': 'http://lib.swu.ac.th/images/Documents/Researchsupport/APA6thNew.pdf',
           'workManhour': '8',
           'workTimeIn': '09:00 AM',
           'workTimeOut': '18:00 PM',
@@ -88,7 +90,9 @@ class Work extends React.Component {
           'typeName': 'test2',
           'workDate': '02/01/2021',
           'workDetail': '....',
-          'workUrl': '-',
+         // 'workUrl': '-',
+         'workLinkPlan': 'https://bezkoder.com/node-express-sequelize-postgresql/',
+         'workReference': 'http://lib.swu.ac.th/images/Documents/Researchsupport/APA6thNew.pdf',
           'workManhour': '8',
           'workTimeIn': '09:00 AM',
           'workTimeOut': '18:00 PM',
@@ -105,7 +109,9 @@ class Work extends React.Component {
           'typeName': 'test3',
           'workDate': '03/01/2021',
           'workDetail': '....',
-          'workUrl': '-',
+         // 'workUrl': '-',
+         'workLinkPlan': 'https://bezkoder.com/node-express-sequelize-postgresql/',
+         'workReference': 'http://lib.swu.ac.th/images/Documents/Researchsupport/APA6thNew.pdf',
           'workManhour': '8',
           'workTimeIn': '09:00 AM',
           'workTimeOut': '18:00 PM',
@@ -122,7 +128,9 @@ class Work extends React.Component {
           'typeName': 'test3',
           'workDate': '03/01/2021',
           'workDetail': '....',
-          'workUrl': '-',
+          // 'workUrl': '-',
+          'workLinkPlan': 'https://bezkoder.com/node-express-sequelize-postgresql/',
+          'workReference': 'http://lib.swu.ac.th/images/Documents/Researchsupport/APA6thNew.pdf',
           'workManhour': '8',
           'workTimeIn': '09:00 AM',
           'workTimeOut': '18:00 PM',
@@ -1103,9 +1111,9 @@ class Work extends React.Component {
                     </div>
                   </div>
                 </div>
-
+ </div>
                 {/* Url */}
-                <div className="col-6">
+                {/* <div className="col-6">
                   <div className="row">
                     <div className="col-4" style={{ textAlign: "right" }} >
                       <label className="title-field" for="txtUrl">
@@ -1116,8 +1124,8 @@ class Work extends React.Component {
                       <input type="text" class="form-control" id="txtUrl" value={this.state.updateData.workUrl} onChange={(event) => { this.onWorkUrlChange(event) }} />
                     </div>
                   </div>
-                </div>
-              </div>
+                </div> */}
+             
 
               {/* Detail */}
               <div className="row form-group">
@@ -1138,7 +1146,48 @@ class Work extends React.Component {
                   </div>
                 </div>
               </div>
+
+
+                                                  {/* Link Plan */}
+                                                        <div className="row form-group">
+                                                            <div className="col-12">
+                                                                <div className="row">
+                                                                    <div className="col-2" style={{ textAlign: "right" }} >
+                                                                        <label className="title-field" for="LinkPlan" >
+                                                                        Link Plan  
+                                                                        </label>
+                                                                    </div>
+                                                                    <div className="col-10" style={{ textAlign: 'start', padding: 0 }}>
+
+                                                                    <input type="text" class="form-control" id="txtLinkPlan" value={this.state.updateData.workLinkPlan} onChange={(event) => { this.onWorkLinkPlanChange(event) }} />
+                                                                      
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                         {/* Reference */}
+                                                         <div className="row form-group">
+                                                            <div className="col-12">
+                                                                <div className="row">
+                                                                    <div className="col-2" style={{ textAlign: "right" }} >
+                                                                        <label className="title-field" for="Reference" >
+                                                                        Reference 
+                                                                        </label>
+                                                                    </div>
+                                                                    <div className="col-10" style={{ textAlign: 'start', padding: 0 }}>
+
+                                                                    <input type="text" class="form-control" id="txtReference" value={this.state.updateData.workReference} onChange={(event) => { this.onWorkReferenceChange(event) }} />
+                                                                      
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+              
             </div>
+
             <div className="row form-group" style={{ margin: 0 }}>
               <div className="col-12" style={{ textAlign: "right", padding: 20 }}>
                 <button
