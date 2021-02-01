@@ -784,7 +784,7 @@ class Work extends React.Component {
             <Breadcrumb>
               {/* <Breadcrumb.Item href="#"> */}
               <HomeOutlined />
-              <span className="breadcrum-custom"> Work</span>
+              <span className="breadcrum-custom">  Work </span>
               {/* </Breadcrumb.Item> */}
             </Breadcrumb>
 
@@ -916,6 +916,8 @@ class Work extends React.Component {
                     <Column dataField="workManhour" caption="Man Hours" dataType="string" />
                     <Column dataField="workTimeIn" caption="Time In" dataType="string" />
                     <Column dataField="workTimeOut" caption="Time Out" dataType="string" />
+                    <Column dataField="workLinkPlan" caption="Link Plan" dataType="string" />
+                    <Column dataField="workReference" caption="Reference" dataType="string" />
                     <Column caption="Edit Delete" alignment="center" width={110} cellRender={this.actionRender}>
 
                     </Column>

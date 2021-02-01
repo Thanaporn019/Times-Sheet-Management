@@ -709,6 +709,7 @@ class ActionsWork extends React.Component {
                                                                                     i
                                                                                 );
                                                                             }}
+                                                                            
                                                                             className={`${this.state.isValid_timeIn[i] || this.state.greaterTimeIn[i] ? 'has-error-input' : ''}`} />
                                                                         {this.state.isValid_timeIn[i] && !this.state.greaterTimeIn[i] ? <span className="color-red">{msgValid.work.validTimeIn}</span> : null}
                                                                         {this.state.greaterTimeIn[i] && !this.state.isValid_timeIn[i] ? <span className="color-red">{msgValid.work.validTimeInmoreTimeOut}</span> : null}
@@ -819,7 +820,7 @@ class ActionsWork extends React.Component {
                                                                     </div>
                                                                     <div className="col-10" style={{ textAlign: 'start', padding: 0 }}>
 
-                                                                    <input type="text" class="form-control" id="txtLink Plan" value={data.workUrl} onChange={(event) => { this.onWorkUrlChange(event, i) }} />
+                                                                    <input type="text" class="form-control" id="txtLinkPlan" value={data.workUrl} onChange={(event) => { this.onWorkUrlChange(event, i) }} />
                                                                       
                                                                     </div>
                                                                 </div>

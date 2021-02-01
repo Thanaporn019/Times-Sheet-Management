@@ -134,9 +134,9 @@ class ActionJobType extends React.Component {
 
                                         {/* Job Type Name */}
                                         <div className="row form-group">
-                                            <div className={`col-5`} style={{ textAlign: 'right' }}><label className="title-field" for="txtJob Type Name">Job Type Name<span style={{ color: 'red' }}>*</span></label></div>
+                                            <div className={`col-5`} style={{ textAlign: 'right' }}><label className="title-field" for="txtJobTypeName">Job Type Name<span style={{ color: 'red' }}>*</span></label></div>
                                             <div className="col-3" style={{ textAlign: 'start', padding: 0 }}>
-                                                <input type="text" class={`form-control ${this.state.valid_typeName && this.state.isSubmit ? 'has-error-input' : ''}`} id="txtJob Type Name" value={this.state.data.typeName} onChange={this.onTypeNameChange} />
+                                                <input type="text" class={`form-control ${this.state.valid_typeName && this.state.isSubmit ? 'has-error-input' : ''}`} id="txtJobTypeName" value={this.state.data.typeName} onChange={this.onTypeNameChange} />
                                                 {this.state.valid_typeName && this.state.isSubmit ? <span className="color-red">{msgValid.req}</span> : null}
                                             </div>
                                         </div>
