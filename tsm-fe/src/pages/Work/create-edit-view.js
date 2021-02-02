@@ -209,7 +209,8 @@ class ActionsWork extends React.Component {
 
 
     // TODO :: Dropdown Time In
-    onChangeTimeIn = (time, timestring, index) => {
+    onChangeTimeIn = (time, timestring, index)  => {
+      
         // console.log("ActionsWork -> onChangeTimeIn -> time, timestring, index", time, timestring, index)
         let data = [...this.state.data];
         let item = { ...data[index] };
@@ -223,6 +224,7 @@ class ActionsWork extends React.Component {
         }
 
         this.setState({ data: data, isValid_timeIn: valid });
+        this.checkGreaterTime('one', index)
     };
 
     // TODO :: Dropdown Time Out
@@ -244,6 +246,7 @@ class ActionsWork extends React.Component {
         }
 
         this.setState({ data: data, isValid_timeOut: valid });
+        this.checkGreaterTime('one', index)
     };
 
 
@@ -266,6 +269,9 @@ class ActionsWork extends React.Component {
             }
             return
         }
+
+       
+    
 
         if (this.checkGreaterTime('one', index) === false) {
             console.log("TCL: ActionsWork -> calManHours -> ", 'time out > time in')
@@ -295,12 +301,22 @@ class ActionsWork extends React.Component {
                     time = (calHours <= 9 ? "0" : "") + calHours + ":" + (calMin <= 9 ? "0" : "") + calMin;
                 }
             }
+
         } else {
+
             time = tempTime;
         }
 
+         let valid = [...this.state.isValid_manHours];
+       
+            valid[index] = false;
+        
+
+        // this.setState({ data: temp, isValid_ManHours: valid });
+
         temp[index].workManhour = time
-        this.setState({ data: temp })
+        // this.setState({ data: temp })
+        this.setState({ data: temp, isValid_manHours: valid });
     };
 
     fnCallDiffTime = (start, end) => {
@@ -383,13 +399,14 @@ class ActionsWork extends React.Component {
     onWorkManHoursChange = (event, index) => {
         let temp = _.cloneDeep(this.state.data)
         temp[index].workManhour = event.target.value
-
-        let valid = [...this.state.isValid_timeOut];
-        if (!event.target.value || event.target.value !== '') {
+        
+        
+        let valid = [...this.state.isValid_manHours];
+        if (event.target.value || event.target.value !== '') {
             valid[index] = false;
         }
 
-        this.setState({ data: temp, isValid_timeOut: valid });
+        this.setState({ data: temp, isValid_manHours: valid });
     }
     onWorkUrlChange = (event, index) => {
         console.log("TCL: ActionsWork -> onWorkUrlChange -> event", event)
@@ -509,21 +526,33 @@ class ActionsWork extends React.Component {
     }
 
     checkGreaterTime(type, index) {
+        
         if (type === 'one') {
 
-            if ((!this.state.data[index].timeIn || this.state.data[index].timeIn !== '') && (!this.state.data[index].timeOut || this.state.data[index].timeOut !== '')) {
+            if ((this.state.data[index].timeIn || this.state.data[index].timeIn !== '') && (this.state.data[index].timeOut || this.state.data[index].timeOut !== '')) {
                 var start = moment(this.state.data[index].timeIn, 'HH:mm A').format('HH:mm');
                 var end = moment(this.state.data[index].timeOut, 'HH:mm A').format('HH:mm');
                 let validTimeIn = [...this.state.greaterTimeIn];
                 let validTimeOut = [...this.state.greaterTimeOut];
+                console.log(start);
+                console.log(end);
                 if (start > end) {
                     validTimeIn[index] = true;
                     validTimeOut[index] = true;
+                    
                     this.setState({
                         greaterTimeIn: validTimeIn,
                         greaterTimeOut: validTimeOut,
                     })
                     return false
+                }else{
+                    validTimeIn[index] = false;
+                    validTimeOut[index] = false;
+                    this.setState({
+                        greaterTimeIn: validTimeIn,
+                        greaterTimeOut: validTimeOut,
+                    })
+                    return true
                 }
             }
         } else {
@@ -717,6 +746,10 @@ class ActionsWork extends React.Component {
                                                                     </div>
                                                                 </div>
                                                             </div>
+
+
+
+
                                                             {/* Time out */}
                                                             <div className="col-6">
                                                                 <div className="row">

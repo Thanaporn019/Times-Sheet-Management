@@ -1057,7 +1057,7 @@ class Work extends React.Component {
                         }}
                         className={`${this.state.isValid_timeIn || this.state.greaterTimeIn ? 'has-error-input' : ''}`} />
                       {this.state.isValid_timeIn && !this.state.greaterTimeIn ? <span className="color-red">{msgValid.work.validTimeIn}</span> : null}
-                      {this.state.greaterTimeIn && !this.state.isValid_timeIn ? <span className="color-red">{msgValid.work.validTimeInAndOut}</span> : null}
+                      {this.state.greaterTimeIn && !this.state.isValid_timeIn ? <span className="color-red">{msgValid.work.validTimeInmoreTimeOut}</span> : null}
 
                     </div>
                   </div>
@@ -1086,7 +1086,7 @@ class Work extends React.Component {
                         }}
                         className={`${this.state.isValid_timeOut || this.state.greaterTimeOut ? 'has-error-input' : ''}`} />
                       {this.state.isValid_timeOut && !this.state.greaterTimeOut ? <span className="color-red">{msgValid.work.validTimeOut}</span> : null}
-                      {this.state.greaterTimeOut && !this.state.isValid_timeOut ? <span className="color-red">{msgValid.work.validTimeInAndOut}</span> : null}
+                      {this.state.greaterTimeOut && !this.state.isValid_timeOut ? <span className="color-red">{msgValid.work.validvalidTimeOutlessTimeIn}</span> : null}
                     </div>
                   </div>
                 </div>

@@ -85,6 +85,8 @@ class ActionJobType extends React.Component {
     }
 
     checkValidate = () => {
+        console.log(this.state.data.typeName);
+        console.log(this.state.data.typeCode);
         if (this.state.data.typeName && this.state.data.typeCode) {
             this.setState({ isOpen: true, isTypeShowConfirm: 'save', isTextMsg: msgPopupTitle.saved, isDataPopUp: this.state.data, valid_typeName: false, valid_typeCode: false })
         } else {

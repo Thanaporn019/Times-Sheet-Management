@@ -27,6 +27,16 @@ let data = {
         },
         project: {
             validEmail: "You entered the email incorrectly.",
+            validStartDate: "Please fill in the information.",
+            validEndDate: "Please fill in the information.",
+            validStartDatemoreEndDate: "The start date must be less than the end date.",
+            validEndDatelessStartDate: "The end date must be greater than the start date.",
+        
+            
+        },
+        jobtype: {
+            validJobTypeName: "Please fill in the information.",
+            validCode: "Please fill in the information.",
         }
     }
 }
