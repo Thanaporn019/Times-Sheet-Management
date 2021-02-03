@@ -6,6 +6,7 @@ import { ConfigProvider, Layout } from "antd";
 // const { Content } = Layout;
 import Routing from './routes'
 
+
 class App extends Component {
 
   render() {

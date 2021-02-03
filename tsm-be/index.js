@@ -1,33 +1,22 @@
-var express = require('express');
-var path = require('path');
-var app = express();
+const express = require("express");
+const app = express();
+const cors = require("cors");
+const pool = require("./connect");
 
-// app.get('/api/youtube', function(req, res){
-//     res.json({youtube: "555", meessage: "get"});
-// });
+// middleware
+app.use(cors());
+app.use(express.json());
 
-// app.post('/api/youtube', function(req, res){
-//     res.json({youtube: "555", meessage: "post"});
-// });
+app.get('/user',(req, res) => {
 
-app.route('/api/youtube').get (function(req, res){
-
-    res.json({youtube: "555", meessage: "get"});
-
-}).post(function(req, res){
-    res.json({youtube: "555", meessage: "post"});
-
-}).delete(function(req, res){
-    res.json({youtube: "555", meessage: "delete"});
-
-}).put(function(req, res){
-    res.json({youtube: "555", meessage: "put"});
+    res.end('HELLO')
 })
-
-
-
+// pool.query('SELECT NOW()', (err, res) => {
+//     console.log(err, res) 
+//     pool.end() 
+//   })
 // open port
-app.listen(7000, function(){
-    console.log("restful index is running..")
+app.listen(5000, () => {
+    console.log("sever has started on port 5000");
 
 });
