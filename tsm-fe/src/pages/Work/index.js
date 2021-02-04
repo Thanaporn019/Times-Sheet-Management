@@ -31,6 +31,12 @@ import AspNetData from 'devextreme-aspnet-data-nojquery';
 import _ from "lodash";
 import { Breadcrumb, Modal, TimePicker, Select } from 'antd';
 import configService from '../../config';
+import axios from 'axios';
+
+
+const api = configService.api;
+
+
 const msgAlertTitle = configService.msgAlert;
 const msgPopupTitle = configService.msgConfirm;
 const msgValid = configService.validDateFill;
@@ -178,6 +184,12 @@ class Work extends React.Component {
     this.getProjectList()
     this.getJobtypeList()
     this.fnSetDefaultDate()
+
+    axios.get(api + '/user').then(res=>{
+      console.log("🚀 ~ file: index.js ~ line 40 ~ axios.get ~ res", res.data)
+        
+      })
+      
   }
 
   fnSetDefaultDate() {
@@ -967,6 +979,34 @@ class Work extends React.Component {
         {this.state.popupEditVisable ?
           <div className="box-title-search" style={{ paddingBottom: 0 }}>
             <p className="font-size-search"> Update Work </p>
+
+            <div className="box-content" style={{ marginBottom: 0 }}>
+                                        <div className="box-action-date">
+                                            <div className="row form-group">
+                                                <div className="col-3" style={{ textAlign: "right" }}>
+
+                                                    <label className="title-field" for="ddlDate">
+
+                                                        Date : <span style={{ color: "red" }}> * </span>
+                                                    </label>
+                                                </div>
+                                                <div className={`col-4`} style={{ textAlign: 'start', padding: 0 }}>
+                                                    <DateBox value={null} type="date" value={this.state.workDate}
+                                                        type="date" onValueChanged={(e) => {
+                                                            this.handleChangeDate(e)
+                                                        }}
+                                                        className={`${this.state.isValid_workDate && this.state.isSubmit ? 'has-error-input' : ''}`} />
+                                                    {this.state.isValid_workDate && this.state.isSubmit ? <span className="color-red">{msgValid.work.validWorkDate}</span> : null}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {/* <hr className="hr-action" /> */}
+                                        <div style={{ textAlign: "right" }}>
+                                            <p className="title-field">
+                                                <span style={{ color: "red" }}> * </span> Items marked with an asterisk are required
+                                            </p>
+                                        </div> </div>
+
 
             <div className="box-action-content">
               <div className="row form-group">

@@ -8,13 +8,16 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/user',(req, res) => {
-
-    res.end('HELLO')
+// 
+// 
+// / SQL
+// DATA = {}
+pool.query('SELECT NOW()', (err, resp) => {
+    console.log(err, resp) 
+    res.end(resp)
+    pool.end() 
+  })
 })
-// pool.query('SELECT NOW()', (err, res) => {
-//     console.log(err, res) 
-//     pool.end() 
-//   })
 // open port
 app.listen(5000, () => {
     console.log("sever has started on port 5000");

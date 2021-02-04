@@ -1,7 +1,8 @@
 
 
 let data = {
-    api: '',
+    api: 'http://localhost:5000',
+    
     msgAlert: {
         updated: 'Your data has been updated successfully.',
         saved: 'Your data has been saved successfully.',
