@@ -35,7 +35,10 @@ import axios from 'axios';
 
 
 const api = configService.api;
-
+axios.get(api + '/user').then(res=>{
+  console.log("🚀 ~ file: index.js ~ line 40 ~ axios.get ~ res", res.data)
+    
+  })
 
 const msgAlertTitle = configService.msgAlert;
 const msgPopupTitle = configService.msgConfirm;
@@ -185,10 +188,7 @@ class Work extends React.Component {
     this.getJobtypeList()
     this.fnSetDefaultDate()
 
-    axios.get(api + '/user').then(res=>{
-      console.log("🚀 ~ file: index.js ~ line 40 ~ axios.get ~ res", res.data)
-        
-      })
+    
       
   }
 
