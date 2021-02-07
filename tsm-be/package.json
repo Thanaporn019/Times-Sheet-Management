@@ -15,6 +15,7 @@
     "express": "^4.17.1",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
+    "node-json-config": "0.0.5",
     "nodemon": "^2.0.7",
     "pg": "^8.5.1",
     "pg-hstore": "^2.3.3",
