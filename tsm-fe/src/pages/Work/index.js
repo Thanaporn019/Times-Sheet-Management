@@ -356,8 +356,9 @@ class Work extends React.Component {
       {data.data.items.length === 0 || data.data.items[0].workId === undefined ?
         <div className="col-6" style={{ textAlign: 'end' }}>
           <Link to='/work/{"action":"create"}'>
-            <button className="btn-custom btn-search " style={{ width: '40px', hight: '13px', borderRadius: '50%', }}><span className="btn-icon"><IoAddOutline /></span> </button>
-
+            {/* <button className="btn-custom btn-search " style={{ width: '40px', hight: '13px', borderRadius: '50%', }}><IoAddOutline /></button> */}
+            <IoAddOutline style={{backgroundColor:'green', borderRadius:'50%', width:'35', height:'35'}}/>
+         
           </Link>
         </div> :
         <div className="col-6" style={{ textAlign: 'end'}}>
@@ -888,7 +889,7 @@ class Work extends React.Component {
               <div className="box-search" style={{ padding: 30 }}>
                 <div style={{ textAlign: 'end', padding: 15 }}>
                   <Link to='/work/{"action":"create"}'>
-                    <button className="btn-custom btn-search " style={{ width: 185 }}><span className="btn-icon"><IoAddOutline /></span> <span className="btn-txt-icon">Create Work</span></button>
+                    <button className="btn-custom btn-search " style={{ width: 185 }}><span className="btn-icon"><IoAddOutline  /></span> <span className="btn-txt-icon">Create Work</span></button>
 
                   </Link>
                 </div>
@@ -981,16 +982,27 @@ class Work extends React.Component {
             <p className="font-size-search"> Update Work </p>
 
             <div className="box-content" style={{ marginBottom: 0 }}>
-                                        <div className="box-action-date">
-                                            <div className="row form-group">
-                                                <div className="col-3" style={{ textAlign: "right" }}>
+                                      
+                                        <div style={{ textAlign: "right" }}>
+                                            <p className="title-field">
+                                                <span style={{ color: "red" }}> * </span> Items marked with an asterisk are required
+                                            </p>
+                                        </div> </div>
 
-                                                    <label className="title-field" for="ddlDate">
 
-                                                        Date : <span style={{ color: "red" }}> * </span>
-                                                    </label>
-                                                </div>
-                                                <div className={`col-4`} style={{ textAlign: 'start', padding: 0 }}>
+                                          <div className="box-action-content">
+
+                                              {/* Date */}
+                                                      <div className="row form-group">
+                                                            <div className="col-12">
+                                                                <div className="row">
+                                                                    <div className="col-2" style={{ textAlign: "right" }} >
+                                                                        <label className="title-field" for="Date" >
+                                                                        Date : <span style={{ color: "red" }}> * </span>
+                                                                        </label>
+                                                                        
+                                                                    </div>
+                                                                    <div className={`col-10`} style={{ textAlign: 'start', padding: 0 }}>
                                                     <DateBox value={null} type="date" value={this.state.workDate}
                                                         type="date" onValueChanged={(e) => {
                                                             this.handleChangeDate(e)
@@ -1000,15 +1012,8 @@ class Work extends React.Component {
                                                 </div>
                                             </div>
                                         </div>
-                                        {/* <hr className="hr-action" /> */}
-                                        <div style={{ textAlign: "right" }}>
-                                            <p className="title-field">
-                                                <span style={{ color: "red" }}> * </span> Items marked with an asterisk are required
-                                            </p>
-                                        </div> </div>
+                                        </div>
 
-
-            <div className="box-action-content">
               <div className="row form-group">
                 <div className="col-6">
                   <div className="row">
