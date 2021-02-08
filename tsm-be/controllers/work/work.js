@@ -58,7 +58,7 @@ router.post('/', async (req, res) => {
         if (sqlWorkProjectName !== '' && sqlWorkJobType !== '' && sqlWorkDateFrom !== '' && sqlWorkDateTo !== '') {
             where = `WHERE ${sqlWorkProjectName} AND ${sqlWorkJobType} AND ${sqlWorkDateFrom} AND ${sqlWorkDateTo}`
         } else {
-            where = `WHERE ${sqlWorkProjectName !== '' ? sqlWorkProjectName : sqlWorkJobType } AND ${sqlWorkJobType !== '' ? sqlWorkJobType: sqlWorkDateFrom} AND ${sqlWorkDateFrom !== '' ? sqlWorkDateFrom: sqlWorkDateTo}`
+            where = `WHERE ${sqlWorkProjectName !== '' ? sqlWorkProjectName : sqlWorkJobType} AND ${sqlWorkJobType !== '' ? sqlWorkJobType : sqlWorkDateFrom} AND ${sqlWorkDateFrom !== '' ? sqlWorkDateFrom : sqlWorkDateTo}`
         }
         query = `SELECT ${fieldsSql} FROM "${table}" ${where} ${orderby} LIMIT ${reqLimit} OFFSET ${reqOffset};`
         var result = await postgresService.queryPostgrest(req, query, 'post');
@@ -71,4 +71,26 @@ router.post('/', async (req, res) => {
 
 });
 
+router.post('/', async (req, res) => {
+    try {
+
+    } catch (error) {
+        console.log("TCL: error", error)
+    }
+});
+router.delete('/:typeId', async (req, res) => {
+    try {
+
+    } catch (error) {
+        console.log("TCL: error", error)
+    }
+});
+
+router.put('/:typeId', async function (req, res) {
+    try {
+
+    } catch (error) {
+        console.log("TCL: error", error)
+    }
+});
 module.exports = router;

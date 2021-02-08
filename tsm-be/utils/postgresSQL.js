@@ -44,14 +44,53 @@ async function queryPostgrestPaging(req, query, table) {
         console.log("TCL: queryPostgrest -> error", error)
     }
 }
-async function insertPostgrest() {
-
+async function insertPostgrest(req, query, method) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            var msg = conf.get('responseMsg');
+            var result = await connectPostgres(req, query, method);
+            if (result.resultCode === msg.message.success.resultCode || msg.message.dataNotFound.resultCode) {
+                resolve(result)
+            } else {
+                reject(result)
+            }
+        } catch (error) {
+            reject(error)
+            console.log("TCL: deletePostgrest -> error", error)
+        }
+    });
 }
-async function updatePostgrest() {
-
+async function updatePostgrest(req, query, method) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            var msg = conf.get('responseMsg');
+            var result = await connectPostgres(req, query, method);
+            if (result.resultCode === msg.message.success.resultCode || msg.message.dataNotFound.resultCode) {
+                resolve(result)
+            } else {
+                reject(result)
+            }
+        } catch (error) {
+            reject(error)
+            console.log("TCL: deletePostgrest -> error", error)
+        }
+    });
 }
-async function deletePostgrest() {
-
+async function deletePostgrest(req, query, method) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            var msg = conf.get('responseMsg');
+            var result = await connectPostgres(req, query, method);
+            if (result.resultCode === msg.message.success.resultCode || msg.message.dataNotFound.resultCode) {
+                resolve(result)
+            } else {
+                reject(result)
+            }
+        } catch (error) {
+            reject(error)
+            console.log("TCL: deletePostgrest -> error", error)
+        }
+    });
 }
 
 async function checkResponse(rawResult, err, method) {
