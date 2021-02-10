@@ -64,7 +64,7 @@ router.post('/', async (req, res) => {
         let body = req.body || {}
         let typeName = body.typeName.replace(/"/g, "'");
         let typeCode = body.typeCode.replace(/"/g, "'");
-        // ? "createBy" เอาค่ามาจากไหน
+        // ? "createBy" เอาค่ามาจากไหน..ยังไม่มีข้อมูล เพราะส่วนนี้ดึงมาจากตอน login ซึ่งระบบนี้ยังไม่มี login
         query = `INSERT INTO "${table}" ("typeName", "typeCode", "updateDate", "updateBy", "createDate", "createBy", "deleteDate", "deleteBy") VALUES ('${typeName}', '${typeCode}', null, null, current_timestamp, 'test_user', null, null);`
         console.log("TCL: query", query)
         var result = await postgresService.insertPostgrest(req, query, 'post');
@@ -78,7 +78,7 @@ router.delete('/:typeId', async (req, res) => {
     try {
         let typeId = req.params.typeId || null
         let query = '';
-        // ? "deleteBy" เอาค่ามาจากไหน
+        // ? "deleteBy" เอาค่ามาจากไหน..ยังไม่มีข้อมูล เพราะส่วนนี้ดึงมาจากตอน login ซึ่งระบบนี้ยังไม่มี login
         query = `UPDATE "${table}" SET "deleteDate" = current_timestamp, "deleteBy" = 'test_user' WHERE "typeId" = ${typeId};`
         var result = await postgresService.deletePostgrest(req, query, 'delete');
         return res.json(result)
@@ -96,7 +96,7 @@ router.put('/:typeId', async function (req, res) {
         let typeCode = body.typeCode.replace(/"/g, "'");
 
         let query = '';
-        // ? "updateBy" เอาค่ามาจากไหน
+        // ? "updateBy" เอาค่ามาจากไหน..ยังไม่มีข้อมูล เพราะส่วนนี้ดึงมาจากตอน login ซึ่งระบบนี้ยังไม่มี login
         query = `UPDATE "${table}" SET "typeName" = '${typeName}', "typeCode" = '${typeCode}', "updateDate" = current_timestamp, "updateBy" = 'test_user' WHERE "typeId" = ${typeId};`
         console.log("TCL: query", query)
         var result = await postgresService.updatePostgrest(req, query, 'put');

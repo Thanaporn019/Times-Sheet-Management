@@ -74,12 +74,35 @@ router.post('/', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
 
+        // let body = req.body || {}
+        // let WorkprojectName = body.WorkprojectName.replace(/"/g, "'");
+        // let WorkJobtype = body.WorkJobtype.replace(/"/g, "'");
+        // let WorkTimein = body.WorkTimein.replace(/"/g, "'");
+        // let WorkTimeout = body.WorkTimeout.replace(/"/g, "'");
+        // let WorkManhours = body.WorkManhours.replace(/"/g, "'");
+        // let WorkDetail = body.WorkDetail.replace(/"/g, "'");
+        // let WorkLinkplan = body.WorkLinkplan.replace(/"/g, "'");
+        // let WorkReference = body.WorkReference ? body.WorkReference.replace(/"/g, "'") : 'null';
+        
+        // query = `INSERT INTO "${table}" ("WorkprojectName", "WorkJobtype", "WorkTimein", "WorkTimeout", "WorkManhours", "WorkDetail", "WorkLinkplan", "WorkReference") 
+        //                          VALUES ('${WorkprojectName}', '${WorkJobtype}', '${WorkTimein}', '${WorkTimeout}', '${WorkManhours}', '${WorkDetail}', '${WorkLinkplan}','${WorkReference}', null, null, current_timestamp, 'test_user', null, null);`
+        // console.log("TCL: query", query)
+        // var result = await postgresService.insertPostgrest(req, query, 'post');
+        // return res.json(result)
+
     } catch (error) {
         console.log("TCL: error", error)
     }
 });
 router.delete('/:typeId', async (req, res) => {
     try {
+
+        // let workId = req.params.workId || null
+        // let query = '';
+      
+        // query = `UPDATE "${table}" SET "deleteDate" = current_timestamp, "deleteBy" = 'test_user' WHERE "worktId" = ${workId};`
+        // var result = await postgresService.deletePostgrest(req, query, 'delete');
+        // return res.json(result)
 
     } catch (error) {
         console.log("TCL: error", error)
@@ -88,6 +111,24 @@ router.delete('/:typeId', async (req, res) => {
 
 router.put('/:typeId', async function (req, res) {
     try {
+
+        // let workId = req.params.workId || null
+        // let body = req.body || {}
+        // let WorkprojectName = body.WorkprojectName.replace(/"/g, "'");
+        // let WorkJobtype = body.WorkJobtype.replace(/"/g, "'");
+        // let WorkTimein = body.WorkTimein.replace(/"/g, "'");
+        // let WorkTimeout = body.WorkTimeout.replace(/"/g, "'");
+        // let WorkManhours = body.WorkManhours.replace(/"/g, "'");
+        // let WorkDetail = body.WorkDetail.replace(/"/g, "'");
+        // let WorkLinkplan = body.WorkLinkplan.replace(/"/g, "'");
+        // let WorkReference = body.WorkReference ? body.WorkReference.replace(/"/g, "'") : 'null';
+
+        // let query = '';
+      
+        // query = `UPDATE "${table}" SET "WorkprojectName" = '${WorkprojectName}', "WorkJobtype" = '${WorkJobtype}', "WorkTimein" = '${WorkTimein}', "WorkTimeout" = '${WorkTimeout}', "WorkManhours" = '${WorkManhours}', "WorkDetail" = '${WorkDetail}', "WorkLinkplan" = '${WorkLinkplan}', "WorkReference" = '${WorkReference}', "updateDate" = current_timestamp, "updateBy" = 'test_user' WHERE "worktId" = ${workId};`
+        // console.log("TCL: query", query)
+        // var result = await postgresService.updatePostgrest(req, query, 'put');
+        // return res.json(result)
 
     } catch (error) {
         console.log("TCL: error", error)
