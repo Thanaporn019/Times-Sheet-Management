@@ -357,7 +357,7 @@ class Work extends React.Component {
         <div className="col-6" style={{ textAlign: 'end' }}>
           <Link to='/work/{"action":"create"}'>
             {/* <button className="btn-custom btn-search " style={{ width: '40px', hight: '13px', borderRadius: '50%', }}><IoAddOutline /></button> */}
-            <IoAddOutline style={{backgroundColor:'green', borderRadius:'50%', width:'35', height:'35'}}/>
+            <IoAddOutline style={{backgroundColor:'green', borderRadius:'50%', width:'30', height:'30'}}/>
          
           </Link>
         </div> :
@@ -785,6 +785,7 @@ class Work extends React.Component {
     }
 
     this.setState({ updateData: item, isValid_timeOut: valid });
+    
   };
 
   render() {
@@ -1101,7 +1102,7 @@ class Work extends React.Component {
                           this.onChangeTimeIn(time, timestring);
                         }}
                         className={`${this.state.isValid_timeIn || this.state.greaterTimeIn ? 'has-error-input' : ''}`} />
-                      {this.state.isValid_timeIn && !this.state.greaterTimeIn ? <span className="color-red">{msgValid.work.validTimeIn}</span> : null}
+                       {this.state.isValid_timeIn && !this.state.greaterTimeIn ? <span className="color-red">{msgValid.work.validTimeIn}</span> : null}
                       {this.state.greaterTimeIn && !this.state.isValid_timeIn ? <span className="color-red">{msgValid.work.validTimeInmoreTimeOut}</span> : null}
 
                     </div>
@@ -1131,7 +1132,7 @@ class Work extends React.Component {
                         }}
                         className={`${this.state.isValid_timeOut || this.state.greaterTimeOut ? 'has-error-input' : ''}`} />
                       {this.state.isValid_timeOut && !this.state.greaterTimeOut ? <span className="color-red">{msgValid.work.validTimeOut}</span> : null}
-                      {this.state.greaterTimeOut && !this.state.isValid_timeOut ? <span className="color-red">{msgValid.work.validvalidTimeOutlessTimeIn}</span> : null}
+                      {this.state.greaterTimeOut && !this.state.isValid_timeOut ? <span className="color-red">{msgValid.work.validTimeOutlessTimeIn}</span> : null}
                     </div>
                   </div>
                 </div>
