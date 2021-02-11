@@ -31,14 +31,14 @@ import AspNetData from 'devextreme-aspnet-data-nojquery';
 import _ from "lodash";
 import { Breadcrumb, Modal, TimePicker, Select } from 'antd';
 import configService from '../../config';
-import axios from 'axios';
+// import axios from 'axios';
 
 
-const api = configService.api;
-axios.get(api + '/user').then(res=>{
-  console.log("🚀 ~ file: index.js ~ line 40 ~ axios.get ~ res", res.data)
+// const api = configService.api;
+// axios.get(api + '/user').then(res=>{
+//   console.log("🚀 ~ file: index.js ~ line 40 ~ axios.get ~ res", res.data)
     
-  })
+//   })
 
 const msgAlertTitle = configService.msgAlert;
 const msgPopupTitle = configService.msgConfirm;
@@ -209,23 +209,81 @@ class Work extends React.Component {
     this.setState({
       projectList: [{
         projectId: '001',
-        projectName: 'test1'
+        projectName: 'SSB-SRFC Phase 0.1'
       },
       {
         projectId: '002',
-        projectName: 'test2'
-      }]
+        projectName: 'Smart Quotation Diagram'
+      },
+      {
+        projectId: '003',
+        projectName: 'Other 2017'
+      },
+      {
+        projectId: '004',
+        projectName: 'SmartZone Support'
+      },
+      {
+        projectId: '005',
+        projectName: 'SmartZone 2018'
+      },
+      {
+        projectId: '006',
+        projectName: 'SmartZone 2019'
+      },
+      {
+        projectId: '007',
+        projectName: 'SmartZone MAC Authen'
+      },
+      {
+        projectId: '008',
+        projectName: 'Other 2017'
+      },
+      {
+        projectId: '009',
+        projectName: 'CarService GissWin'
+      },
+    ]
     })
 
     let resData = [
       {
         projectId: "001",
-        projectName: "test1",
+        projectName: "SSB-SRFC Phase 0.1",
       },
       {
         projectId: "002",
-        projectName: "test2",
+        projectName: "Smart Quotation Diagram",
       },
+      {
+        projectId: '003',
+        projectName: 'Other 2017'
+      },
+      {
+        projectId: '004',
+        projectName: 'SmartZone Support'
+      }, 
+      {
+        projectId: '005',
+        projectName: 'SmartZone 2018'
+      }, 
+      {
+        projectId: '006',
+        projectName: 'SmartZone 2019'
+      }, 
+      {
+        projectId: '007',
+        projectName: 'SmartZone MAC Authen'
+      }, 
+      {
+        projectId: '008',
+        projectName: 'SmartZone Tax Invoice'
+      }, 
+      {
+        projectId: '009',
+        projectName: 'CarService GissWin'
+      },
+
     ];
     let temp = [];
     for (let i = 0; i < resData.length; i++) {
@@ -241,22 +299,80 @@ class Work extends React.Component {
     this.setState({
       jobtypeList: [{
         typeId: '001',
-        typeName: 'test1'
+        typeName: 'SSB-SRFC Phase 0.1'
       },
       {
         typeId: '002',
-        typeName: 'test2'
-      }]
+        typeName: 'Smart Quotation Diagram'
+      },
+      {
+        typeId: '003',
+        typeName: 'Other 2017'
+      },
+      {
+        typeId: '004',
+        typeName: 'SmartZone Support'
+      },
+      {
+        typeId: '005',
+        typeName: 'SmartZone 2018'
+      },
+      {
+        typeId: '006',
+        typeName: 'Other 2017'
+      },
+      {
+        typeId: '007',
+        typeName: 'SmartZone MAC Authen'
+      },
+      {
+        typeId: '008',
+        typeName: 'SmartZone Tax Invoice'
+      },
+      {
+        typeId: '009',
+        typeName: 'CarService GissWin'
+      },
+
+    ]
     })
 
     let resData = [
       {
         typeId: "001",
-        typeName: "test1",
+        typeName: "SSB-SRFC Phase 0.1",
       },
       {
         typeId: "002",
-        typeName: "test2",
+        typeName: "Smart Quotation Diagram",
+      },
+      {
+        typeId: "003",
+        typeName: 'Other 2017'
+      },
+      {
+        typeId: "004",
+        typeName: "SmartZone Support"
+      },
+      {
+        typeId: "005",
+        typeName: "SmartZone 2018"
+      },
+      {
+        typeId: "006",
+        typeName: "Other 2017"
+      },
+      {
+        typeId: '007',
+        typeName: "SmartZone MAC Authen"
+      },
+      {
+        typeId: "008",
+        typeName: "SmartZone Tax Invoice"
+      },
+      {
+        typeId: "009",
+        typeName: "CarService GissWin"
       },
     ];
     let temp = [];

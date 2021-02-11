@@ -37,7 +37,7 @@ class Head extends Component {
                   <Link to="/work" >
                     <span class="gx-pointer gx-d-block">
 
-              {/* Icon */} 
+              {/* Icon Work*/} 
                         <span className="icon-header"> < PartitionOutlined style={{color: '#fff'}}/>  </span>
                       Work
                     </span>

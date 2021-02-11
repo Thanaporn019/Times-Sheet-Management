@@ -368,7 +368,7 @@ class ActionsProject extends React.Component {
                                                     }}
                                                     className={`${this.state.isValid_startDate && this.state.isSubmit || this.state.greater.startDate || this.state.startGreater ? 'has-error-input' : ''}`} />
                                                 {this.state.isValid_startDate && this.state.isSubmit ? <span className="color-red">{msgValid.req}</span> : null}
-                                                {this.state.greater.startDate || this.state.startGreater ? <span className="color-red">{msgValid.req}</span> : null}
+                                                {this.state.greater.startDate || this.state.startGreater ? <span className="color-red">{msgValid.project.validStartDatemoreEndDate}</span> : null}
 
 
                                             </div>
@@ -385,7 +385,7 @@ class ActionsProject extends React.Component {
                                                     }}
                                                     className={`${this.state.isValid_endDate && this.state.isSubmit || this.state.greater.endDate || this.state.endGreater || this.state.greater.startDate ? 'has-error-input' : ''}`} />
                                                 {this.state.isValid_endDate && this.state.isSubmit ? <span className="color-red">{msgValid.req}</span> : null}
-                                                {this.state.greater.endDate || this.state.greater.startDate && !this.state.endGreater && this.state.data.projectEndDate ? <span className="color-red">{msgValid.req}</span> : null}
+                                                {this.state.greater.endDate || this.state.greater.startDate && !this.state.endGreater && this.state.data.projectEndDate ? <span className="color-red">{msgValid.project.validEndDatelessStartDate}</span> : null}
                                                 {/* {!this.state.greater.stopDate && this.state.endGreater && this.state.data.projectEndDate ? <span className="color-red">The end date must be greater than the start date. </span> : null} */}
 
                                             </div>
