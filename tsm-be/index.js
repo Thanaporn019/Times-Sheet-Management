@@ -26,6 +26,8 @@ app.set('port', appPort);
 // })
 
 app.use(apiUrlPrefix + '/type', require('./controllers/job/index'))
+app.use(apiUrlPrefix + '/project', require('./controllers/project/index'))
+app.use(apiUrlPrefix + '/work', require('./controllers/work/index'))
 
 // open port
 app.listen(appPort, () => {
