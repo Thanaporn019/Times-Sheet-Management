@@ -2,69 +2,115 @@ let moment = require('moment')
 const express = require('express');
 const router = express.Router();
 let postgresService = require('../../utils/postgresSQL')
-const table = 'Work'
-router.post('/', async (req, res) => {
+const conf = require('../../utils/config');
+var msg = conf.get('responseMsg');
+const service = require('../../utils/service');
+const table = 'work'
 
-    console.log("TCL: req", req)
+router.get('/:dateFrom/:dateTo', async (req, res) => {
+    let dateFrom = req.params.dateFrom || null
+    let dateTo = req.params.dateTo || null
     let reqQuery = req.query.filter || {};
-    let reqParam = req.params || {};
     let reqFields = req.query.fields || '';
     let reqOrderBy = req.query.orderby || '';
     let reqLimit = req.query.limit || '';
     let reqOffset = req.query.offset || '';
-    let fields = reqFields.split(',')
+    let fields = service.toSnakeUpperCase(reqFields)
+    let fieldsSql = service.changeFieldSingle(fields)
+    let user = null;
     try {
         let query = ``;
         let where = ``;
         let orderby;
         if (reqOrderBy) {
-            orderby = `ORDER BY "${reqOrderBy}"`
+            orderby = `ORDER BY "${_.snakeCase(reqOrderBy)}"`
         } else {
             orderby = ``;
         }
-        let sqlWorkProjectName = ``;
-        let sqlWorkJobType = ``;
-        let sqlWorkDateFrom = ``;
-        let sqlWorkDateTo = ``;
+        let sqlProjectName = ``;
+        let sqlTypeId = ``;
+        let sqlDateFrom = ``;
+        let sqlDateTo = ``;
         if (Object.keys(reqQuery).length === 0 && reqQuery.constructor === Object) {
-            sqlWorkProjectName = ``;
-            sqlWorkJobType = ``;
-            sqlWorkDateFrom = ``;
-            sqlWorkDateTo = ``;
+            sqlProjectName = ``;
+            sqlTypeId = ``;
+            sqlDateFrom = ``;
+            sqlDateTo = ``;
         } else {
-            let filter = reqQuery.split(',')
-            for (const iterator of filter) {
-                let data = iterator.split('=')
-                if (data[0] === 'WorkProjectName') {
-                    sqlWorkName = `LOWER("WorkProjectName") LIKE LOWER('%${data[1]}%')`
-                }
-                if (data[0] === 'WorkJobType') {
-                    sqlWorkJobType = `LOWER("WorkJobType") LIKE LOWER('%${data[1]}%')`
-                }
-                if (data[0] === 'WorkDateFrom') {
-                    sqlWorkDateFrom = `LOWER("WorkDateFrom") LIKE LOWER('%${data[1]}%')`
-                }
+            let filter = JSON.parse(reqQuery)
 
-                if (data[0] === 'WorkDateTo') {
-                    sqlWorkDateTo = `LOWER("WorkDateTo") LIKE LOWER('%${data[1]}%')`
-                }
+            if (filter.projectName) {
+                sqlProjectName = `LOWER("project_name") LIKE LOWER('%${filter.projectName}%')`
             }
+            if (filter.typeId) {
+                sqlTypeId = `"type_id" = ${filter.typeId}`
+            }
+
         }
-        let fieldsSql = ``
-        for (const iterator of fields) {
-            fieldsSql += `"${iterator}",`
+
+        where = `WHERE work_date BETWEEN ${dateFrom} AND ${dateTo}`
+        if (sqlProjectName !== '') {
+            where += `AND ${sqlProjectName}`
         }
-        fieldsSql = fieldsSql.slice(0, fieldsSql.length - 1)
-        if (sqlWorkProjectName !== '' && sqlWorkJobType !== '' && sqlWorkDateFrom !== '' && sqlWorkDateTo !== '') {
-            where = `WHERE ${sqlWorkProjectName} AND ${sqlWorkJobType} AND ${sqlWorkDateFrom} AND ${sqlWorkDateTo}`
-        } else {
-            where = `WHERE ${sqlWorkProjectName !== '' ? sqlWorkProjectName : sqlWorkJobType} AND ${sqlWorkJobType !== '' ? sqlWorkJobType : sqlWorkDateFrom} AND ${sqlWorkDateFrom !== '' ? sqlWorkDateFrom : sqlWorkDateTo}`
+        if (sqlTypeId !== '') {
+            where += `AND ${sqlTypeId}`
         }
         query = `SELECT ${fieldsSql} FROM "${table}" ${where} ${orderby} LIMIT ${reqLimit} OFFSET ${reqOffset};`
-        var result = await postgresService.queryPostgrest(req, query, 'post');
+        console.log("\nTCL: query", query, '\n')
+        var result = await postgresService.queryPostgrest(req, query, 'get');
+        result.resultData = service.toSnakeCamelCase(result.resultData);
+        console.log("\nTCL: result", result, '\n')
         return res.json(result)
     } catch (error) {
         console.log("TCL: error", error)
+        let result;
+        if (error) {
+            result = error
+        } else {
+            result = msg.message.error
+        }
+        return res.json(result)
+    }
+
+
+
+});
+
+router.get('/', async (req, res) => {
+    let reqQuery = req.query.filter || {};
+    let user = null;
+    try {
+        let query = ``;
+        let where = ``;
+        var result;
+        if (Object.keys(reqQuery).length === 0 && reqQuery.constructor === Object) {
+            result = msg.message.dataNotFound
+        } else {
+            let filter = JSON.parse(reqQuery)
+            if (filter.workDate) {
+                where = `WHERE work_date = '${filter.workDate}'`
+            }
+        }
+        query = `SELECT * FROM "${table}" ${where};`
+        console.log("\nTCL: query", query, '\n')
+        var result = await postgresService.queryPostgrest(req, query, 'get');
+        result.resultData = service.toSnakeCamelCase(result.resultData);
+        for (let i = 0; i < result.resultData.length; i++) {
+            const element = result.resultData[i];
+            result.resultData[i].workTimeIn = moment(element.workTimeIn, 'HH:mm:ss').format('HH:mm A')
+            result.resultData[i].workTimeOut = moment(element.workTimeOut, 'HH:mm:ss').format('HH:mm A')
+        }
+        console.log("\nTCL: result", result, '\n')
+        return res.json(result)
+    } catch (error) {
+        console.log("TCL: error", error)
+        let result;
+        if (error) {
+            result = error
+        } else {
+            result = msg.message.error
+        }
+        return res.json(result)
     }
 
 
@@ -73,25 +119,49 @@ router.post('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-
-        // let body = req.body || {}
-        // let WorkprojectName = body.WorkprojectName.replace(/"/g, "'");
-        // let WorkJobtype = body.WorkJobtype.replace(/"/g, "'");
-        // let WorkTimein = body.WorkTimein.replace(/"/g, "'");
-        // let WorkTimeout = body.WorkTimeout.replace(/"/g, "'");
-        // let WorkManhours = body.WorkManhours.replace(/"/g, "'");
-        // let WorkDetail = body.WorkDetail.replace(/"/g, "'");
-        // let WorkLinkplan = body.WorkLinkplan.replace(/"/g, "'");
-        // let WorkReference = body.WorkReference ? body.WorkReference.replace(/"/g, "'") : 'null';
-        
-        // query = `INSERT INTO "${table}" ("WorkprojectName", "WorkJobtype", "WorkTimein", "WorkTimeout", "WorkManhours", "WorkDetail", "WorkLinkplan", "WorkReference") 
-        //                          VALUES ('${WorkprojectName}', '${WorkJobtype}', '${WorkTimein}', '${WorkTimeout}', '${WorkManhours}', '${WorkDetail}', '${WorkLinkplan}','${WorkReference}', null, null, current_timestamp, 'test_user', null, null);`
-        // console.log("TCL: query", query)
-        // var result = await postgresService.insertPostgrest(req, query, 'post');
-        // return res.json(result)
+        let body = req.body || []
+        let user = null
+        let query = ``;
+        let fields = `"project_id","type_id","work_date","work_detail","work_plan","work_ref","work_manhour","work_time_in","work_time_out","update_date","update_by","create_date","create_by","delete_date","delete_by"`
+        var result;
+        var allInsertResponse = []
+        if (body && body.length > 0) {
+            for (let i = 0; i < body.length; i++) {
+                const element = body[i];
+                let projectId = element.projectId.replace(/"/g, "'");
+                let typeId = element.typeId.replace(/"/g, "'");
+                let workDate = element.workDate.replace(/"/g, "'");
+                let workDetail = element.workDetail.replace(/"/g, "'");
+                let workPlan = element.workPlan ? element.workPlan.replace(/"/g, "'") : null;
+                let workRef = element.workRef ? element.workRef.replace(/"/g, "'") : null;
+                let workManhour = element.workManhour.replace(/"/g, "'");
+                let workTimeIn = element.workTimeIn.replace(/"/g, "'");
+                let workTimeOut = element.workTimeOut.replace(/"/g, "'");
+                var value = `${projectId},${typeId},'${workDate}','${workDetail}','${workPlan}','${workRef}','${workManhour}','${moment(workTimeIn, 'HH:mm A').format('HH:mm:ss')}','${moment(workTimeOut, 'HH:mm A').format('HH:mm:ss')}', null, null, current_timestamp, ${user}, null, null`
+                query = `INSERT INTO 
+                            "${table}" 
+                                (${fields}) 
+                            VALUES 
+                                (${value});`
+                console.log("\nTCL: query -> No ", i + 1, '  ||  ', query, '\n')
+                result = await postgresService.insertPostgrest(req, query, 'post');
+                console.log("\nTCL: result", result, '\n')
+                allInsertResponse.push(result)
+            }
+            await Promise.all(allInsertResponse);
+            return res.json(result)
+        }
 
     } catch (error) {
         console.log("TCL: error", error)
+        let result;
+        if (error) {
+            result = error
+        } else {
+            result = msg.message.error
+        }
+        return res.json(result)
+
     }
 });
 router.delete('/:typeId', async (req, res) => {
@@ -99,13 +169,20 @@ router.delete('/:typeId', async (req, res) => {
 
         // let workId = req.params.workId || null
         // let query = '';
-      
+
         // query = `UPDATE "${table}" SET "deleteDate" = current_timestamp, "deleteBy" = 'test_user' WHERE "worktId" = ${workId};`
         // var result = await postgresService.deletePostgrest(req, query, 'delete');
         // return res.json(result)
 
     } catch (error) {
         console.log("TCL: error", error)
+        let result;
+        if (error) {
+            result = error
+        } else {
+            result = msg.message.error
+        }
+        return res.json(result)
     }
 });
 
@@ -124,7 +201,7 @@ router.put('/:typeId', async function (req, res) {
         // let WorkReference = body.WorkReference ? body.WorkReference.replace(/"/g, "'") : 'null';
 
         // let query = '';
-      
+
         // query = `UPDATE "${table}" SET "WorkprojectName" = '${WorkprojectName}', "WorkJobtype" = '${WorkJobtype}', "WorkTimein" = '${WorkTimein}', "WorkTimeout" = '${WorkTimeout}', "WorkManhours" = '${WorkManhours}', "WorkDetail" = '${WorkDetail}', "WorkLinkplan" = '${WorkLinkplan}', "WorkReference" = '${WorkReference}', "updateDate" = current_timestamp, "updateBy" = 'test_user' WHERE "worktId" = ${workId};`
         // console.log("TCL: query", query)
         // var result = await postgresService.updatePostgrest(req, query, 'put');
@@ -132,6 +209,13 @@ router.put('/:typeId', async function (req, res) {
 
     } catch (error) {
         console.log("TCL: error", error)
+        let result;
+        if (error) {
+            result = error
+        } else {
+            result = msg.message.error
+        }
+        return res.json(result)
     }
 });
 module.exports = router;

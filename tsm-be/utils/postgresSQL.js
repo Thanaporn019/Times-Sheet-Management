@@ -11,6 +11,8 @@ async function connectPostgres(req, query, method) {
         try {
             await client.query('BEGIN')
             let queryResult = await client.query(query);
+            // allInsertResponse
+            // await Promise.all(allInsertResponse);
             result = checkResponse(queryResult, null, method)
             await client.query('COMMIT')
         } catch (err) {
@@ -32,7 +34,7 @@ async function queryPostgrest(req, query, method) {
     try {
         var result = await connectPostgres(req, query, method);
         // console.log("TCL: queryPostgrest -> result", result)
-        return service.convertDateFormat(result, '', 'YYYY-MM-DD HH:mm:ss');
+        return service.convertDateFormat(result, '', 'DD/MM/YYYY HH:mm:ss');
     } catch (error) {
         console.log("TCL: queryPostgrest -> error", error)
     }
@@ -49,7 +51,8 @@ async function insertPostgrest(req, query, method) {
         try {
             var msg = conf.get('responseMsg');
             var result = await connectPostgres(req, query, method);
-            if (result.resultCode === msg.message.success.resultCode || msg.message.dataNotFound.resultCode) {
+            console.log("TCL: insertPostgrest -> result", result)
+            if (result && (result.resultCode === msg.message.success.resultCode || msg.message.dataNotFound.resultCode)) {
                 resolve(result)
             } else {
                 reject(result)
@@ -65,7 +68,7 @@ async function updatePostgrest(req, query, method) {
         try {
             var msg = conf.get('responseMsg');
             var result = await connectPostgres(req, query, method);
-            if (result.resultCode === msg.message.success.resultCode || msg.message.dataNotFound.resultCode) {
+            if (result && (result.resultCode === msg.message.success.resultCode || msg.message.dataNotFound.resultCode)) {
                 resolve(result)
             } else {
                 reject(result)
@@ -81,7 +84,7 @@ async function deletePostgrest(req, query, method) {
         try {
             var msg = conf.get('responseMsg');
             var result = await connectPostgres(req, query, method);
-            if (result.resultCode === msg.message.success.resultCode || msg.message.dataNotFound.resultCode) {
+            if (result && (result.resultCode === msg.message.success.resultCode || msg.message.dataNotFound.resultCode)) {
                 resolve(result)
             } else {
                 reject(result)

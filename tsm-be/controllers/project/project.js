@@ -1,30 +1,39 @@
 let moment = require('moment')
+let _ = require('lodash')
 const express = require('express');
 const router = express.Router();
 let postgresService = require('../../utils/postgresSQL')
 const conf = require('../../utils/config');
 var msg = conf.get('responseMsg');
-const table = 'Project';
+const service = require('../../utils/service');
+const table = 'project';
 
 router.get('/', async (req, res) => {
-
-    console.log("TCL: req", req)
     let reqQuery = req.query.filter || {};
     let reqFields = req.query.fields || '';
     let reqOrderBy = req.query.orderby || '';
     let reqLimit = req.query.limit || '';
     let reqOffset = req.query.offset || '';
-    let fields = reqFields.split(',')
+    let fields = service.toSnakeUpperCase(reqFields)
+    let fieldsSql = service.changeFieldSingle(fields)
     let user = null;
     try {
         let query = ``;
         let where = ``;
+        let limitOffset = ``;
         let orderby;
         if (reqOrderBy) {
-            orderby = `ORDER BY "${reqOrderBy}"`
+            orderby = `ORDER BY "${_.snakeCase(reqOrderBy)}"`
         } else {
             orderby = ``;
         }
+
+        if (reqLimit && reqOffset) {
+            limitOffset = `LIMIT ${reqLimit} OFFSET ${reqOffset}`
+        } else {
+            limitOffset = ``
+        }
+
         let sqlProjectName = ``;
 
         if (Object.keys(reqQuery).length === 0 && reqQuery.constructor === Object) {
@@ -33,31 +42,30 @@ router.get('/', async (req, res) => {
 
             let filter = JSON.parse(reqQuery)
             if (filter.projectName) {
-                sqlProjectName = `LOWER("ProjectName") LIKE LOWER('%${filter.projectName}%')`
+                sqlProjectName = `LOWER("project_name") LIKE LOWER('%${filter.projectName}%')`
             }
-            // let filter = reqQuery.split(',')
-            // for (const iterator of filter) {
-            //     let data = iterator.split('=')
-            //     if (data[0] === 'ProjectName') {
-            //         sqlProjectName = `LOWER("ProjectName") LIKE LOWER('%${data[1]}%')`
-            //     }
-            // }
         }
-        let fieldsSql = ``
-        for (const iterator of fields) {
-            fieldsSql += `"${iterator}",`
-        }
-        fieldsSql = fieldsSql.slice(0, fieldsSql.length - 1)
+
         if (sqlProjectName !== '') {
-            where = `WHERE ${sqlProjectName} AND "deleteDate" IS NULL`
+            where = `WHERE ${sqlProjectName} AND "delete_date" IS NULL`
         } else {
-            where = `WHERE "deleteDate" IS NULL`
+            where = `WHERE "delete_date" IS NULL`
         }
-        query = `SELECT ${fieldsSql} FROM "${table}" ${where} ${orderby} LIMIT ${reqLimit} OFFSET ${reqOffset};`
+        query = `SELECT ${fieldsSql} FROM "${table}" ${where} ${orderby} ${limitOffset}`
+        console.log("\nTCL: query", query, '\n')
         var result = await postgresService.queryPostgrest(req, query, 'get');
+        result.resultData = service.toSnakeCamelCase(result.resultData);
+        console.log("\nTCL: result", result, '\n')
         return res.json(result)
     } catch (error) {
         console.log("TCL: error", error)
+        let result;
+        if (error) {
+            result = error
+        } else {
+            result = msg.message.error
+        }
+        return res.json(result)
     }
 });
 
@@ -67,14 +75,24 @@ router.get('/:projectId', async (req, res) => {
         let query = ``;
         let result;
         if (projectId) {
-            query = `SELECT * FROM "${table}" WHERE "projectId" = ${projectId};`
+            query = `SELECT * FROM "${table}" WHERE "project_id" = ${projectId};`
         } else {
             result = msg.message.dataNotFound
         }
+        console.log("\nTCL: query", query, '\n')
         result = await postgresService.queryPostgrest(req, query, 'get');
+        result.resultData = service.toSnakeCamelCase(result.resultData);
+        console.log("\nTCL: result", result, '\n')
         return res.json(result)
     } catch (error) {
         console.log("TCL: error", error)
+        let result;
+        if (error) {
+            result = error
+        } else {
+            result = msg.message.error
+        }
+        return res.json(result)
     }
 });
 
@@ -86,17 +104,26 @@ router.post('/', async (req, res) => {
         let projectDetail = body.projectDetail.replace(/"/g, "'");
         let projectStartDate = body.projectStartDate.replace(/"/g, "'");
         let projectEndDate = body.projectEndDate.replace(/"/g, "'");
-        let projectManDays = body.projectManDays.replace(/"/g, "'");
+        let projectManDays = body.projectManDays ? body.projectManDays.replace(/"/g, "'") : 'null';
         let customerEmail = body.customerEmail ? body.customerEmail.replace(/"/g, "'") : 'null';
         let user = null;
+        let fields = `"project_name","project_phase","project_detail","project_start_date","project_end_date","project_mandays","customer_email","update_date","update_by","create_date","create_by","delete_date","delete_by"`;
         // ? "createBy" เอาค่ามาจากไหน..ยังไม่มีข้อมูล เพราะส่วนนี้ดึงมาจากตอน login ซึ่งระบบนี้ยังไม่มี login
-        query = `INSERT INTO "${table}" ("projectName", "projectPhase", "projectDetail", "projectStartDate", "projectEndDate", "projectManDays", "customerEmail", "updateDate", "updateBy", "createDate", "createBy", "deleteDate", "deleteBy") 
-                                 VALUES ('${projectName}', '${projectPhase}', '${projectDetail}', '${projectStartDate}', '${projectEndDate}', '${projectManDays}', '${customerEmail}', null, null, current_timestamp, ${user}, null, null);`
-        console.log("TCL: query", query)
+        query = `INSERT INTO "${table}" (${fields}) 
+                VALUES ('${projectName}', '${projectPhase}', '${projectDetail}', '${projectStartDate}', '${projectEndDate}', '${projectManDays}', '${customerEmail}', null, null, current_timestamp, ${user}, null, null);`
+        console.log("\nTCL: query", query, '\n')
         var result = await postgresService.insertPostgrest(req, query, 'post');
+        console.log("\nTCL: result", result, '\n')
         return res.json(result)
     } catch (error) {
         console.log("TCL: error", error)
+        let result;
+        if (error) {
+            result = error
+        } else {
+            result = msg.message.error
+        }
+        return res.json(result)
     }
 });
 
@@ -106,11 +133,20 @@ router.delete('/:projectId', async (req, res) => {
         let query = '';
         let user = null;
         // ? "deleteBy" เอาค่ามาจากไหน..ยังไม่มีข้อมูล เพราะส่วนนี้ดึงมาจากตอน login ซึ่งระบบนี้ยังไม่มี login
-        query = `UPDATE "${table}" SET "deleteDate" = current_timestamp, "deleteBy" = ${user} WHERE "projectId" = ${projectId};`
+        query = `UPDATE "${table}" SET "delete_date" = current_timestamp, "delete_by" = ${user} WHERE "project_id" = ${projectId};`
+        console.log("\nTCL: query", query, '\n')
         var result = await postgresService.deletePostgrest(req, query, 'delete');
+        console.log("\nTCL: result", result, '\n')
         return res.json(result)
     } catch (error) {
         console.log("TCL: error", error)
+        let result;
+        if (error) {
+            result = error
+        } else {
+            result = msg.message.error
+        }
+        return res.json(result)
     }
 });
 
@@ -124,18 +160,26 @@ router.put('/:projectId', async function (req, res) {
         let projectDetail = body.projectDetail.replace(/"/g, "'");
         let projectStartDate = body.projectStartDate.replace(/"/g, "'");
         let projectEndDate = body.projectEndDate.replace(/"/g, "'");
-        let projectManDays = body.projectManDays.replace(/"/g, "'");
+        let projectManDays = body.projectManDays ? body.projectManDays.replace(/"/g, "'") : null;
         let customerEmail = body.customerEmail ? body.customerEmail.replace(/"/g, "'") : null;
         let user = null;
 
         let query = '';
         // ? "updateBy" เอาค่ามาจากไหน..ยังไม่มีข้อมูล เพราะส่วนนี้ดึงมาจากตอน login ซึ่งระบบนี้ยังไม่มี login
-        query = `UPDATE "${table}" SET "projectName" = '${projectName}', "projectPhase" = '${projectPhase}', "projectDetail" = '${projectDetail}', "projectStartDate" = '${projectStartDate}', "projectEndDate" = '${projectEndDate}', "projectManDays" = '${projectManDays}', "customerEmail" = '${customerEmail}', "updateDate" = current_timestamp, "updateBy" = ${user} WHERE "projectId" = ${projectId};`
-        console.log("TCL: query", query)
+        query = `UPDATE "${table}" SET "project_name" = '${projectName}', "project_phase" = '${projectPhase}', "project_detail" = '${projectDetail}', "project_start_date" = '${projectStartDate}', "project_end_date" = '${projectEndDate}', "project_mandays" = '${projectManDays}', "customer_email" = '${customerEmail}', "update_date" = current_timestamp, "update_by" = ${user} WHERE "project_id" = ${projectId};`
+        console.log("\nTCL: query", query, '\n')
         var result = await postgresService.updatePostgrest(req, query, 'put');
+        console.log("\nTCL: result", result, '\n')
         return res.json(result)
     } catch (error) {
         console.log("TCL: error", error)
+        let result;
+        if (error) {
+            result = error
+        } else {
+            result = msg.message.error
+        }
+        return res.json(result)
     }
 });
 
