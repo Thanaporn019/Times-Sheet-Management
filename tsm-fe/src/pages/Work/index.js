@@ -4,17 +4,12 @@ import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import DateBox from 'devextreme-react/date-box';
 import { IoAddOutline } from "react-icons/io5";
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import { HomeOutlined, EyeOutlined, PlusOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons';
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { HomeOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons';
 import DropDownButton from 'devextreme-react/drop-down-button';
-import Toolbar, { Item } from 'devextreme-react/toolbar';
 import moment from 'moment';
 import AlertPopUp from "../../components/popup/alert_popup";
 import ConfirmPopup from "../../components/popup/confirm_popup";
-import {
-  SimpleItem,
-  GroupItem
-} from 'devextreme-react/form';
 import DataGrid, {
   Column,
   Grouping,
@@ -24,28 +19,21 @@ import DataGrid, {
   Editing,
   Pager,
   Scrolling,
-  Form,
-  Button
 } from 'devextreme-react/data-grid';
-import AspNetData from 'devextreme-aspnet-data-nojquery';
 import _ from "lodash";
 import { Breadcrumb, Modal, TimePicker, Select } from 'antd';
 import configService from '../../config';
-// import axios from 'axios';
-
-
-// const api = configService.api;
-// axios.get(api + '/user').then(res=>{
-//   console.log("🚀 ~ file: index.js ~ line 40 ~ axios.get ~ res", res.data)
-    
-//   })
+import axios from 'axios'
+import { LoadPanel } from 'devextreme-react/load-panel';
 
 const msgAlertTitle = configService.msgAlert;
 const msgPopupTitle = configService.msgConfirm;
 const msgValid = configService.validDateFill;
-const url = 'https://js.devexpress.com/Demos/Mvc/api/TreeListTasks';
+
 const format = "HH:mm A";
 const Option = Select.Option;
+const api = configService.appIp + configService.apiUrlPrefix
+const position = { of: '#App' };
 
 class Work extends React.Component {
 
@@ -56,8 +44,8 @@ class Work extends React.Component {
       height: 0,
       itembar: [false, false, false],
       filter: {
-        dateFrom: new Date(),
-        dateTo: new Date(),
+        dateFrom: moment().clone().startOf('month').toDate(),
+        dateTo: moment().clone().endOf('month').toDate(),
         projectId: null,
         typeId: null
       },
@@ -81,9 +69,9 @@ class Work extends React.Component {
           'typeName': 'test1',
           'workDate': '01/01/2021',
           'workDetail': '....',
-         // 'workUrl': '-',
-         'workLinkPlan': 'https://bezkoder.com/node-express-sequelize-postgresql/',
-         'workReference': 'http://lib.swu.ac.th/images/Documents/Researchsupport/APA6thNew.pdf',
+          // 'workUrl': '-',
+          'workLinkPlan': 'https://bezkoder.com/node-express-sequelize-postgresql/',
+          'workReference': 'http://lib.swu.ac.th/images/Documents/Researchsupport/APA6thNew.pdf',
           'workManhour': '8',
           'workTimeIn': '09:00 AM',
           'workTimeOut': '18:00 PM',
@@ -97,11 +85,11 @@ class Work extends React.Component {
           'projectPhase': '1',
           'typeId': '0002',
           'typeName': 'test2',
-          'workDate': '02/01/2021',
+          'workDate': '02/02/2021',
           'workDetail': '....',
-         // 'workUrl': '-',
-         'workLinkPlan': 'https://bezkoder.com/node-express-sequelize-postgresql/',
-         'workReference': 'http://lib.swu.ac.th/images/Documents/Researchsupport/APA6thNew.pdf',
+          // 'workUrl': '-',
+          'workLinkPlan': 'https://bezkoder.com/node-express-sequelize-postgresql/',
+          'workReference': 'http://lib.swu.ac.th/images/Documents/Researchsupport/APA6thNew.pdf',
           'workManhour': '8',
           'workTimeIn': '09:00 AM',
           'workTimeOut': '18:00 PM',
@@ -118,9 +106,9 @@ class Work extends React.Component {
           'typeName': 'test3',
           'workDate': '03/01/2021',
           'workDetail': '....',
-         // 'workUrl': '-',
-         'workLinkPlan': 'https://bezkoder.com/node-express-sequelize-postgresql/',
-         'workReference': 'http://lib.swu.ac.th/images/Documents/Researchsupport/APA6thNew.pdf',
+          // 'workUrl': '-',
+          'workLinkPlan': 'https://bezkoder.com/node-express-sequelize-postgresql/',
+          'workReference': 'http://lib.swu.ac.th/images/Documents/Researchsupport/APA6thNew.pdf',
           'workManhour': '8',
           'workTimeIn': '09:00 AM',
           'workTimeOut': '18:00 PM',
@@ -165,7 +153,8 @@ class Work extends React.Component {
         projectPhase: null,
         timeIn: null,
         timeOut: null,
-      }
+      },
+      loadPanelVisible: false
     };
 
     this.dataPopup = [
@@ -183,13 +172,16 @@ class Work extends React.Component {
     // ปั้นวันที่ตามเดือนปัจจุบัน end
   }
 
-  componentDidMount() {
-    this.getProjectList()
-    this.getJobtypeList()
-    this.fnSetDefaultDate()
-
-    
-      
+  async componentDidMount() {
+    try {
+      this.setState({ loadPanelVisible: true })
+      await this.getProjectList()
+      await this.getJobtypeList()
+      this.fnSetDefaultDate()
+      this.setState({ loadPanelVisible: false })
+    } catch (error) {
+      console.log("TCL: componentDidMount -> error", error)
+    }
   }
 
   fnSetDefaultDate() {
@@ -205,236 +197,105 @@ class Work extends React.Component {
     this.setState({ data: temp })
   }
 
-  getProjectList() {
-    this.setState({
-      projectList: [{
-        projectId: '001',
-        projectName: 'SSB-SRFC Phase 0.1'
-      },
-      {
-        projectId: '002',
-        projectName: 'Smart Quotation Diagram'
-      },
-      {
-        projectId: '003',
-        projectName: 'Other 2017'
-      },
-      {
-        projectId: '004',
-        projectName: 'SmartZone Support'
-      },
-      {
-        projectId: '005',
-        projectName: 'SmartZone 2018'
-      },
-      {
-        projectId: '006',
-        projectName: 'SmartZone 2019'
-      },
-      {
-        projectId: '007',
-        projectName: 'SmartZone MAC Authen'
-      },
-      {
-        projectId: '008',
-        projectName: 'Other 2017'
-      },
-      {
-        projectId: '009',
-        projectName: 'CarService GissWin'
-      },
-    ]
-    })
+  async getProjectList() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let resData = []
+        let filter = {
+          "fields": "projectName,projectId"
+        }
+        const response = await axios.get(api + '/project', { params: filter })
+        if (response && response.status === 200) {
+          if (response.data && response.data.resultCode === "20000") {
+            this.setState({ projectList: response.data.resultData })
+            resData = response.data.resultData
+          } else {
+            this.setState({ projectList: response.data.resultData ? response.data.resultData : [] })
+            resData = response.data.resultData || [];
+          }
 
-    let resData = [
-      {
-        projectId: "001",
-        projectName: "SSB-SRFC Phase 0.1",
-      },
-      {
-        projectId: "002",
-        projectName: "Smart Quotation Diagram",
-      },
-      {
-        projectId: '003',
-        projectName: 'Other 2017'
-      },
-      {
-        projectId: '004',
-        projectName: 'SmartZone Support'
-      }, 
-      {
-        projectId: '005',
-        projectName: 'SmartZone 2018'
-      }, 
-      {
-        projectId: '006',
-        projectName: 'SmartZone 2019'
-      }, 
-      {
-        projectId: '007',
-        projectName: 'SmartZone MAC Authen'
-      }, 
-      {
-        projectId: '008',
-        projectName: 'SmartZone Tax Invoice'
-      }, 
-      {
-        projectId: '009',
-        projectName: 'CarService GissWin'
-      },
+          let temp = [];
+          for (let i = 0; i < resData.length; i++) {
+            temp.push(
+              <Option key={resData[i].projectId}> {resData[i].projectName} </Option>
+            );
+          }
 
-    ];
-    let temp = [];
-    for (let i = 0; i < resData.length; i++) {
-      temp.push(
-        <Option key={resData[i].projectId}> {resData[i].projectName} </Option>
-      );
-    }
-
-    this.projectList = temp;
+          this.projectList = temp;
+        }
+        resolve();
+      } catch (error) {
+        console.log("TCL: getProjectList -> error", error)
+        reject(error)
+      }
+    });
   }
 
-  getJobtypeList() {
-    this.setState({
-      jobtypeList: [{
-        typeId: '001',
-        typeName: 'SSB-SRFC Phase 0.1'
-      },
-      {
-        typeId: '002',
-        typeName: 'Smart Quotation Diagram'
-      },
-      {
-        typeId: '003',
-        typeName: 'Other 2017'
-      },
-      {
-        typeId: '004',
-        typeName: 'SmartZone Support'
-      },
-      {
-        typeId: '005',
-        typeName: 'SmartZone 2018'
-      },
-      {
-        typeId: '006',
-        typeName: 'Other 2017'
-      },
-      {
-        typeId: '007',
-        typeName: 'SmartZone MAC Authen'
-      },
-      {
-        typeId: '008',
-        typeName: 'SmartZone Tax Invoice'
-      },
-      {
-        typeId: '009',
-        typeName: 'CarService GissWin'
-      },
+  async getJobtypeList() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let resData = []
+        let filter = {
+          "fields": "typeId,typeName"
+        }
+        const response = await axios.get(api + '/type', { params: filter })
+        if (response && response.status === 200) {
+          if (response.data && response.data.resultCode === "20000") {
+            this.setState({ jobtypeList: response.data.resultData })
+            resData = response.data.resultData
+          } else {
+            this.setState({ jobtypeList: response.data.resultData ? response.data.resultData : [] })
+            resData = response.data.resultData || [];
+          }
 
-    ]
-    })
+          let temp = [];
+          for (let i = 0; i < resData.length; i++) {
+            temp.push(
+              <Option key={resData[i].typeId}> {resData[i].typeName} </Option>
+            );
+          }
 
-    let resData = [
-      {
-        typeId: "001",
-        typeName: "SSB-SRFC Phase 0.1",
-      },
-      {
-        typeId: "002",
-        typeName: "Smart Quotation Diagram",
-      },
-      {
-        typeId: "003",
-        typeName: 'Other 2017'
-      },
-      {
-        typeId: "004",
-        typeName: "SmartZone Support"
-      },
-      {
-        typeId: "005",
-        typeName: "SmartZone 2018"
-      },
-      {
-        typeId: "006",
-        typeName: "Other 2017"
-      },
-      {
-        typeId: '007',
-        typeName: "SmartZone MAC Authen"
-      },
-      {
-        typeId: "008",
-        typeName: "SmartZone Tax Invoice"
-      },
-      {
-        typeId: "009",
-        typeName: "CarService GissWin"
-      },
-    ];
-    let temp = [];
-    for (let i = 0; i < resData.length; i++) {
-      temp.push(
-        <Option key={resData[i].typeId}> {resData[i].typeName} </Option>
-      );
-      console.log(
-        "ActionsWork -> getJobtypeList -> resData[i].typeId",
-        resData[i].typeId
-      );
-    }
-
-    this.typeList = temp;
+          this.jobtypeList = temp;
+        }
+        resolve();
+      } catch (error) {
+        console.log("TCL: getProjectList -> error", error)
+        reject(error)
+      }
+    });
   }
-
+  
   handleProjectChange = (event) => {
-
-    let temp = _.cloneDeep(this.state.filter)
-    temp.projectId = event.target.value
     this.setState({
       filter: {
-        dateFrom: temp.dateFrom,
-        dateTo: temp.dateTo,
-        typeId: temp.typeId,
+        ...this.state.filter,
         projectId: event.target.value
       }
     });
   }
 
   handleTypeChange = (event) => {
-
-    let temp = _.cloneDeep(this.state.filter)
-    temp.typeId = event.target.value
     this.setState({
       filter: {
-        dateFrom: temp.dateFrom,
-        dateTo: temp.dateTo,
-        typeId: temp.typeId,
-        projectId: temp.projectId
+        ...this.state.filter,
+        typeId: event.target.value
       }
     });
   }
 
   handleChangeDate = (event, type) => {
-    let temp = _.cloneDeep(this.state.filter)
     if (type === 'from') {
       this.setState({
         filter: {
+          ...this.state.filter,
           dateFrom: event.value,
-          dateTo: temp.dateTo,
-          typeId: temp.typeId,
-          projectId: temp.projectId
         }
       });
     } else {
       this.setState({
         filter: {
-          dateFrom: temp.dateFrom,
-          dateTo: event.value,
-          typeId: temp.typeId,
-          projectId: temp.projectId
+          ...this.state.filter,
+          dateTo: event.value
         }
       });
 
@@ -444,8 +305,8 @@ class Work extends React.Component {
   handleReset = () => {
     this.setState({
       filter: {
-        dateFrom: new Date(),
-        dateTo: new Date(),
+        dateFrom: moment().clone().startOf('month').toDate(),
+        dateTo: moment().clone().endOf('month').toDate(),
         projectId: null,
         typeId: null
       }
@@ -453,7 +314,7 @@ class Work extends React.Component {
   }
 
   groupRender = (data) => {
-    console.log("groupRender -> data", data)
+    // console.log("groupRender -> data", data)
     // ข้อความ ดำ > บันทึกแล้ว
     // ข้อความ แดง > ไม่บันทึก / ส - อ
     // ข้อความ น้ำเงิน > ปัจจุบัน
@@ -461,6 +322,10 @@ class Work extends React.Component {
     let id = data.data.items && data.data.items.length > 0 ? data.data.items[0].workId : data.data.collapsedItems && data.data.collapsedItems.length > 0 ? data.data.collapsedItems[0].workId : null
     let name = `DATE : ${data.value}  ${day}`
     let now = moment().format('DD/MM/YYYY');
+    let workDate = '"' + data.value.replace(/\//g, "%2F") + '"'
+      
+
+    console.log("TCL: groupRender -> workDate", workDate)
     return (<div className="row">
       <div style={{ fontSize: '12pt' }} className={`col-6 ${day === 'Sunday' || day === 'Saturday' ? 'color-red' : data.value === now ? 'color-blue' : 'color-black'}`}>
         {name}
@@ -471,14 +336,14 @@ class Work extends React.Component {
       {/* {data.data.items[0].workId} */}
       {data.data.items.length === 0 || data.data.items[0].workId === undefined ?
         <div className="col-6" style={{ textAlign: 'end' }}>
-          <Link to='/work/{"action":"create"}'>
+          <Link to={"/work" + `/{"action":"create","workDate":${workDate}}`}>
             {/* <button className="btn-custom btn-search " style={{ width: '40px', hight: '13px', borderRadius: '50%', }}><IoAddOutline /></button> */}
-            <IoAddOutline style={{backgroundColor:'green', borderRadius:'50%', width:'30', height:'30'}}/>
-         
+            <IoAddOutline style={{ backgroundColor: 'green', borderRadius: '50%', width: '30', height: '30' }} />
+
           </Link>
         </div> :
-        <div className="col-6" style={{ textAlign: 'end'}}>
-          <Link to={"/work" + `/{"action":"edit","workId":"${id}"}`}>
+        <div className="col-6" style={{ textAlign: 'end' }}>
+          <Link to={"/work" + `/{"action":"edit","workDate":${workDate}}`}>
             <span className="custom-icon-group" style={{ color: 'black', fontSize: '12pt', marginRight: 20 }}><FormOutlined /></span>
           </Link>
           <a className="custom-icon-group" onClick={() => {
@@ -901,14 +766,14 @@ class Work extends React.Component {
     }
 
     this.setState({ updateData: item, isValid_timeOut: valid });
-    
+
   };
 
   render() {
 
     return (<>
 
-      <div className="App">
+      <div className="App" id="App">
         <div id="boxType" className="container-box-content">
           <div className="row wrap-container">
             <Breadcrumb>
@@ -966,6 +831,7 @@ class Work extends React.Component {
                             <div className="col-7" style={{ paddingLeft: 0, paddingRight: 0 }}>
                               <DateBox
                                 value={this.state.filter.dateFrom}
+                                displayFormat="dd/MM/yyyy"
                                 type="date" onValueChanged={(e) => {
                                   this.handleChangeDate(e, 'from')
                                 }} />
@@ -977,6 +843,7 @@ class Work extends React.Component {
                             <div className="col-4"><label for="ddlDateTo" className="title-field">Date : To</label></div>
                             <div className="col-7" style={{ paddingLeft: 0, paddingRight: 0 }}>
                               <DateBox value={this.state.filter.dateTo}
+                                displayFormat="dd/MM/yyyy"
                                 type="date" type="date" onValueChanged={(e) => {
                                   this.handleChangeDate(e, 'to')
                                 }} />
@@ -1006,7 +873,7 @@ class Work extends React.Component {
               <div className="box-search" style={{ padding: 30 }}>
                 <div style={{ textAlign: 'end', padding: 15 }}>
                   <Link to='/work/{"action":"create"}'>
-                    <button className="btn-custom btn-search " style={{ width: 185 }}><span className="btn-icon"><IoAddOutline  /></span> <span className="btn-txt-icon">Create Work</span></button>
+                    <button className="btn-custom btn-search " style={{ width: 185 }}><span className="btn-icon"><IoAddOutline /></span> <span className="btn-txt-icon">Create Work</span></button>
 
                   </Link>
                 </div>
@@ -1065,6 +932,12 @@ class Work extends React.Component {
         </div>
       </div>
 
+      <LoadPanel
+        shadingColor="rgba(0,0,0,0.4)"
+        position={position}
+        visible={this.state.loadPanelVisible}
+      />
+
       {/* POPUP */}
       <AlertPopUp successStatus={this.state.isPopupSuccess} errorStatus={this.state.isPopupError} message={this.state.isPopupMsg}
         clearActive={() => {
@@ -1099,37 +972,37 @@ class Work extends React.Component {
             <p className="font-size-search"> Update Work </p>
 
             <div className="box-content" style={{ marginBottom: 0 }}>
-                                      
-                                        <div style={{ textAlign: "right" }}>
-                                            <p className="title-field">
-                                                <span style={{ color: "red" }}> * </span> Items marked with an asterisk are required
+
+              <div style={{ textAlign: "right" }}>
+                <p className="title-field">
+                  <span style={{ color: "red" }}> * </span> Items marked with an asterisk are required
                                             </p>
-                                        </div> </div>
+              </div> </div>
 
 
-                                          <div className="box-action-content">
+            <div className="box-action-content">
 
-                                              {/* Date */}
-                                                      <div className="row form-group">
-                                                            <div className="col-12">
-                                                                <div className="row">
-                                                                    <div className="col-2" style={{ textAlign: "right" }} >
-                                                                        <label className="title-field" for="Date" >
-                                                                        Date : <span style={{ color: "red" }}> * </span>
-                                                                        </label>
-                                                                        
-                                                                    </div>
-                                                                    <div className={`col-10`} style={{ textAlign: 'start', padding: 0 }}>
-                                                    <DateBox value={null} type="date" value={this.state.workDate}
-                                                        type="date" onValueChanged={(e) => {
-                                                            this.handleChangeDate(e)
-                                                        }}
-                                                        className={`${this.state.isValid_workDate && this.state.isSubmit ? 'has-error-input' : ''}`} />
-                                                    {this.state.isValid_workDate && this.state.isSubmit ? <span className="color-red">{msgValid.work.validWorkDate}</span> : null}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        </div>
+              {/* Date */}
+              <div className="row form-group">
+                <div className="col-12">
+                  <div className="row">
+                    <div className="col-2" style={{ textAlign: "right" }} >
+                      <label className="title-field" for="Date" >
+                        Date : <span style={{ color: "red" }}> * </span>
+                      </label>
+
+                    </div>
+                    <div className={`col-10`} style={{ textAlign: 'start', padding: 0 }}>
+                      <DateBox value={null} type="date" value={this.state.workDate}
+                        type="date" onValueChanged={(e) => {
+                          this.handleChangeDate(e)
+                        }}
+                        className={`${this.state.isValid_workDate && this.state.isSubmit ? 'has-error-input' : ''}`} />
+                      {this.state.isValid_workDate && this.state.isSubmit ? <span className="color-red">{msgValid.work.validWorkDate}</span> : null}
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               <div className="row form-group">
                 <div className="col-6">
@@ -1218,7 +1091,7 @@ class Work extends React.Component {
                           this.onChangeTimeIn(time, timestring);
                         }}
                         className={`${this.state.isValid_timeIn || this.state.greaterTimeIn ? 'has-error-input' : ''}`} />
-                       {this.state.isValid_timeIn && !this.state.greaterTimeIn ? <span className="color-red">{msgValid.work.validTimeIn}</span> : null}
+                      {this.state.isValid_timeIn && !this.state.greaterTimeIn ? <span className="color-red">{msgValid.work.validTimeIn}</span> : null}
                       {this.state.greaterTimeIn && !this.state.isValid_timeIn ? <span className="color-red">{msgValid.work.validTimeInmoreTimeOut}</span> : null}
 
                     </div>
@@ -1275,9 +1148,9 @@ class Work extends React.Component {
                     </div>
                   </div>
                 </div>
- </div>
-                {/* Url */}
-                {/* <div className="col-6">
+              </div>
+              {/* Url */}
+              {/* <div className="col-6">
                   <div className="row">
                     <div className="col-4" style={{ textAlign: "right" }} >
                       <label className="title-field" for="txtUrl">
@@ -1289,7 +1162,7 @@ class Work extends React.Component {
                     </div>
                   </div>
                 </div> */}
-             
+
 
               {/* Detail */}
               <div className="row form-group">
@@ -1312,44 +1185,44 @@ class Work extends React.Component {
               </div>
 
 
-                                                  {/* Link Plan */}
-                                                        <div className="row form-group">
-                                                            <div className="col-12">
-                                                                <div className="row">
-                                                                    <div className="col-2" style={{ textAlign: "right" }} >
-                                                                        <label className="title-field" for="LinkPlan" >
-                                                                        Link Plan  
+              {/* Link Plan */}
+              <div className="row form-group">
+                <div className="col-12">
+                  <div className="row">
+                    <div className="col-2" style={{ textAlign: "right" }} >
+                      <label className="title-field" for="LinkPlan" >
+                        Link Plan
                                                                         </label>
-                                                                    </div>
-                                                                    <div className="col-10" style={{ textAlign: 'start', padding: 0 }}>
+                    </div>
+                    <div className="col-10" style={{ textAlign: 'start', padding: 0 }}>
 
-                                                                    <input type="text" class="form-control" id="txtLinkPlan" value={this.state.updateData.workLinkPlan} onChange={(event) => { this.onWorkLinkPlanChange(event) }} />
-                                                                      
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                      <input type="text" class="form-control" id="txtLinkPlan" value={this.state.updateData.workLinkPlan} onChange={(event) => { this.onWorkLinkPlanChange(event) }} />
 
-                                                         {/* Reference */}
-                                                         <div className="row form-group">
-                                                            <div className="col-12">
-                                                                <div className="row">
-                                                                    <div className="col-2" style={{ textAlign: "right" }} >
-                                                                        <label className="title-field" for="Reference" >
-                                                                        Reference 
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Reference */}
+              <div className="row form-group">
+                <div className="col-12">
+                  <div className="row">
+                    <div className="col-2" style={{ textAlign: "right" }} >
+                      <label className="title-field" for="Reference" >
+                        Reference
                                                                         </label>
-                                                                    </div>
-                                                                    <div className="col-10" style={{ textAlign: 'start', padding: 0 }}>
+                    </div>
+                    <div className="col-10" style={{ textAlign: 'start', padding: 0 }}>
 
-                                                                    <input type="text" class="form-control" id="txtReference" value={this.state.updateData.workReference} onChange={(event) => { this.onWorkReferenceChange(event) }} />
-                                                                      
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                      <input type="text" class="form-control" id="txtReference" value={this.state.updateData.workReference} onChange={(event) => { this.onWorkReferenceChange(event) }} />
+
+                    </div>
+                  </div>
+                </div>
+              </div>
 
 
-              
+
             </div>
 
             <div className="row form-group" style={{ margin: 0 }}>

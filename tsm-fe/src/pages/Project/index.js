@@ -24,34 +24,14 @@ import DataGrid, { Column, Pager, Paging } from "devextreme-react/data-grid";
 import AlertPopUp from "../../components/popup/alert_popup";
 import ConfirmPopup from "../../components/popup/confirm_popup";
 import configService from "../../config";
+
+import axios from 'axios'
+import { LoadPanel } from 'devextreme-react/load-panel';
+
 const msgAlertTitle = configService.msgAlert;
 const msgPopupTitle = configService.msgConfirm;
-
-const url = "https://js.devexpress.com/Demos/Mvc/api/TreeListTasks";
-
-const tasksData = AspNetData.createStore({
-    key: "Task_ID",
-    loadUrl: `${url}/Tasks`,
-    insertUrl: `${url}/InsertTask`,
-    updateUrl: `${url}/UpdateTask`,
-    deleteUrl: `${url}/DeleteTask`,
-    onBeforeSend: function (method, ajaxOptions) {
-        ajaxOptions.xhrFields = { withCredentials: true };
-    },
-});
-
-const employeesData = AspNetData.createStore({
-    key: "ID",
-    loadUrl: `${url}/TaskEmployees`,
-});
-
-const statusesData = [
-    "Not Started",
-    "Need Assistance",
-    "In Progress",
-    "Deferred",
-    "Completed",
-];
+const api = configService.appIp + configService.apiUrlPrefix
+const position = { of: '#App' };
 
 class Project extends React.Component {
     state = {
@@ -74,68 +54,52 @@ class Project extends React.Component {
             filter: {
                 projectName: null
             },
-            data: [
-                {
-                    projectId: "0001",
-                    projectName: "name1",
-                    projectPhase: "1",
-                    projectDetail: "....",
-                    projectStartDate: "20/01/2020",
-                    projectEndDate: "31/12/2021",
-                    projectManDays: "50",
-                    customerEmail: "test@test.com",
-                    updateDate: "01/01/2020",
-                    updateBy: "joon",
-                    createDate: "01/01/2020",
-                    createBy: "joon",
-                },
-                {
-                    projectId: "0002",
-                    projectName: "name2",
-                    projectPhase: "1",
-                    projectDetail: "....",
-                    projectStartDate: "20/01/2020",
-                    projectEndDate: "31/12/2021",
-                    projectManDays: "50",
-                    customerEmail: "test@test.com",
-                    updateDate: "01/01/2020",
-                    updateBy: "joon",
-                    createDate: "01/01/2020",
-                    createBy: "joon",
-                },
-                {
-                    projectId: "0003",
-                    projectName: "name3",
-                    projectPhase: "1",
-                    projectDetail: "....",
-                    projectStartDate: "20/01/2020",
-                    projectEndDate: "31/12/2021",
-                    projectManDays: "50",
-                    customerEmail: "test@test.com",
-                    updateDate: "01/01/2020",
-                    updateBy: "joon",
-                    createDate: "01/01/2020",
-                    createBy: "joon",
-                },
-                {
-                    projectId: "0004",
-                    projectName: "name4",
-                    projectPhase: "1",
-                    projectDetail: "....",
-                    projectStartDate: "20/01/2020",
-                    projectEndDate: "31/12/2021",
-                    projectManDays: "50",
-                    customerEmail: "test@test.com",
-                    updateDate: "01/01/2020",
-                    updateBy: "joon",
-                    createDate: "01/01/2020",
-                    createBy: "joon",
-                },
-            ],
+            data: [],
+            pageSize: configService.defaultPageSize,
+            pageIndex: 0,
+            loadPanelVisible: false
         };
+
+        this.dataGridRef = React.createRef();
+        this.getTotalPageCount = () => {
+            return this.dataGridRef.current.instance.pageCount();
+        }
+
+        this.changePageSize = this.changePageSize.bind(this);
+        this.goToLastPage = this.goToLastPage.bind(this);
+        this.handleOptionChange = this.handleOptionChange.bind(this);
+
     }
 
     componentDidMount() {
+        this.fnGetData();
+    }
+
+    changePageSize(value) {
+        this.setState({
+            pageSize: value
+        });
+    }
+
+    goToLastPage() {
+        const pageCount = this.dataGridRef.current.instance.pageCount();
+        this.setState({
+            pageIndex: pageCount - 1
+        });
+    }
+
+    handleOptionChange(e) {
+        console.log("TCL: JobType -> handleOptionChange -> e", e)
+        if (e.fullName === 'paging.pageSize') {
+            this.setState({
+                pageSize: e.value
+            });
+        }
+        if (e.fullName === 'paging.pageIndex') {
+            this.setState({
+                pageIndex: e.value
+            });
+        }
     }
 
     handleReset = () => {
@@ -144,6 +108,10 @@ class Project extends React.Component {
                 projectName: '',
             },
         });
+
+        setTimeout(() => {
+            this.fnGetData();
+        }, 100);
     };
 
     onTypeNameChange = (event) => {
@@ -154,23 +122,61 @@ class Project extends React.Component {
         });
     }
     onSearch = () => {
-
-        console.log("TCL: Project -> onSearch -> ",)
-
+        this.setState({ loadPanelVisible: true })
+        this.fnGetData();
     }
 
-    onDeleteData = (data) => {
-        console.log("TCL: Project -> onDeleteData -> data", data)
+    onDeleteData = async (data) => {
+        try {
+            var response = await axios.delete(api + '/project/' + data);
+            if (response && response.status === 200) {
+                if (response.data && response.data.resultCode === "20000") {
+                    this.setState({ isOpen: false });
+                    this.setState({ isPopupError: false });
+                    this.setState({ isPopupSuccess: true });
+                    this.setState({ isPopupMsg: msgAlertTitle.deleted });
+                } else {
+                    this.setState({ isOpen: false })
+                    this.setState({ isPopupError: true })
+                    this.setState({ isPopupSuccess: false })
+                    this.setState({ isPopupMsg: msgAlertTitle.systemError })
+                }
+            }
+        } catch (error) {
+            this.setState({ loadPanelVisible: false })
+            this.setState({ isOpen: false })
+            this.setState({ isPopupError: true })
+            this.setState({ isPopupSuccess: false })
+            this.setState({ isPopupMsg: msgAlertTitle.systemError })
+            console.log("TCL: JobType -> fnGetData -> error", error)
+        }
+    }
 
-        // ต้อง call api -------------------
-        let tempDel = this.state.data.filter(r => data.indexOf(r.projectId) === -1)
-        // console.log("TCL: JobType -> onDeleteData -> delete", tempDel)
-        this.setState({ data: tempDel })
-        // ต้อง call api -------------------
-        this.setState({ isOpen: false });
-        this.setState({ isPopupError: false });
-        this.setState({ isPopupSuccess: true });
-        this.setState({ isPopupMsg: msgAlertTitle.deleted });
+    fnGetData = async () => {
+        try {
+            let filter = {}
+            filter.filter = {}
+            filter.fields = configService.fields.projectList
+            filter.limit = this.state.pageSize;
+            filter.offset = this.state.pageIndex;
+            filter.orderby = "projectName";
+            if (this.state.filter.projectName && this.state.filter.projectName !== '') {
+                filter.filter.projectName = this.state.filter.projectName
+            }
+            const response = await axios.get(api + '/project', { params: filter })
+            if (response && response.status === 200) {
+                if (response.data && response.data.resultCode === "20000") {
+                    this.setState({ data: response.data.resultData })
+                } else {
+                    this.setState({ data: response.data.resultData })
+                }
+
+            }
+            this.setState({ loadPanelVisible: false })
+        } catch (error) {
+            this.setState({ loadPanelVisible: false })
+            console.log("TCL: JobType -> fnGetData -> error", error)
+        }
     }
 
     delCellRender = (data) => {
@@ -198,7 +204,7 @@ class Project extends React.Component {
     editCellRender = (data) => {
         return (
             <Link
-                to={"/project" + `/{"action":"edit","projectId":"${data.data.typeId}"}`}
+                to={"/project" + `/{"action":"edit","projectId":"${data.data.projectId}"}`}
             >
                 <span style={{ color: "black", fontSize: "12pt" }}>
 
@@ -211,7 +217,7 @@ class Project extends React.Component {
     viewCellRender = (data) => {
         return (
             <Link
-                to={"/project" + `/{"action":"view","projectId":"${data.data.typeId}"}`}
+                to={"/project" + `/{"action":"view","projectId":"${data.data.projectId}"}`}
             >
                 <span style={{ color: "black", fontSize: "12pt" }}>
 
@@ -235,7 +241,7 @@ class Project extends React.Component {
     render() {
         return (
             <>
-                <div className="App">
+                <div className="App" id="App">
                     <div id="boxType" className="container-box-content">
                         <div className="row wrap-container">
                             <Breadcrumb>
@@ -325,13 +331,20 @@ class Project extends React.Component {
                                             dataSource={this.state.data}
                                             showBorders={true}
                                             showRowLines={true}
+                                            ref={this.dataGridRef}
+                                            noDataText="Data Not Found"
+                                            onOptionChanged={this.handleOptionChange}
                                         >
-                                            <Paging defaultPageSize={3} />
+                                            <Paging defaultPageSize={configService.defaultPageSize}
+                                                pageSize={this.state.pageSize}
+                                                pageIndex={this.state.pageIndex} />
                                             <Pager
                                                 showPageSizeSelector={true}
-                                                allowedPageSizes={[10, 20, 50, 100, 250]}
+                                                allowedPageSizes={configService.allowedPageSizes}
                                                 showInfo={true}
                                                 showNavigationButtons={true}
+                                                visible={true}
+                                                remoteOperations={true}
                                             />
                                             <Column
                                                 width="100"
@@ -376,6 +389,14 @@ class Project extends React.Component {
                         </div>
                     </div>
                 </div>
+
+                <LoadPanel
+                    shadingColor="rgba(0,0,0,0.4)"
+                    position={position}
+                    visible={this.state.loadPanelVisible}
+                />
+
+
                 {/* POPUP */}
                 <AlertPopUp
                     successStatus={this.state.isPopupSuccess}
@@ -384,6 +405,7 @@ class Project extends React.Component {
                     clearActive={() => {
                         this.setState({ isPopupError: false });
                         this.setState({ isPopupSuccess: false });
+                        this.fnGetData()
                     }}
                 />
                 <ConfirmPopup

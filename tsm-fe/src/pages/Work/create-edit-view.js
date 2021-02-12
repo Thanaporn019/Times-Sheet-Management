@@ -12,11 +12,15 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import AlertPopUp from "../../components/popup/alert_popup";
 import ConfirmPopup from "../../components/popup/confirm_popup";
 import configService from "../../config";
+import axios from 'axios'
+import { LoadPanel } from 'devextreme-react/load-panel';
 const msgAlertTitle = configService.msgAlert;
 const msgPopupTitle = configService.msgConfirm;
 const msgValid = configService.validDateFill;
 const format = "HH:mm A";
 const Option = Select.Option;
+const api = configService.appIp + configService.apiUrlPrefix
+const position = { of: '#App' };
 
 class ActionsWork extends React.Component {
     state = {
@@ -27,10 +31,11 @@ class ActionsWork extends React.Component {
     closeModal = () => this.setState({ isOpen: false });
 
     constructor(props) {
-        console.log("ActionsWork -> constructor -> props", props);
+        console.log("TCL: ActionsWork -> constructor -> props", props)
         let query = _.cloneDeep(props.match.params.query);
         let tempQuery = JSON.parse(JSON.stringify(query));
         let param = JSON.parse(tempQuery);
+        // console.log("TCL: ActionsWork -> constructor -> param", param)
 
         super(props);
         this.state = {
@@ -45,11 +50,13 @@ class ActionsWork extends React.Component {
             workDate: null,
             data: [
                 {
+                    workId: null,
                     projectId: null,
                     typeId: null,
                     workDate: null,
                     workDetail: null,
-                    workUrl: null,
+                    workPlan: null,
+                    workRef: null,
                     workManhour: null,
                     workTimeIn: null,
                     workTimeOut: null,
@@ -71,6 +78,7 @@ class ActionsWork extends React.Component {
             greaterTimeIn: [],
             greaterTimeOut: [],
             isSubmit: false,
+            loadPanelVisible: false
         };
 
         let tempDateFirstRow = _.cloneDeep(this.state.data)
@@ -79,193 +87,97 @@ class ActionsWork extends React.Component {
         this.setState({ data: tempDateFirstRow })
     }
 
-    componentDidMount() {
-        this.getTypeList();
-        this.getProjectList();
+    async componentDidMount() {
+        try {
+            this.setState({ loadPanelVisible: true })
+            await this.getProjectList()
+            await this.getJobtypeList()
+            if (this.state.params && this.state.params.workDate) {
+                let workDate = _.cloneDeep(this.state.params.workDate)
+                console.log("TCL: ActionsWork -> componentDidMount -> workDate", workDate)
+                let date = workDate.replace(/%2F/g, "\/")
+                if (this.state.params.action === 'create') {
+                    this.setState({
+                        workDate: moment(date, 'DD/MM/YYYY').toDate()
+                    })
+
+                }
+                if (this.state.params.action === 'edit') {
+                    await this.getDataView()
+                }
+            }
+            this.setState({ loadPanelVisible: false })
+        } catch (error) {
+            console.log("TCL: componentDidMount -> error", error)
+        }
     }
 
-    getProjectList() {
-        this.setState({
-            projectList: [{
-                projectId: '001',
-                projectName: 'SSB-SRFC Phase 0.1'
-              },
-              {
-                projectId: '002',
-                projectName: 'Smart Quotation Diagram'
-              },
-              {
-                projectId: '003',
-                projectName: 'Other 2017'
-              },
-              {
-                projectId: '004',
-                projectName: 'SmartZone Support'
-              },
-              {
-                projectId: '005',
-                projectName: 'SmartZone 2018'
-              },
-              {
-                projectId: '006',
-                projectName: 'SmartZone 2019'
-              },
-              {
-                projectId: '007',
-                projectName: 'SmartZone MAC Authen'
-              },
-              {
-                projectId: '008',
-                projectName: 'Other 2017'
-              },
-              {
-                projectId: '009',
-                projectName: 'CarService GissWin'
-              },
-            ]
-            });
+    async getProjectList() {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let resData = []
+                let filter = {
+                    "fields": "projectId,projectName"
+                }
+                const response = await axios.get(api + '/project', { params: filter })
+                if (response && response.status === 200) {
+                    if (response.data && response.data.resultCode === "20000") {
+                        this.setState({ projectList: response.data.resultData })
+                        resData = response.data.resultData
+                    } else {
+                        this.setState({ projectList: response.data.resultData ? response.data.resultData : [] })
+                        resData = response.data.resultData || [];
+                    }
 
-            let resData = [
-                {
-                  projectId: "001",
-                  projectName: "SSB-SRFC Phase 0.1",
-                },
-                {
-                  projectId: "002",
-                  projectName: "Smart Quotation Diagram",
-                },
-                {
-                  projectId: '003',
-                  projectName: 'Other 2017'
-                },
-                {
-                  projectId: '004',
-                  projectName: 'SmartZone Support'
-                }, 
-                {
-                  projectId: '005',
-                  projectName: 'SmartZone 2018'
-                }, 
-                {
-                  projectId: '006',
-                  projectName: 'SmartZone 2019'
-                }, 
-                {
-                  projectId: '007',
-                  projectName: 'SmartZone MAC Authen'
-                }, 
-                {
-                  projectId: '008',
-                  projectName: 'SmartZone Tax Invoice'
-                }, 
-                {
-                  projectId: '009',
-                  projectName: 'CarService GissWin'
-                },
-          
-              ];
-        let temp = [];
-        for (let i = 0; i < resData.length; i++) {
-            temp.push(
-                <Option key={resData[i].projectId}> {resData[i].projectName} </Option>
-            );
-        }
+                    let temp = [];
+                    for (let i = 0; i < resData.length; i++) {
+                        temp.push(
+                            <Option key={resData[i].projectId} value={resData[i].projectId}> {resData[i].projectName} </Option>
+                        );
+                    }
 
-        this.projectList = temp;
+                    this.projectList = temp;
+                }
+                resolve();
+            } catch (error) {
+                console.log("TCL: getProjectList -> error", error)
+                reject(error)
+            }
+        });
     }
 
-    getTypeList() {
-        this.setState({
-            jobtypeList: [{
-                typeId: '001',
-                typeName: 'SSB-SRFC Phase 0.1'
-              },
-              {
-                typeId: '002',
-                typeName: 'Smart Quotation Diagram'
-              },
-              {
-                typeId: '003',
-                typeName: 'Other  2017'
-              },
-              {
-                typeId: '004',
-                typeName: 'SmartZone  Support'
-              },
-              {
-                typeId: '005',
-                typeName: 'SmartZone  2018'
-              },
-              {
-                typeId: '006',
-                typeName: 'Other  2017'
-              },
-              {
-                typeId: '007',
-                typeName: 'SmartZone MAC Authen'
-              },
-              {
-                typeId: '008',
-                typeName: 'SmartZone Tax Invoice'
-              },
-              {
-                typeId: '009',
-                typeName: 'CarService GissWin'
-              },
-        
-            ]
-            });
+    async getJobtypeList() {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let resData = []
+                let filter = {
+                    "fields": "typeId,typeName"
+                }
+                const response = await axios.get(api + '/type', { params: filter })
+                if (response && response.status === 200) {
+                    if (response.data && response.data.resultCode === "20000") {
+                        this.setState({ typeList: response.data.resultData })
+                        resData = response.data.resultData
+                    } else {
+                        this.setState({ typeList: response.data.resultData ? response.data.resultData : [] })
+                        resData = response.data.resultData || [];
+                    }
 
-            let resData = [
-                {
-                  typeId: "001",
-                  typeName: "SSB-SRFC Phase 0.1",
-                },
-                {
-                  typeId: "002",
-                  typeName: "Smart Quotation Diagram",
-                },
-                {
-                  typeId: "003",
-                  typeName: 'Other  2017'
-                },
-                {
-                  typeId: "004",
-                  typeName: "SmartZone  Support"
-                },
-                {
-                  typeId: "005",
-                  typeName: "SmartZone  2018"
-                },
-                {
-                  typeId: "006",
-                  typeName: "Other  2017"
-                },
-                {
-                  typeId: '007',
-                  typeName: "SmartZone MAC Authen"
-                },
-                {
-                  typeId: "008",
-                  typeName: "SmartZone Tax Invoice"
-                },
-                {
-                  typeId: "009",
-                  typeName: "CarService GissWin"
-                },
-              ];
-        let temp = [];
-        for (let i = 0; i < resData.length; i++) {
-            temp.push(
-                <Option key={resData[i].typeId}> {resData[i].typeName} </Option>
-            );
-            console.log(
-                "ActionsWork -> getJobtypeList -> resData[i].typeId",
-                resData[i].typeId
-            );
-        }
+                    let temp = [];
+                    for (let i = 0; i < resData.length; i++) {
+                        temp.push(
+                            <Option key={resData[i].typeId} value={resData[i].typeId}> {resData[i].typeName} </Option>
+                        );
+                    }
 
-        this.typeList = temp;
+                    this.typeList = temp;
+                }
+                resolve();
+            } catch (error) {
+                console.log("TCL: getProjectList -> error", error)
+                reject(error)
+            }
+        });
     }
 
 
@@ -278,14 +190,10 @@ class ActionsWork extends React.Component {
         data[index] = item;
 
         let valid = [...this.state.isValid_projectName];
-        console.log("TCL: ActionsWork -> handleChangeProject -> valid", valid)
         if (!value || value !== '') {
             valid[index] = false;
         }
-
         this.setState({ data: data, isValid_projectName: valid });
-
-        console.log("TCL: ActionsWork -> handleChangeProject -> ", this.state)
     };
 
     handleBlurProject = () => {
@@ -321,9 +229,9 @@ class ActionsWork extends React.Component {
 
 
     // TODO :: Dropdown Time In
-    onChangeTimeIn = (time, timestring, index)  => {
-      
-        // console.log("ActionsWork -> onChangeTimeIn -> time, timestring, index", time, timestring, index)
+    onChangeTimeIn = (time, timestring, index) => {
+
+        console.log("ActionsWork -> onChangeTimeIn -> time, timestring, index", time, timestring, index)
         let data = [...this.state.data];
         let item = { ...data[index] };
         item.workTimeIn = time;
@@ -341,12 +249,6 @@ class ActionsWork extends React.Component {
 
     // TODO :: Dropdown Time Out
     onChangeTimeOut = (time, timestring, index) => {
-        console.log(
-            "ActionsWork -> onChangeTimeOut -> time, timestring, index",
-            time,
-            timestring,
-            index
-        );
         let data = [...this.state.data];
         let item = { ...data[index] };
         item.workTimeOut = time;
@@ -382,9 +284,6 @@ class ActionsWork extends React.Component {
             return
         }
 
-       
-    
-
         if (this.checkGreaterTime('one', index) === false) {
             console.log("TCL: ActionsWork -> calManHours -> ", 'time out > time in')
             return
@@ -419,15 +318,9 @@ class ActionsWork extends React.Component {
             time = tempTime;
         }
 
-         let valid = [...this.state.isValid_manHours];
-       
-            valid[index] = false;
-        
-
-        // this.setState({ data: temp, isValid_ManHours: valid });
-
+        let valid = [...this.state.isValid_manHours];
+        valid[index] = false;
         temp[index].workManhour = time
-        // this.setState({ data: temp })
         this.setState({ data: temp, isValid_manHours: valid });
     };
 
@@ -453,21 +346,19 @@ class ActionsWork extends React.Component {
     handleAddData = () => {
         console.log("ActionsWork -> handleAddData -> handleAddData");
         this.state.data.push({
+            workId: null,
             projectId: null,
             typeId: null,
             workDate: null,
             workDetail: null,
-            workUrl: null,
+            workPlan: null,
+            workRef: null,
             workManhour: null,
             workTimeIn: null,
             workTimeOut: null,
         });
         let a = this.state.data;
         this.setState({ data: a });
-        console.log(
-            "ActionsWork -> handleAddData ->  this.state.data",
-            this.state.data
-        );
     };
 
     handleChangeDate = (event) => {
@@ -480,39 +371,12 @@ class ActionsWork extends React.Component {
         if (!event.value || event.value !== '') {
             this.setState({ isValid_workDate: false });
         }
-        console.log("TCL: ActionsWork -> handleChangeDate -> temp", temp)
         this.setState({ workDate: event.value, data: temp })
-    }
-
-    deleteData = (data) => {
-        console.log("TCL: ActionsWork -> deleteData -> data", data)
-
-        // ต้อง call api -------------------
-        let tempDel = _.cloneDeep(this.state.data)
-        tempDel.splice(data[1], 1);
-        this.setState({ data: tempDel })
-        // ต้อง call api -------------------
-
-        this.setState({ isOpen: false });
-        this.setState({ isPopupError: false });
-        this.setState({ isPopupSuccess: true });
-        this.setState({ isPopupMsg: msgAlertTitle.deleted });
-    }
-
-    confirmSave = (data) => {
-        console.log("TCL: ActionsWork -> confirmSave -> data", data)
-        this.setState({ isOpen: false });
-        this.setState({ isPopupError: false });
-        this.setState({ isPopupSuccess: true });
-        this.setState({ isPopupMsg: this.state.params.action === "edit" ? msgAlertTitle.updated : msgAlertTitle.saved });
-
     }
 
     onWorkManHoursChange = (event, index) => {
         let temp = _.cloneDeep(this.state.data)
         temp[index].workManhour = event.target.value
-        
-        
         let valid = [...this.state.isValid_manHours];
         if (event.target.value || event.target.value !== '') {
             valid[index] = false;
@@ -520,16 +384,23 @@ class ActionsWork extends React.Component {
 
         this.setState({ data: temp, isValid_manHours: valid });
     }
-    onWorkUrlChange = (event, index) => {
-        console.log("TCL: ActionsWork -> onWorkUrlChange -> event", event)
-        let temp = _.cloneDeep(this.state.data)
-        temp[index].workUrl = event.target.value
-        console.log("TCL: ActionsWork -> onWorkUrlChange -> temp", temp)
 
+    onWorkPlanChange = (event, index) => {
+        let temp = _.cloneDeep(this.state.data)
+        temp[index].workPlan = event.target.value
         this.setState({
             data: temp
         });
     }
+
+    onWorkReferenceChange = (event, index) => {
+        let temp = _.cloneDeep(this.state.data)
+        temp[index].workRef = event.target.value
+        this.setState({
+            data: temp
+        });
+    }
+
     onWorkDetailChange = (event, index) => {
         let temp = _.cloneDeep(this.state.data)
         temp[index].workDetail = event.target.value
@@ -559,7 +430,6 @@ class ActionsWork extends React.Component {
                 isDelete: false,
             });
         } else {
-
             console.log("TCL: ActionsWork -> checkValidData -> ", 'กรอกข้อมูลไม่ครบ')
         }
     }
@@ -638,7 +508,7 @@ class ActionsWork extends React.Component {
     }
 
     checkGreaterTime(type, index) {
-        
+
         if (type === 'one') {
 
             if ((this.state.data[index].timeIn || this.state.data[index].timeIn !== '') && (this.state.data[index].timeOut || this.state.data[index].timeOut !== '')) {
@@ -651,13 +521,13 @@ class ActionsWork extends React.Component {
                 if (start > end) {
                     validTimeIn[index] = true;
                     validTimeOut[index] = true;
-                    
+
                     this.setState({
                         greaterTimeIn: validTimeIn,
                         greaterTimeOut: validTimeOut,
                     })
                     return false
-                }else{
+                } else {
                     validTimeIn[index] = false;
                     validTimeOut[index] = false;
                     this.setState({
@@ -688,6 +558,114 @@ class ActionsWork extends React.Component {
             }
             return res
         }
+    }
+
+    deleteData = (data) => {
+        // ต้อง call api -------------------
+        let tempDel = _.cloneDeep(this.state.data)
+        tempDel.splice(data[1], 1);
+        this.setState({ data: tempDel })
+        // ต้อง call api -------------------
+
+        this.setState({ isOpen: false });
+        this.setState({ isPopupError: false });
+        this.setState({ isPopupSuccess: true });
+        this.setState({ isPopupMsg: msgAlertTitle.deleted });
+    }
+
+    confirmSave = async (data) => {
+        this.setState({ loadPanelVisible: true })
+        console.log("TCL: ActionJobType -> confirmSave -> data", data)
+        try {
+            let body = []
+            for (let i = 0; i < data.length; i++) {
+                const element = data[i];
+                let temp = {
+                    workId: element.workId,
+                    projectId: element.projectId,
+                    typeId: element.typeId,
+                    workDate: moment(this.state.workDate).format('YYYY-MM-DD'),
+                    workDetail: element.workDetail,
+                    workPlan: element.workPlan,
+                    workRef: element.workRef,
+                    workManhour: element.workManhour,
+                    workTimeIn: element.timeIn,
+                    workTimeOut: element.timeOut};
+                if (!element.workRef) {
+                   delete temp.workRef;
+                }
+                if (!element.workPlan) {
+                   delete temp.workPlan;
+                }
+                if (this.state.params.action === 'create') {
+                    delete temp.workId;
+                }
+                body.push(temp)
+            }
+            console.log("TCL: ActionsWork -> confirmSave -> body", body)
+            var response;
+            if (this.state.params.action === 'edit') {
+                response = await axios.put(api + '/work', body)
+            } else {
+                response = await axios.post(api + '/work', body)
+            }
+            if (response && response.status === 200) {
+                if (response.data && response.data.resultCode === "20000") {
+                    this.setState({ isOpen: false })
+                    this.setState({ isPopupError: false })
+                    this.setState({ isPopupSuccess: true })
+                    this.setState({ isPopupMsg: this.state.params.action === 'edit' ? msgAlertTitle.updated : msgAlertTitle.saved })
+                } else {
+                    this.setState({ isOpen: false })
+                    this.setState({ isPopupError: true })
+                    this.setState({ isPopupSuccess: false })
+                    this.setState({ isPopupMsg: msgAlertTitle.systemError })
+                }
+            }
+            this.setState({ loadPanelVisible: false })
+        } catch (error) {
+            this.setState({ loadPanelVisible: false })
+            this.setState({ isOpen: false })
+            this.setState({ isPopupError: true })
+            this.setState({ isPopupSuccess: false })
+            this.setState({ isPopupMsg: msgAlertTitle.systemError })
+            console.log("TCL: JobType -> fnGetData -> error", error)
+        }
+    }
+
+    async getDataView() {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let resData = []
+                let filter = {
+                    "filter": {
+                        "workDate": moment(this.state.params.workDate.replace(/%2F/g, "\/"), 'DD/MM/YYYY').format('YYYY-MM-DD')
+                    }
+                }
+                const response = await axios.get(api + '/work', { params: filter })
+                if (response && response.status === 200) {
+                    if (response.data && response.data.resultCode === "20000") {
+                        let temp = _.cloneDeep(response.data.resultData)
+                        console.log("TCL: ActionsWork -> getDataView -> temp", temp)
+                        for (let i = 0; i < temp.length; i++) {
+                            const element = temp[i];
+                            temp[i].timeIn = element.workTimeIn
+                            temp[i].timeOut = element.workTimeOut
+                            temp[i].workTimeIn = moment(element.workTimeIn, 'HH:mm A').local();
+                            temp[i].workTimeOut = moment(element.workTimeOut, 'HH:mm A').local();
+                        }
+                        console.log("TCL: ActionsWork -> getDataView -> temp", temp)
+                        this.setState({ data: temp, workDate: moment(temp[0].workDate, 'DD/MM/YYYY').toDate() })
+                    } else {
+                        // this.setState({ data: [], workDate: null })
+                    }
+                }
+                resolve();
+            } catch (error) {
+                console.log("TCL: getProjectList -> error", error)
+                reject(error)
+            }
+        });
     }
 
     render() {
@@ -728,6 +706,7 @@ class ActionsWork extends React.Component {
                                                 </div>
                                                 <div className={`col-4`} style={{ textAlign: 'start', padding: 0 }}>
                                                     <DateBox value={null} type="date" value={this.state.workDate}
+                                                        displayFormat="dd/MM/yyyy"
                                                         type="date" onValueChanged={(e) => {
                                                             this.handleChangeDate(e)
                                                         }}
@@ -765,14 +744,11 @@ class ActionsWork extends React.Component {
                                                                                 placeholder="Please selete project"
                                                                                 optionFilterProp="children"
                                                                                 onChange={(e) => {
+                                                                                    
+                                                                                    console.log("TCL: ActionsWork -> render -> ", this.projectList)
                                                                                     this.handleChangeProject(e, i);
                                                                                 }}
-                                                                                onFocus={(e) => {
-                                                                                    this.handleFocusProject(e, i);
-                                                                                }}
-                                                                                onBlur={(e) => {
-                                                                                    this.handleBlurProject(e, i);
-                                                                                }}
+                                                                               
                                                                                 filterOption={(input, option) =>
                                                                                     option.props.children[1].toLowerCase().indexOf(input.toLowerCase()) >= 0
                                                                                 }
@@ -850,7 +826,7 @@ class ActionsWork extends React.Component {
                                                                                     i
                                                                                 );
                                                                             }}
-                                                                            
+
                                                                             className={`${this.state.isValid_timeIn[i] || this.state.greaterTimeIn[i] ? 'has-error-input' : ''}`} />
                                                                         {this.state.isValid_timeIn[i] && !this.state.greaterTimeIn[i] ? <span className="color-red">{msgValid.work.validTimeIn}</span> : null}
                                                                         {this.state.greaterTimeIn[i] && !this.state.isValid_timeIn[i] ? <span className="color-red">{msgValid.work.validTimeInmoreTimeOut}</span> : null}
@@ -915,9 +891,9 @@ class ActionsWork extends React.Component {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            </div>
-                                                            {/* Url */}
-                                                            {/* <div className="col-6">
+                                                        </div>
+                                                        {/* Url */}
+                                                        {/* <div className="col-6">
                                                                 <div className="row">
                                                                     <div className="col-4" style={{ textAlign: "right" }} >
                                                                         <label className="title-field" for="txtUrl">
@@ -929,7 +905,7 @@ class ActionsWork extends React.Component {
                                                                     </div>
                                                                 </div>
                                                             </div> */}
-                                                        
+
                                                         {/* Detail */}
                                                         <div className="row form-group">
                                                             <div className="col-12">
@@ -954,38 +930,35 @@ class ActionsWork extends React.Component {
                                                             </div>
                                                         </div>
 
-                                                    {/* Link Plan */}
+                                                        {/* Link Plan */}
                                                         <div className="row form-group">
                                                             <div className="col-12">
                                                                 <div className="row">
                                                                     <div className="col-2" style={{ textAlign: "right" }} >
                                                                         <label className="title-field" for="txtLinkPlan" >
-                                                                        Link Plan  
+                                                                            Link Plan
                                                                         </label>
                                                                     </div>
                                                                     <div className="col-10" style={{ textAlign: 'start', padding: 0 }}>
 
-                                                                    <input type="text" class="form-control" id="txtLinkPlan" value={data.workUrl} onChange={(event) => { this.onWorkUrlChange(event, i) }} />
-                                                                      
+                                                                        <input type="text" class="form-control" id="txtLinkPlan" value={data.workPlan} onChange={(event) => { this.onWorkPlanChange(event, i) }} />
+
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
 
-                                                         {/* Reference*/}
+                                                        {/* Reference*/}
                                                         <div className="row form-group">
                                                             <div className="col-12">
                                                                 <div className="row">
                                                                     <div className="col-2" style={{ textAlign: "right" }} >
                                                                         <label className="title-field" for="txtReference" >
-                                                                        Reference 
+                                                                            Reference
                                                                         </label>
                                                                     </div>
                                                                     <div className="col-10" style={{ textAlign: 'start', padding: 0 }}>
-
-                                                                    <input type="text" class="form-control" id="txtReference" value={data.workReference} onChange={(event) => { this.onWorkReferenceChange(event, i) }} />
-                                                                      
-
+                                                                        <input type="text" class="form-control" id="txtReference" value={data.workRef} onChange={(event) => { this.onWorkReferenceChange(event, i) }} />
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1061,14 +1034,14 @@ class ActionsWork extends React.Component {
                     message={this.state.isPopupMsg}
                     clearActive={() => {
 
-                        if(this.state.isPopupSuccess === true && this.state.isDelete === false){
-                            this.props.history.push('/work') 
+                        if (this.state.isPopupSuccess === true && this.state.isDelete === false) {
+                            this.props.history.push('/work')
                         }
-                       
+
 
                         this.setState({ isPopupError: false });
                         this.setState({ isPopupSuccess: false });
-                        
+
                     }}
                 />
                 <ConfirmPopup

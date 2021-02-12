@@ -17,34 +17,10 @@ import ConfirmPopup from "../../components/popup/confirm_popup";
 import axios from 'axios'
 import { LoadPanel } from 'devextreme-react/load-panel';
 
-const url = "https://js.devexpress.com/Demos/Mvc/api/TreeListTasks";
 const msgAlertTitle = configService.msgAlert;
 const msgPopupTitle = configService.msgConfirm;
 const api = configService.appIp + configService.apiUrlPrefix
 const position = { of: '#App' };
-const tasksData = AspNetData.createStore({
-    key: "Task_ID",
-    loadUrl: `${url}/Tasks`,
-    insertUrl: `${url}/InsertTask`,
-    updateUrl: `${url}/UpdateTask`,
-    deleteUrl: `${url}/DeleteTask`,
-    onBeforeSend: function (method, ajaxOptions) {
-        ajaxOptions.xhrFields = { withCredentials: true };
-    },
-});
-
-const employeesData = AspNetData.createStore({
-    key: "ID",
-    loadUrl: `${url}/TaskEmployees`,
-});
-
-const statusesData = [
-    "Not Started",
-    "Need Assistance",
-    "In Progress",
-    "Deferred",
-    "Completed",
-];
 
 class JobType extends React.Component {
 
@@ -116,8 +92,6 @@ class JobType extends React.Component {
     }
 
     onTypeNameChange = (event) => {
-        console.log("TCL: JobType -> handleReset -> ", this.state.filter)
-        console.log("TCL: JobType -> onTypeNameChange -> event.target.value", event.target.value)
         this.setState({
             filter: {
                 ...this.state.filter,
@@ -136,7 +110,6 @@ class JobType extends React.Component {
     }
 
     handleReset = () => {
-        console.log("TCL: JobType -> handleReset -> ", this.state.filter)
         this.setState({ loadPanelVisible: true })
         this.setState({
             filter: { typeName: '', typeCode: '' }
@@ -356,7 +329,6 @@ class JobType extends React.Component {
                                             ref={this.dataGridRef}
                                             noDataText="Data Not Found"
                                             onOptionChanged={this.handleOptionChange}
-                                            loadPanel
                                         >
                                             <Paging defaultPageSize={configService.defaultPageSize}
                                                 pageSize={this.state.pageSize}

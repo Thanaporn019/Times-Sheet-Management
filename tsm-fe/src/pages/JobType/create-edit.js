@@ -60,11 +60,13 @@ class ActionJobType extends React.Component {
         this.onTypeNameChange = this.onTypeNameChange.bind(this);
         this.onTypeCodeChange = this.onTypeCodeChange.bind(this);
 
-
     }
 
     async componentDidMount() {
-        this.fnGetDataView();
+        if (this.state.params.action === 'edit') {
+            this.fnGetDataView();
+        }
+      
     }
 
     onTypeNameChange(event) {
@@ -113,8 +115,8 @@ class ActionJobType extends React.Component {
         console.log("TCL: ActionJobType -> confirmSave -> data", data)
         try {
             let body = {}
-            body.typeName = this.state.data.typeName;
-            body.typeCode = this.state.data.typeCode;
+            body.typeName = data.typeName;
+            body.typeCode = data.typeCode;
             var response;
             if (this.state.params.action === 'edit') {
                 response = await axios.put(api + '/type/' + this.state.data.typeId, body)

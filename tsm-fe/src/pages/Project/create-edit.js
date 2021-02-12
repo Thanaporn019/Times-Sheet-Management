@@ -12,28 +12,16 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import AlertPopUp from "../../components/popup/alert_popup";
 import ConfirmPopup from "../../components/popup/confirm_popup";
 import configService from '../../config';
+import axios from 'axios'
+import { LoadPanel } from 'devextreme-react/load-panel';
+
+const api = configService.appIp + configService.apiUrlPrefix
 const msgAlertTitle = configService.msgAlert;
 const msgPopupTitle = configService.msgConfirm;
 const msgValid = configService.validDateFill;
 const format = 'HH:mm';
 const Option = Select.Option;
-
-let data = [{
-    projectId: null,
-    typeId: null,
-    workDate: null,
-    workDetail: null,
-    workUrl: null,
-    workManhour: null,
-    workTimeIn: null,
-    workTimeOut: null,
-}]
-
-let projectList = [];
-let typeList = [];
-let timeHours = [];
-let timeMin = [];
-
+const position = { of: '#App' };
 class ActionsProject extends React.Component {
     state = {
         isOpen: false
@@ -58,6 +46,7 @@ class ActionsProject extends React.Component {
             isDataPopUp: {}, // ข้อมูลที่ใช้
             isTextMsg: '', // msg ของ Popup
             data: {
+                projectId: null,
                 projectName: null,
                 projectPhase: null,
                 projectDetail: null,
@@ -65,6 +54,10 @@ class ActionsProject extends React.Component {
                 projectEndDate: null,
                 projectManDays: null,
                 customerEmail: null,
+                createDate: null,
+createBy: null,
+updateDate: null,
+updateBy: null,
             },
             params: param,
             isSubmit: false,
@@ -84,11 +77,15 @@ class ActionsProject extends React.Component {
             },
             startGreater: false,
             endGreater: false,
+            loadPanelVisible: false
         };
     }
 
     componentDidMount() {
-
+        console.log("TCL: ActionsProject -> componentDidMount -> this.state.params", this.state.params)
+        if (this.state.params.action !== 'create') {
+            this.fnGetDataView();
+        }
     }
 
     handleChangeDate = (event, type) => {
@@ -141,6 +138,7 @@ class ActionsProject extends React.Component {
             this.setState({ isValid_phase: false })
         }
     }
+
     onProjectDetailChange = (event) => {
         this.setState({
             data: {
@@ -153,6 +151,7 @@ class ActionsProject extends React.Component {
             this.setState({ isValid_detail: false })
         }
     }
+
     onCustomerEmailChange = (event) => {
         this.setState({
             data: {
@@ -161,11 +160,21 @@ class ActionsProject extends React.Component {
             }
         });
 
-        if (!this.checkValidEmail()) {
-            this.setState({ isValid_email: true })
-        } else {
-            this.setState({ isValid_email: false })
-        }
+        setTimeout(() => {
+            if (this.state.data.customerEmail && !this.checkValidEmail()) {
+                this.setState({ isValid_email: true })
+            } else {
+                this.setState({ isValid_email: false })
+            }
+        }, 100);
+    }
+    onManDaysChange = (event) => {
+        this.setState({
+            data: {
+                ...this.state.data,
+                projectManDays: event.target.value
+            }
+        });
     }
 
     checkValidate = () => {
@@ -280,6 +289,7 @@ class ActionsProject extends React.Component {
         let checkGreaterCreatedDate = this.checkGreaterStartDate(this.state.data.projectEndDate, this.state.data.projectStartDate);
         this.setState({ startGreater: checkGreaterCreatedDate })
     }
+
     checkGreaterStopDateValue = () => {
         if (!this.state.data.projectStartDate || !this.state.data.projectEndDate || this.checkNullObjectMany(this.inputDate)) {
             this.setState({ endGreater: false })
@@ -307,14 +317,6 @@ class ActionsProject extends React.Component {
 
     }
 
-    confirmSave = (data) => {
-        console.log("TCL: ActionsProject -> confirmSave -> data", data)
-        this.setState({ isOpen: false })
-        this.setState({ isPopupError: false })
-        this.setState({ isPopupSuccess: true })
-        this.setState({ isPopupMsg: this.state.params.action === 'edit' ? msgAlertTitle.updated : msgAlertTitle.saved })
-    }
-
     checkValidEmail = () => {
         let reg = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
         const match = this.state.data.customerEmail ? this.state.data.customerEmail.match(reg) : null;
@@ -326,12 +328,113 @@ class ActionsProject extends React.Component {
         }
     }
 
+    confirmSave = async (data) => {
+        this.setState({ loadPanelVisible: true })
+        console.log("TCL: ActionJobType -> confirmSave -> data", data)
+        try {
+            let body = {}
+            body.projectName = data.projectName;
+            body.projectPhase = data.projectPhase;
+            body.projectDetail = data.projectDetail;
+            body.projectStartDate = moment(data.projectStartDate).format('YYYY-MM-DD HH:mm:ss');
+            body.projectEndDate = moment(data.projectEndDate).format('YYYY-MM-DD HH:mm:ss');
+            if (data.projectManDays) {
+                body.projectManDays = data.projectManDays;
+            }
+            if (data.customerEmail) {
+                body.customerEmail = data.customerEmail;
+            }
+            console.log("TCL: ActionsProject -> confirmSave -> body", body)
+            var response;
+            if (this.state.params.action === 'edit') {
+                response = await axios.put(api + '/project/' + this.state.data.projectId, body)
+            } else {
+                response = await axios.post(api + '/project', body)
+            }
+            if (response && response.status === 200) {
+                if (response.data && response.data.resultCode === "20000") {
+                    this.setState({ isOpen: false })
+                    this.setState({ isPopupError: false })
+                    this.setState({ isPopupSuccess: true })
+                    this.setState({ isPopupMsg: this.state.params.action === 'edit' ? msgAlertTitle.updated : msgAlertTitle.saved })
+                } else {
+                    this.setState({ isOpen: false })
+                    this.setState({ isPopupError: true })
+                    this.setState({ isPopupSuccess: false })
+                    this.setState({ isPopupMsg: msgAlertTitle.systemError })
+                }
+            }
+            this.setState({ loadPanelVisible: false })
+        } catch (error) {
+            this.setState({ loadPanelVisible: false })
+            this.setState({ isOpen: false })
+            this.setState({ isPopupError: true })
+            this.setState({ isPopupSuccess: false })
+            this.setState({ isPopupMsg: msgAlertTitle.systemError })
+            console.log("TCL: JobType -> fnGetData -> error", error)
+        }
+    }
+
+    fnGetDataView = async () => {
+        try {
+
+            this.setState({ loadPanelVisible: true })
+            let filter = {
+                "projectId": this.state.params.projectId
+            }
+            const response = await axios.get(api + '/project/' + this.state.params.projectId)
+            console.log("TCL: ActionJobType -> fnGetDataView -> response", response)
+            if (response && response.status === 200) {
+                if (response.data && response.data.resultCode === "20000") {
+                    this.setState({
+                        data: {
+                            projectId: response.data.resultData[0].projectId,
+                            projectName: response.data.resultData[0].projectName,
+                            projectPhase: response.data.resultData[0].projectPhase,
+                            projectDetail: response.data.resultData[0].projectDetail,
+                            projectStartDate: moment(response.data.resultData[0].projectStartDate, 'DD/MM/YYYY HH:mm:ss').toDate(),
+                            projectEndDate: moment(response.data.resultData[0].projectEndDate, 'DD/MM/YYYY HH:mm:ss').toDate(),
+                            projectManDays: response.data.resultData[0].projectManDays,
+                            customerEmail: response.data.resultData[0].customerEmail,
+                            createDate: response.data.resultData[0].createDate,
+                            createBy: response.data.resultData[0].createBy,
+                            updateDate: response.data.resultData[0].updateDate,
+                            updateBy: response.data.resultData[0].updateBy,
+                        }
+                    })
+                } else {
+                    this.setState({
+                        data: {
+                            projectId: null,
+                            projectName: null,
+                            projectPhase: null,
+                            projectDetail: null,
+                            projectStartDate: null,
+                            projectEndDate: null,
+                            projectManDays: null,
+                            customerEmail: null,
+                            createDate: null,
+                            createBy: null,
+                            updateDate: null,
+                            updateBy: null,
+                        }
+                    })
+                }
+
+            }
+            this.setState({ loadPanelVisible: false })
+        } catch (error) {
+            this.setState({ loadPanelVisible: false })
+            console.log("TCL: ActionJobType -> fnGetDataView -> error", error)
+        }
+    }
+
 
     render() {
 
         return (<>
 
-            <div className="App">
+            <div className="App" id="App">
                 <div id="boxType" className="container-box-content">
                     <div className="row wrap-container">
 
@@ -363,6 +466,8 @@ class ActionsProject extends React.Component {
                                             <div className={`col-4`} style={{ textAlign: 'start', padding: 0 }}>
                                                 <DateBox
                                                     value={this.state.data.projectStartDate}
+                                                    disabled={this.state.params.action === 'view'}
+                                                    displayFormat="dd/MM/yyyy"
                                                     type="date" onValueChanged={(e) => {
                                                         this.handleChangeDate(e, 'start')
                                                     }}
@@ -380,6 +485,8 @@ class ActionsProject extends React.Component {
                                             <div className={`col-4`} style={{ textAlign: 'start', padding: 0 }}>
                                                 <DateBox
                                                     value={this.state.data.projectEndDate}
+                                                    displayFormat="dd/MM/yyyy"
+                                                    disabled={this.state.params.action === 'view'}
                                                     type="date" onValueChanged={(e) => {
                                                         this.handleChangeDate(e, 'end')
                                                     }}
@@ -396,7 +503,7 @@ class ActionsProject extends React.Component {
                                             <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="ddlProject">Project{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
                                             <div className="col-4" style={{ textAlign: 'start', padding: 0 }}>
                                                 <input type="text" class={`form-control  ${this.state.isValid_projectName && this.state.isSubmit ? 'has-error-input' : ''}`} id="txtProject"
-                                                    value={this.state.data.projectName} onChange={this.onProjectNameChange} />
+                                                    value={this.state.data.projectName} onChange={this.onProjectNameChange} disabled={this.state.params.action === 'view'}/>
                                                 {this.state.isValid_projectName && this.state.isSubmit ? <span className="color-red">{msgValid.req}</span> : null}
                                             </div>
 
@@ -407,7 +514,7 @@ class ActionsProject extends React.Component {
                                             <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="ddlPhase">Phase{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
                                             <div className="col-4" style={{ textAlign: 'start', padding: 0 }}>
                                                 <input type="text" class={`form-control  ${this.state.isValid_phase && this.state.isSubmit ? 'has-error-input' : ''}`}
-                                                    id="txtPhase" value={this.state.data.projectPhase} onChange={this.onProjectPhaseChange} />
+                                                    id="txtPhase" value={this.state.data.projectPhase} onChange={this.onProjectPhaseChange} disabled={this.state.params.action === 'view'}/>
                                                 {this.state.isValid_phase && this.state.isSubmit ? <span className="color-red">{msgValid.req}</span> : null}
 
                                             </div>
@@ -417,7 +524,7 @@ class ActionsProject extends React.Component {
                                         <div className="row form-group">
                                             <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="txtManDay">Man Day{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}></span> : null}</label></div>
                                             <div className="col-5" style={{ textAlign: 'start', padding: 0 }}>
-                                                <input type="text" class="form-control col-5" id="txtManDay" />
+                                                <input type="text" class="form-control col-5" id="txtManDay" value={this.state.data.projectManDays} onChange={this.onManDaysChange} disabled={this.state.params.action === 'view'}/>
                                             </div>
                                         </div>
 
@@ -426,7 +533,7 @@ class ActionsProject extends React.Component {
                                             <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="txtDetail">Detail {this.state.params.action !== 'view' ? <span style={{ color: 'red' }}>*</span> : null}</label></div>
                                             <div className="col-5" style={{ textAlign: 'start', padding: 0 }}>
                                                 <textarea rows="3" type="text" class={`form-control  ${this.state.isValid_detail && this.state.isSubmit ? 'has-error-input' : ''}`}
-                                                    id="txtDetail" value={this.state.data.projectDetail} onChange={this.onProjectDetailChange} />
+                                                    id="txtDetail" value={this.state.data.projectDetail} onChange={this.onProjectDetailChange} disabled={this.state.params.action === 'view'}/>
                                                 {this.state.isValid_detail && this.state.isSubmit ? <span className="color-red">{msgValid.req}</span> : null}
                                             </div>
                                         </div>
@@ -435,7 +542,7 @@ class ActionsProject extends React.Component {
                                         <div className="row form-group">
                                             <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="txtCustomerEmail">Customer Email<span style={{ color: 'red' }}></span></label></div>
                                             <div className="col-5" style={{ textAlign: 'start', padding: 0 }}>
-                                                <input type="text" class={`form-control  ${this.state.isValid_email ? 'has-error-input' : ''}`} id="txtCustomerEmail" value={this.state.data.customerEmail} onChange={this.onCustomerEmailChange} />
+                                                <input type="text" class={`form-control  ${this.state.isValid_email ? 'has-error-input' : ''}`} id="txtCustomerEmail" value={this.state.data.customerEmail} onChange={this.onCustomerEmailChange} disabled={this.state.params.action === 'view'}/>
                                                 {this.state.isValid_email ? <span className="color-red">{msgValid.project.validEmail}</span> : null}
                                             </div>
                                         </div>
@@ -443,27 +550,27 @@ class ActionsProject extends React.Component {
                                         {/* CreateDate */}
                                         {this.state.params.action === 'view' ? <div className="row form-group">
                                             <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="txtCreateDate">CreateDate<span style={{ color: 'red' }}></span></label></div>
-                                            <input type="text" class="form-control col-5" id="txtCreateDate" />
+                                            <input type="text" class="form-control col-5" id="txtCreateDate" disabled={this.state.params.action === 'view'} value={this.state.data.createDate}/>
                                         </div> : null}
 
                                         {/* CreateBy */}
                                         {this.state.params.action === 'view' ? <div className="row form-group">
                                             <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="txtCreateBy">CreateBy<span style={{ color: 'red' }}></span></label></div>
-                                            <input type="text" class="form-control col-5" id="txtCreateBy" />
+                                            <input type="text" class="form-control col-5" id="txtCreateBy" disabled={this.state.params.action === 'view'} value={this.state.data.createBy}/>
 
                                         </div> : null}
 
                                         {/* UpdateDate */}
                                         {this.state.params.action === 'view' ? <div className="row form-group">
                                             <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="txtUpdateDate">UpdateDate<span style={{ color: 'red' }}></span></label></div>
-                                            <input type="text" class="form-control col-5" id="txtUpdateDate" />
+                                            <input type="text" class="form-control col-5" id="txtUpdateDate" disabled={this.state.params.action === 'view'} value={this.state.data.updateDate}/>
 
                                         </div> : null}
 
                                         {/*  UpdateBy */}
                                         {this.state.params.action === 'view' ? <div className="row form-group">
                                             <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="txtUpdateBy">UpdateBy<span style={{ color: 'red' }}></span></label></div>
-                                            <input type="text" class="form-control col-5" id="txtUpdateBy" />
+                                            <input type="text" class="form-control col-5" id="txtUpdateBy" disabled={this.state.params.action === 'view'} value={this.state.data.updateBy}/>
 
                                         </div> : null}
 
@@ -497,6 +604,12 @@ class ActionsProject extends React.Component {
                 </div>
 
             </div>
+
+            <LoadPanel
+                shadingColor="rgba(0,0,0,0.4)"
+                position={position}
+                visible={this.state.loadPanelVisible}
+            />
 
             {/* POPUP */}
             <AlertPopUp successStatus={this.state.isPopupSuccess} errorStatus={this.state.isPopupError} message={this.state.isPopupMsg}
