@@ -12,10 +12,14 @@ import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-ro
 import AlertPopUp from "../../components/popup/alert_popup";
 import ConfirmPopup from "../../components/popup/confirm_popup";
 import configService from '../../config';
+import axios from 'axios'
+import { LoadPanel } from 'devextreme-react/load-panel';
+
+const api = configService.appIp + configService.apiUrlPrefix
 const msgAlertTitle = configService.msgAlert;
 const msgPopupTitle = configService.msgConfirm;
 const msgValid = configService.validDateFill;
-
+const position = { of: '#App' };
 class ActionJobType extends React.Component {
     state = {
         isOpen: false
@@ -43,7 +47,6 @@ class ActionJobType extends React.Component {
                 typeName: null,
                 typeCode: null,
                 typeId: null,
-
             },
             projectList: [],
             typeList: [],
@@ -51,11 +54,17 @@ class ActionJobType extends React.Component {
             isSubmit: false,
             valid_typeName: false,
             valid_typeCode: false,
+            loadPanelVisible: false
         };
 
         this.onTypeNameChange = this.onTypeNameChange.bind(this);
         this.onTypeCodeChange = this.onTypeCodeChange.bind(this);
 
+
+    }
+
+    async componentDidMount() {
+        this.fnGetDataView();
     }
 
     onTypeNameChange(event) {
@@ -99,12 +108,77 @@ class ActionJobType extends React.Component {
         }
     }
 
-    confirmSave = (data) => {
+    confirmSave = async (data) => {
+        this.setState({ loadPanelVisible: true })
         console.log("TCL: ActionJobType -> confirmSave -> data", data)
-        this.setState({ isOpen: false })
-        this.setState({ isPopupError: true })
-        this.setState({ isPopupSuccess: false })
-        this.setState({ isPopupMsg: this.state.params.action === 'edit' ? msgAlertTitle.updated :  msgAlertTitle.saved })
+        try {
+            let body = {}
+            body.typeName = this.state.data.typeName;
+            body.typeCode = this.state.data.typeCode;
+            var response;
+            if (this.state.params.action === 'edit') {
+                response = await axios.put(api + '/type/' + this.state.data.typeId, body)
+            } else {
+                response = await axios.post(api + '/type', body)
+            }
+            if (response && response.status === 200) {
+                if (response.data && response.data.resultCode === "20000") {
+                    this.setState({ isOpen: false })
+                    this.setState({ isPopupError: false })
+                    this.setState({ isPopupSuccess: true })
+                    this.setState({ isPopupMsg: this.state.params.action === 'edit' ? msgAlertTitle.updated : msgAlertTitle.saved })
+                } else {
+                    this.setState({ isOpen: false })
+                    this.setState({ isPopupError: true })
+                    this.setState({ isPopupSuccess: false })
+                    this.setState({ isPopupMsg: msgAlertTitle.systemError })
+                }
+            }
+            this.setState({ loadPanelVisible: false })
+        } catch (error) {
+            this.setState({ loadPanelVisible: false })
+            this.setState({ isOpen: false })
+            this.setState({ isPopupError: true })
+            this.setState({ isPopupSuccess: false })
+            this.setState({ isPopupMsg: msgAlertTitle.systemError })
+            console.log("TCL: JobType -> fnGetData -> error", error)
+        }
+    }
+
+    fnGetDataView = async () => {
+        try {
+
+            this.setState({ loadPanelVisible: true })
+            let filter = {
+                "typeId": this.state.params.jobTypeId
+            }
+            const response = await axios.get(api + '/type/' + this.state.params.jobTypeId)
+            console.log("TCL: ActionJobType -> fnGetDataView -> response", response)
+            if (response && response.status === 200) {
+                if (response.data && response.data.resultCode === "20000") {
+                    this.setState({
+                        data: {
+                            typeName: response.data.resultData[0].typeName,
+                            typeCode: response.data.resultData[0].typeCode,
+                            typeId: response.data.resultData[0].typeId,
+                        }
+                    })
+                } else {
+                    this.setState({
+                        data: {
+                            typeName: null,
+                            typeCode: null,
+                            typeId: null,
+                        }
+                    })
+                }
+
+            }
+            this.setState({ loadPanelVisible: false })
+        } catch (error) {
+            this.setState({ loadPanelVisible: false })
+            console.log("TCL: ActionJobType -> fnGetDataView -> error", error)
+        }
     }
 
     render() {
@@ -183,6 +257,11 @@ class ActionJobType extends React.Component {
                     </div>
                 </div>
             </div>
+            <LoadPanel
+                shadingColor="rgba(0,0,0,0.4)"
+                position={position}
+                visible={this.state.loadPanelVisible}
+            />
 
             {/* POPUP */}
             <AlertPopUp successStatus={this.state.isPopupSuccess} errorStatus={this.state.isPopupError} message={this.state.isPopupMsg}

@@ -1,6 +1,13 @@
 
 
 let data = {
+    "appIp": "http://localhost:5000",
+    "apiUrlPrefix": "/TimeSheetManagement/Working",
+    "allowedPageSizes": [10, 25, 50, 100],
+    "defaultPageSize": 10,
+    "fields": {
+        "typeList": "typeId,typeName,typeCode,updateDate,updateBy,createDate,createBy"
+    },
     // api: {
     //    Api: 'http://localhost:5000',
     //     work: {

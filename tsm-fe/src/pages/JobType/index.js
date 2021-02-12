@@ -14,10 +14,14 @@ import DataGrid, { Column, Pager, Paging } from "devextreme-react/data-grid";
 import configService from "../../config";
 import AlertPopUp from "../../components/popup/alert_popup";
 import ConfirmPopup from "../../components/popup/confirm_popup";
+import axios from 'axios'
+import { LoadPanel } from 'devextreme-react/load-panel';
+
 const url = "https://js.devexpress.com/Demos/Mvc/api/TreeListTasks";
 const msgAlertTitle = configService.msgAlert;
 const msgPopupTitle = configService.msgConfirm;
-
+const api = configService.appIp + configService.apiUrlPrefix
+const position = { of: '#App' };
 const tasksData = AspNetData.createStore({
     key: "Task_ID",
     loadUrl: `${url}/Tasks`,
@@ -43,6 +47,7 @@ const statusesData = [
 ];
 
 class JobType extends React.Component {
+
     state = {
         isOpen: false,
     };
@@ -64,57 +69,50 @@ class JobType extends React.Component {
                 typeName: null,
                 typeCode: null,
             },
-            data: [
-                {
-                    typeId: "0001",
-                    typeName: "test",
-                    typeCode: "T0001",
-                    updateDate: "01/12/2020",
-                    updateBy: "joon",
-                    createDate: "01/11/2020",
-                    createBy: "joon",
-                },
-                {
-                    typeId: "0002",
-                    typeName: "test2",
-                    typeCode: "T0002",
-                    updateDate: "01/12/2020",
-                    updateBy: "joon",
-                    createDate: "01/11/2020",
-                    createBy: "joon",
-                },
-                {
-                    typeId: "0003",
-                    typeName: "test3",
-                    typeCode: "T0003",
-                    updateDate: "01/12/2020",
-                    updateBy: "joon",
-                    createDate: "01/11/2020",
-                    createBy: "joon",
-                },
-                {
-                    typeId: "0004",
-                    typeName: "test4",
-                    typeCode: "T0004",
-                    updateDate: "01/12/2020",
-                    updateBy: "joon",
-                    createDate: "01/11/2020",
-                    createBy: "joon",
-                },
-                {
-                    typeId: "0005",
-                    typeName: "test5",
-                    typeCode: "T0005",
-                    updateDate: "01/12/2020",
-                    updateBy: "joon",
-                    createDate: "01/11/2020",
-                    createBy: "joon",
-                },
-            ],
+            data: [],
+            pageSize: configService.defaultPageSize,
+            pageIndex: 0,
+            loadPanelVisible: false
         };
+        this.dataGridRef = React.createRef();
+        this.getTotalPageCount = () => {
+            return this.dataGridRef.current.instance.pageCount();
+        }
+
+        this.changePageSize = this.changePageSize.bind(this);
+        this.goToLastPage = this.goToLastPage.bind(this);
+        this.handleOptionChange = this.handleOptionChange.bind(this);
     }
 
-    componentDidMount() {
+    async componentDidMount() {
+        this.fnGetData();
+    }
+
+    changePageSize(value) {
+        this.setState({
+            pageSize: value
+        });
+    }
+
+    goToLastPage() {
+        const pageCount = this.dataGridRef.current.instance.pageCount();
+        this.setState({
+            pageIndex: pageCount - 1
+        });
+    }
+
+    handleOptionChange(e) {
+        console.log("TCL: JobType -> handleOptionChange -> e", e)
+        if (e.fullName === 'paging.pageSize') {
+            this.setState({
+                pageSize: e.value
+            });
+        }
+        if (e.fullName === 'paging.pageIndex') {
+            this.setState({
+                pageIndex: e.value
+            });
+        }
     }
 
     onTypeNameChange = (event) => {
@@ -127,6 +125,7 @@ class JobType extends React.Component {
             }
         });
     }
+
     onTypeCodeChange = (event) => {
         this.setState({
             filter: {
@@ -138,9 +137,13 @@ class JobType extends React.Component {
 
     handleReset = () => {
         console.log("TCL: JobType -> handleReset -> ", this.state.filter)
+        this.setState({ loadPanelVisible: true })
         this.setState({
             filter: { typeName: '', typeCode: '' }
         });
+        setTimeout(() => {
+            this.fnGetData();
+        }, 100);
     };
 
     delCellRender = (data) => {
@@ -189,26 +192,70 @@ class JobType extends React.Component {
     };
 
     onSearch = () => {
-        console.log("TCL: JobType -> onSearch -> ")
+        this.setState({ loadPanelVisible: true})
+        this.fnGetData();
     };
 
-    onDeleteData = (data) => {
-        console.log("TCL: JobType -> onDeleteData -> data", data)
-        this.setState({ isOpen: false });
-        this.setState({ isPopupError: false });
-        this.setState({ isPopupSuccess: true });
-        this.setState({ isPopupMsg: msgAlertTitle.deleted });
-
-        // ต้อง call api -------------------
-        let tempDel = this.state.data.filter(r => data.indexOf(r.typeId) === -1)
-        // console.log("TCL: JobType -> onDeleteData -> delete", tempDel)
-        this.setState({ data: tempDel })
-        // ต้อง call api -------------------
+    onDeleteData = async (data) => {
+        try {
+            var response = await axios.delete(api + '/type/' + data);
+            if (response && response.status === 200) {
+                if (response.data && response.data.resultCode === "20000") {
+                    this.setState({ isOpen: false });
+                    this.setState({ isPopupError: false });
+                    this.setState({ isPopupSuccess: true });
+                    this.setState({ isPopupMsg: msgAlertTitle.deleted });
+                } else {
+                    this.setState({ isOpen: false })
+                    this.setState({ isPopupError: true })
+                    this.setState({ isPopupSuccess: false })
+                    this.setState({ isPopupMsg: msgAlertTitle.systemError })
+                }
+            }
+        } catch (error) {
+            this.setState({ loadPanelVisible: false })
+            this.setState({ isOpen: false })
+            this.setState({ isPopupError: true })
+            this.setState({ isPopupSuccess: false })
+            this.setState({ isPopupMsg: msgAlertTitle.systemError })
+            console.log("TCL: JobType -> fnGetData -> error", error)
+        }
     }
+
+    fnGetData = async () => {
+        try {
+            let filter = {}
+            filter.filter = {}
+            filter.fields = configService.fields.typeList
+            filter.limit = this.state.pageSize;
+            filter.offset = this.state.pageIndex;
+            filter.orderby = "typeName";
+            if (this.state.filter.typeName && this.state.filter.typeName !== '') {
+                filter.filter.typeName = this.state.filter.typeName
+            }
+            if (this.state.filter.typeCode && this.state.filter.typeCode !== '') {
+                filter.filter.typeCode = this.state.filter.typeCode
+            }
+            const response = await axios.get(api + '/type', { params: filter })
+            if (response && response.status === 200) {
+                if (response.data && response.data.resultCode === "20000") {
+                    this.setState({ data: response.data.resultData })
+                } else {
+                    this.setState({ data: response.data.resultData })
+                }
+
+            }
+            this.setState({ loadPanelVisible: false })
+        } catch (error) {
+            this.setState({ loadPanelVisible: false })
+            console.log("TCL: JobType -> fnGetData -> error", error)
+        }
+    }
+
     render() {
         return (
             <>
-                <div className="App">
+                <div className="App" id="App">
                     <div id="boxType" className="container-box-content">
                         <div className="row wrap-container">
                             <Breadcrumb>
@@ -306,13 +353,21 @@ class JobType extends React.Component {
                                             dataSource={this.state.data}
                                             showBorders={true}
                                             showRowLines={true}
+                                            ref={this.dataGridRef}
+                                            noDataText="Data Not Found"
+                                            onOptionChanged={this.handleOptionChange}
+                                            loadPanel
                                         >
-                                            <Paging defaultPageSize={3} />
+                                            <Paging defaultPageSize={configService.defaultPageSize}
+                                                pageSize={this.state.pageSize}
+                                                pageIndex={this.state.pageIndex} />
                                             <Pager
                                                 showPageSizeSelector={true}
-                                                allowedPageSizes={[10, 20, 50, 100]}
+                                                allowedPageSizes={configService.allowedPageSizes}
                                                 showInfo={true}
                                                 showNavigationButtons={true}
+                                                visible={true}
+                                                remoteOperations={true}
                                             />
                                             <Column
                                                 width="100"
@@ -345,6 +400,11 @@ class JobType extends React.Component {
                                             />
                                         </DataGrid>
                                     </div>
+                                    <LoadPanel
+                                        shadingColor="rgba(0,0,0,0.4)"
+                                        position={position}
+                                        visible={this.state.loadPanelVisible}
+                                    />
                                 </div>
                             </div>
                             {/* content end*/}
@@ -359,6 +419,8 @@ class JobType extends React.Component {
                     clearActive={() => {
                         this.setState({ isPopupError: false });
                         this.setState({ isPopupSuccess: false });
+                        this.setState({ loadPanelVisible: true })
+                        this.fnGetData()
                     }}
                 />
                 <ConfirmPopup
