@@ -7,7 +7,8 @@ let data = {
     "defaultPageSize": 10,
     "fields": {
         "typeList": "typeId,typeName,typeCode,updateDate,updateBy,createDate,createBy",
-        "projectList": "projectId,projectName,projectPhase,projectDetail,projectStartDate,projectEndDate,projectManDays,customerEmail,updateDate,updateBy,createDate,createBy"
+        "projectList": "projectId,projectName,projectPhase,projectDetail,projectStartDate,projectEndDate,projectManDays,customerEmail,updateDate,updateBy,createDate,createBy",
+        "workList": "projectId,typeId,workDate,workDetail,workPlan,workRef,workManhour,workTimeIn,workTimeOut,updateDate,updateBy,createDate,createBy"
     },
     // api: {
     //    Api: 'http://localhost:5000',

@@ -61,7 +61,9 @@ router.get('/', async (req, res) => {
         query = `SELECT ${fieldsSql} FROM "${table}" ${where} ${orderby} ${limitOffset};`
         console.log("\nTCL: query", query, '\n')
         var result = await postgresService.queryPostgrest(req, query, 'get');
+        console.log("🚀 ~ file: job.js ~ line 64 ~ router.get ~ result", result)
         result.resultData = service.toSnakeCamelCase(result.resultData);
+        // node
         console.log("\nTCL: result", result, '\n')
         return res.json(result)
     } catch (error) {

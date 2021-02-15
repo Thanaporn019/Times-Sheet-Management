@@ -1,11 +1,13 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const pool = require("./connect");
+const pool = require("./utils/postgresSQL");
 const conf = require('./utils/config');
 const apiUrlPrefix = conf.get('apiUrlPrefix');
 const appIp = (process.env.HOST_IP) ? process.env.HOST_IP : conf.get('appIp');
+// console.log("🚀 ~ file: index.js ~ line 8 ~ appIp", appIp)
 const appPort = (process.env.HOST_PORT) ? process.env.HOST_PORT : conf.get('appPort');
+// console.log("🚀 ~ file: index.js ~ line 10 ~ appPort", appPort)
 // middleware
 app.use(cors());
 app.use(express.json());

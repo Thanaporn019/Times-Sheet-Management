@@ -4,6 +4,7 @@ const conf = require('./config');
 const service = require('./service');
 async function connectPostgres(req, query, method) {
     var postgresSQL = conf.get('database');
+    console.log("🚀 ~ file: postgresSQL.js ~ line 7 ~ connectPostgres ~ postgresSQL", postgresSQL)
     const pool = new Pool(postgresSQL)
     var result = {};
     try {

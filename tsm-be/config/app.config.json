@@ -9,7 +9,7 @@
             "host": "localhost",
             "database": "postgres",
             "password": "11111",
-            "port": 5433
+            "port": 5432
         },
         "feUrl": "http://localhost:3000/",
         "responseMsg": {

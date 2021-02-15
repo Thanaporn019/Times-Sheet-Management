@@ -148,7 +148,7 @@ class Project extends React.Component {
             this.setState({ isPopupError: true })
             this.setState({ isPopupSuccess: false })
             this.setState({ isPopupMsg: msgAlertTitle.systemError })
-            console.log("TCL: JobType -> fnGetData -> error", error)
+            console.log("TCL: Project -> fnGetData -> error", error)
         }
     }
 
@@ -175,7 +175,7 @@ class Project extends React.Component {
             this.setState({ loadPanelVisible: false })
         } catch (error) {
             this.setState({ loadPanelVisible: false })
-            console.log("TCL: JobType -> fnGetData -> error", error)
+            console.log("TCL: Project -> fnGetData -> error", error)
         }
     }
 

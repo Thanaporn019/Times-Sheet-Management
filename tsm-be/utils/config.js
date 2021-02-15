@@ -2,6 +2,7 @@ const nodeEnv = process.env.NODE_ENV || 'default';
 const NodeJsonConfig = require('node-json-config');
 const conf = new NodeJsonConfig(__dirname + '/../config/app.config.json');
 var defaultConfObj = conf.get('default');
+console.log("🚀 ~ file: config.js ~ line 5 ~ defaultConfObj", defaultConfObj)
 var envConfObj = conf.get(nodeEnv);
 var currentConfObj = Object.assign(defaultConfObj, envConfObj);
 conf.put(nodeEnv, currentConfObj);

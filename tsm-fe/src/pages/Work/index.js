@@ -769,6 +769,43 @@ class Work extends React.Component {
 
   };
 
+  
+  fnGetData = async () => {
+    try {
+        let filter = {}
+        filter.filter = {}
+        filter.fields = configService.fields.workList
+        filter.limit = this.state.pageSize;
+        filter.offset = this.state.pageIndex;
+        filter.orderby = "projectName";
+        if (this.state.filter.projectName && this.state.filter.projectName !== '') {
+            filter.filter.projectName = this.state.filter.projectName
+        }
+        
+        if (this.state.filter.typeName && this.state.filter.typeName !== '') {
+            filter.filter.typeName = this.state.filter.typeName
+        }
+
+        if (this.state.filter.workDate && this.state.filter.workDate !== '') {
+          filter.filter.workDate = this.state.filter.workDate
+      }
+
+        const response = await axios.get(api + '/type', { params: filter })
+        if (response && response.status === 200) {
+            if (response.data && response.data.resultCode === "20000") {
+                this.setState({ data: response.data.resultData })
+            } else {
+                this.setState({ data: response.data.resultData })
+            }
+
+        }
+        this.setState({ loadPanelVisible: false })
+    } catch (error) {
+        this.setState({ loadPanelVisible: false })
+        console.log("TCL: JobType -> fnGetData -> error", error)
+    }
+}
+
   render() {
 
     return (<>
