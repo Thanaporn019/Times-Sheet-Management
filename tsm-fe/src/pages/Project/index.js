@@ -243,6 +243,14 @@ class Project extends React.Component {
         );
     };
 
+    onProjectNameChange = (event) => {
+        this.setState({
+            filter: {
+                ...this.state.filter,
+                projectName: event.target.value
+            }
+        });
+    }
     render() {
         return (
             <>

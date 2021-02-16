@@ -177,6 +177,7 @@ class Work extends React.Component {
       this.setState({ loadPanelVisible: true })
       await this.getProjectList()
       await this.getJobtypeList()
+      this.fnGetData();
       this.fnSetDefaultDate()
       this.setState({ loadPanelVisible: false })
     } catch (error) {

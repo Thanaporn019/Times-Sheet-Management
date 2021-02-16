@@ -47,7 +47,7 @@ router.get('/', async (req, res) => {
                 sqlProjectName = `LOWER("project_name") LIKE LOWER('%${filter.projectName}%')`
             }
         }
-
+ 
         if (sqlProjectName !== '') {
             where = `WHERE ${sqlProjectName} AND "delete_date" IS NULL`
         } else {
