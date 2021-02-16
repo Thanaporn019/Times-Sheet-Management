@@ -10,6 +10,7 @@ const table = 'project';
 
 router.get('/', async (req, res) => {
     let reqQuery = req.query.filter || {};
+    console.log("🚀 ~ file: project.js ~ line 13 ~ router.get ~ reqQuery", reqQuery)
     let reqFields = req.query.fields || '';
     let reqOrderBy = req.query.orderby || '';
     let reqLimit = req.query.limit || '';
@@ -22,6 +23,7 @@ router.get('/', async (req, res) => {
         let where = ``;
         let limitOffset = ``;
         let orderby;
+        console.log("🚀 ~ file: project.js ~ line 26 ~ router.get ~ reqOrderBy", reqOrderBy)
         if (reqOrderBy) {
             orderby = `ORDER BY "${_.snakeCase(reqOrderBy)}"`
         } else {
@@ -49,8 +51,10 @@ router.get('/', async (req, res) => {
         if (sqlProjectName !== '') {
             where = `WHERE ${sqlProjectName} AND "delete_date" IS NULL`
         } else {
+            if (sqlProjectName == '') {
             where = `WHERE "delete_date" IS NULL`
-        }
+        } 
+    }
         query = `SELECT ${fieldsSql} FROM "${table}" ${where} ${orderby} ${limitOffset}`
         console.log("\nTCL: query", query, '\n')
         var result = await postgresService.queryPostgrest(req, query, 'get');
@@ -74,10 +78,12 @@ router.get('/:projectId', async (req, res) => {
     try {
         let query = ``;
         let result;
+        // console.log("🚀 ~ file: project.js ~ line 78 ~ router.get ~ projectId", projectId)
         if (projectId) {
             query = `SELECT * FROM "${table}" WHERE "project_id" = ${projectId};`
         } else {
             result = msg.message.dataNotFound
+            
         }
         console.log("\nTCL: query", query, '\n')
         result = await postgresService.queryPostgrest(req, query, 'get');

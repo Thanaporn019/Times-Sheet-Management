@@ -778,19 +778,26 @@ class Work extends React.Component {
         filter.limit = this.state.pageSize;
         filter.offset = this.state.pageIndex;
         filter.orderby = "projectName";
+        
         if (this.state.filter.projectName && this.state.filter.projectName !== '') {
             filter.filter.projectName = this.state.filter.projectName
         }
         
-        if (this.state.filter.typeName && this.state.filter.typeName !== '') {
-            filter.filter.typeName = this.state.filter.typeName
+        if (this.state.filter.typeID && this.state.filter.typeID !== '') {
+            filter.filter.typeID = this.state.filter.typeID
         }
 
-        if (this.state.filter.workDate && this.state.filter.workDate !== '') {
-          filter.filter.workDate = this.state.filter.workDate
+        if (this.state.filter.DateFrom && this.state.filter.DateFrom !== '') {
+          filter.filter.DateFrom = this.state.filter.DateFrom
       }
 
-        const response = await axios.get(api + '/type', { params: filter })
+      
+      if (this.state.filter.DateTo && this.state.filter.DateTo !== '') {
+        filter.filter.DateTo = this.state.filter.DateTo
+    }
+
+      
+        const response = await axios.get(api + '/work', { params: filter })
         if (response && response.status === 200) {
             if (response.data && response.data.resultCode === "20000") {
                 this.setState({ data: response.data.resultData })
@@ -802,7 +809,7 @@ class Work extends React.Component {
         this.setState({ loadPanelVisible: false })
     } catch (error) {
         this.setState({ loadPanelVisible: false })
-        console.log("TCL: JobType -> fnGetData -> error", error)
+        console.log("TCL: Work -> fnGetData -> error", error)
     }
 }
 
@@ -951,7 +958,7 @@ class Work extends React.Component {
                     <Column dataField="workTimeIn" caption="Time In" dataType="string" />
                     <Column dataField="workTimeOut" caption="Time Out" dataType="string" />
                     <Column dataField="workLinkPlan" caption="Link Plan" dataType="string" />
-                    <Column dataField="workReference" caption="Reference" dataType="string" />
+                    <Column dataField="workReference" caption="Ref" dataType="string" />
                     <Column caption="Edit Delete" alignment="center" width={110} cellRender={this.actionRender}>
 
                     </Column>
@@ -1240,18 +1247,18 @@ class Work extends React.Component {
                 </div>
               </div>
 
-              {/* Reference */}
+              {/* Ref */}
               <div className="row form-group">
                 <div className="col-12">
                   <div className="row">
                     <div className="col-2" style={{ textAlign: "right" }} >
-                      <label className="title-field" for="Reference" >
-                        Reference
+                      <label className="title-field" for="Ref" >
+                        Ref
                                                                         </label>
                     </div>
                     <div className="col-10" style={{ textAlign: 'start', padding: 0 }}>
 
-                      <input type="text" class="form-control" id="txtReference" value={this.state.updateData.workReference} onChange={(event) => { this.onWorkReferenceChange(event) }} />
+                      <input type="text" class="form-control" id="txtRef" value={this.state.updateData.workRef} onChange={(event) => { this.onWorkRefChange(event) }} />
 
                     </div>
                   </div>

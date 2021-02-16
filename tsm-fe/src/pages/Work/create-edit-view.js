@@ -948,17 +948,17 @@ class ActionsWork extends React.Component {
                                                             </div>
                                                         </div>
 
-                                                        {/* Reference*/}
+                                                        {/* Ref*/}
                                                         <div className="row form-group">
                                                             <div className="col-12">
                                                                 <div className="row">
                                                                     <div className="col-2" style={{ textAlign: "right" }} >
-                                                                        <label className="title-field" for="txtReference" >
-                                                                            Reference
+                                                                        <label className="title-field" for="txtRef" >
+                                                                        Ref
                                                                         </label>
                                                                     </div>
                                                                     <div className="col-10" style={{ textAlign: 'start', padding: 0 }}>
-                                                                        <input type="text" class="form-control" id="txtReference" value={data.workRef} onChange={(event) => { this.onWorkReferenceChange(event, i) }} />
+                                                                        <input type="text" class="form-control" id="txtRef" value={data.workRef} onChange={(event) => { this.onWorkRefeChange(event, i) }} />
                                                                     </div>
                                                                 </div>
                                                             </div>
