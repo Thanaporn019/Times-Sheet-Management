@@ -204,6 +204,7 @@ class Work extends React.Component {
         let resData = []
         let filter = {
           "fields": "projectName,projectId"
+          
         }
         const response = await axios.get(api + '/project', { params: filter })
         if (response && response.status === 200) {

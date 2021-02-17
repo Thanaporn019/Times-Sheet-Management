@@ -46,10 +46,12 @@ router.get('/:dateFrom/:dateTo', async (req, res) => {
                 sqlTypeName = `LOWER("type_name") LIKE LOWER('%${filter.typeName}%')`
             }
             if (filter.dateFrom) {
-                sqlDateFrom = `LOWER("date_from") LIKE LOWER('%${filter.dateFrom}%')`
+                sqlDateFrom  = date_from >= '${moment(filter.dateFrom).format("DD/MM/YYYY HH:mm:ss")}'
             }
+            
             if (filter.dateTo) {
-                sqlDateTo = `LOWER("date_to") LIKE LOWER('%${filter.dateTo}%')`
+                sqlDateTo  = date_to <= '${moment(filter.dateto).format("DD/MM/YYYY HH:mm:ss")}'
+                
             }
 
         }
@@ -75,6 +77,7 @@ router.get('/:dateFrom/:dateTo', async (req, res) => {
 
 
         query = `SELECT ${fieldsSql} FROM "${table}" ${where} ${orderby} LIMIT ${reqLimit} OFFSET ${reqOffset};`
+ 
         console.log("\nTCL: query", query, '\n')
         var result = await postgresService.queryPostgrest(req, query, 'get');
         result.resultData = service.toSnakeCamelCase(result.resultData);
@@ -110,7 +113,14 @@ router.get('/', async (req, res) => {
                 where = `WHERE work_date = '${filter.workDate}'`
             }
         }
-        query = `SELECT * FROM "${table}" ${where};`
+        // query = `SELECT * FROM "${table}" ${where} ;`
+
+        query = `SELECT work.work_id, work.work_date, work.work_detail, work.work_manhour, work.work_time_in, work.work_time_out,
+        work.work_plan, work.work_ref, type.type_name, project.project_name, project.project_phase 
+        FROM ((work 
+        INNER JOIN type ON work.type_id = type.type_id)
+        INNER JOIN project ON work.project_id = project.project_id);`
+
         console.log("\nTCL: query", query, '\n')
         var result = await postgresService.queryPostgrest(req, query, 'get');
         result.resultData = service.toSnakeCamelCase(result.resultData);
