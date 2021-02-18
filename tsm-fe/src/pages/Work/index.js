@@ -163,10 +163,10 @@ class Work extends React.Component {
     ];
 
     // ปั้นวันที่ตามเดือนปัจจุบัน start
-    this.dateOfCurrentMouth = []
-    for (let i = 0; i < moment().daysInMonth(); i++) {
-      this.dateOfCurrentMouth.push({ workDate: `${(i + 1) >= 10 ? i + 1 : '0' + (i + 1)}/${moment().format('MM')}/${moment().format('YYYY')}` })
-    }
+    // this.dateOfCurrentMouth = []
+    // for (let i = 0; i < moment().daysInMonth(); i++) {
+    //   this.dateOfCurrentMouth.push({ workDate: `${(i + 1) >= 10 ? i + 1 : '0' + (i + 1)}/${moment().format('MM')}/${moment().format('YYYY')}` })
+    // }
 
     // this.keyDelete = [];
     // ปั้นวันที่ตามเดือนปัจจุบัน end
@@ -193,23 +193,41 @@ class Work extends React.Component {
     temp = temp.filter(r => dataWorkDate.indexOf(r.workDate) === -1)
     for (const item of this.state.data) {
       temp.push(item)
+
     }
+   
+    // for (let i = 0; i < moment().daysInMonth(); i++) {
+    //   this.dateOfCurrentMouth.push({ workDate: `${(i + 1) >= 10 ? i + 1 : '0' + (i + 1)}/${moment().format('MM')}/${moment().format('YYYY')}` })
+    // }
+
     console.log("TCL: fnSetDefaultDate -> temp", temp)
     this.setState({ data: temp })
   }
 
+  
   async getProjectList() {
     return new Promise(async (resolve, reject) => {
       try {
         let resData = []
         let filter = {
-          "fields": "projectName,projectId"
+          "fields": "projectName,projectPhase"
           
         }
         const response = await axios.get(api + '/project', { params: filter })
         if (response && response.status === 200) {
           if (response.data && response.data.resultCode === "20000") {
+
+            // const result = numbers.map((number) => {
+            //   return number*2
+            // })
+// ** Map Phase **
+            response.data.resultData = response.data.resultData.map((phase) => {
+              phase.projectName = `${phase.projectName} ${phase.projectPhase}`
+              return phase
+            })
+
             this.setState({ projectList: response.data.resultData })
+            console.log("🚀 ~ file: index.js ~ line 219 ~ Work ~ returnnewPromise ~ response.data.resultData", response.data.resultData)
             resData = response.data.resultData
           } else {
             this.setState({ projectList: response.data.resultData ? response.data.resultData : [] })
@@ -785,15 +803,14 @@ class Work extends React.Component {
             filter.filter.projectName = this.state.filter.projectName
         }
         
-        if (this.state.filter.typeID && this.state.filter.typeID !== '') {
-            filter.filter.typeID = this.state.filter.typeID
+        if (this.state.filter.typeName && this.state.filter.typetypeName !== '') {
+            filter.filter.typeName = this.state.filter.typeName
         }
 
-        if (this.state.filter.DateFrom && this.state.filter.DateFrom !== '') {
-          filter.filter.DateFrom = this.state.filter.DateFrom
-      }
+      if (this.state.filter.DateFrom && this.state.filter.DateFrom !== '') {
+        filter.filter.DateFrom = this.state.filter.DateFrom
+    }
 
-      
       if (this.state.filter.DateTo && this.state.filter.DateTo !== '') {
         filter.filter.DateTo = this.state.filter.DateTo
     }
