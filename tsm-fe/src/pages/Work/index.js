@@ -163,10 +163,10 @@ class Work extends React.Component {
     ];
 
     // ปั้นวันที่ตามเดือนปัจจุบัน start
-    // this.dateOfCurrentMouth = []
-    // for (let i = 0; i < moment().daysInMonth(); i++) {
-    //   this.dateOfCurrentMouth.push({ workDate: `${(i + 1) >= 10 ? i + 1 : '0' + (i + 1)}/${moment().format('MM')}/${moment().format('YYYY')}` })
-    // }
+    this.dateOfCurrentMouth = []
+    for (let i = 0; i < moment().daysInMonth(); i++) {
+      this.dateOfCurrentMouth.push({ workDate: `${(i + 1) >= 10 ? i + 1 : '0' + (i + 1)}/${moment().format('MM')}/${moment().format('YYYY')}` })
+    }
 
     // this.keyDelete = [];
     // ปั้นวันที่ตามเดือนปัจจุบัน end
@@ -210,7 +210,7 @@ class Work extends React.Component {
       try {
         let resData = []
         let filter = {
-          "fields": "projectName,projectPhase"
+          "fields": "projectId,projectName,projectPhase"
           
         }
         const response = await axios.get(api + '/project', { params: filter })
@@ -220,7 +220,7 @@ class Work extends React.Component {
             // const result = numbers.map((number) => {
             //   return number*2
             // })
-// ** Map Phase **
+          // ** Map Phase **
             response.data.resultData = response.data.resultData.map((phase) => {
               phase.projectName = `${phase.projectName} ${phase.projectPhase}`
               return phase
@@ -798,21 +798,22 @@ class Work extends React.Component {
         filter.limit = this.state.pageSize;
         filter.offset = this.state.pageIndex;
         filter.orderby = "projectName";
+
         
         if (this.state.filter.projectName && this.state.filter.projectName !== '') {
             filter.filter.projectName = this.state.filter.projectName
         }
         
-        if (this.state.filter.typeName && this.state.filter.typetypeName !== '') {
+        if (this.state.filter.typeName && this.state.filter.typeName !== '') {
             filter.filter.typeName = this.state.filter.typeName
         }
 
-      if (this.state.filter.DateFrom && this.state.filter.DateFrom !== '') {
-        filter.filter.DateFrom = this.state.filter.DateFrom
+      if (this.state.filter.dateFrom && this.state.filter.dateFrom !== '') {
+        filter.filter.dateFrom = this.state.filter.dateFrom
     }
 
-      if (this.state.filter.DateTo && this.state.filter.DateTo !== '') {
-        filter.filter.DateTo = this.state.filter.DateTo
+      if (this.state.filter.dateTo && this.state.filter.dateTo !== '') {
+        filter.filter.dateTo = this.state.filter.dateTo
     }
 
       

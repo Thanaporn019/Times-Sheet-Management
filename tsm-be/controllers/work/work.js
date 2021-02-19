@@ -51,7 +51,7 @@ router.get('/:dateFrom/:dateTo', async (req, res) => {
             }
 
             if (filter.dateTo) {
-                sqlDateTo = date_to <= '${moment(filter.dateto).format("DD/MM/YYYY HH:mm:ss")}'
+                sqlDateTo = date_to <= '${moment(filter.dateTo).format("DD/MM/YYYY HH:mm:ss")}'
 
             }
 
@@ -65,13 +65,13 @@ router.get('/:dateFrom/:dateTo', async (req, res) => {
         //     where += `AND ${sqlTypeId}`
         // }
 
-        if (sqlProjectName !== '' && sqlTypeName !== '') {
-            where = `WHERE ${sqlProjectName} AND ${sqlTypeName} AND "delete_date" IS NULL`
+        if (sqlProjectName !== '' && sqlTypeName !== '' && sqlDateFrom !== '' && sqlDateTo !== '') {
+            where = `WHERE ${sqlProjectName} AND ${sqlTypeName} AND ${sqlDateFrom} AND ${sqlDateTo} AND "delete_date" IS NULL`
         } else {
-            if (sqlProjectName == '' && sqlTypeName == '') {
+            if (sqlProjectName == '' && sqlTypeName == '' && sqlDateFrom == '' && sqlDateTo == '') {
                 where = `WHERE "delete_date" IS NULL`
             } else {
-                where = `WHERE ${sqlProjectName !== '' ? sqlProjectName : sqlTypeName}`
+                where = `WHERE ${sqlProjectName !== '' ? sqlProjectName : sqlTypeName }` 
                 where += `AND "delete_date" IS NULL`
             }
         }

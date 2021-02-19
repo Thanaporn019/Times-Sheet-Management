@@ -117,11 +117,21 @@ class ActionsWork extends React.Component {
             try {
                 let resData = []
                 let filter = {
-                    "fields": "projectId,projectName"
+                    "fields": "projectId,projectName,projectPhase"
                 }
                 const response = await axios.get(api + '/project', { params: filter })
                 if (response && response.status === 200) {
                     if (response.data && response.data.resultCode === "20000") {
+
+            // const result = numbers.map((number) => {
+            //   return number*2
+            // })
+            // ** Map Phase **
+                response.data.resultData = response.data.resultData.map((phase) => {
+                phase.projectName = `${phase.projectName} ${phase.projectPhase}`
+                return phase
+                })
+
                         this.setState({ projectList: response.data.resultData })
                         resData = response.data.resultData
                     } else {

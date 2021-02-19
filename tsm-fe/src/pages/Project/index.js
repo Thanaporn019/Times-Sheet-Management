@@ -161,10 +161,7 @@ class Project extends React.Component {
             filter.offset = this.state.pageIndex;
             filter.orderby = "projectName";
             console.log("🚀 ~ file: index.js ~ line 164 ~ Project ~ fnGetData= ~ this.state.filter", this.state.filter)
-            // if (this.state.filter.projectID && this.state.filter.projectID !== '') {
-              
-            //     filter.filter.projectID = this.state.filter.projectID
-            // }
+            
             if (this.state.filter.projectName && this.state.filter.projectName !== '') {
                 filter.filter.projectName = this.state.filter.projectName
             }
@@ -277,7 +274,7 @@ class Project extends React.Component {
                                                         style={{ textAlign: "right" }}
                                                     ></div>
                                                 </div>
-                                                {/* Job Type Name */}
+                                                {/* Project Name */}
                                                 <div className="row form-group">
                                                     <div className="col-3" style={{ textAlign: "right" }}>
 
