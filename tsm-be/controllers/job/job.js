@@ -63,6 +63,7 @@ router.get('/', async (req, res) => {
         var result = await postgresService.queryPostgrest(req, query, 'get');
         console.log("🚀 ~ file: job.js ~ line 64 ~ router.get ~ result", result)
         result.resultData = service.toSnakeCamelCase(result.resultData);
+        
         // node
         console.log("\nTCL: result", result, '\n')
         return res.json(result)

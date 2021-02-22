@@ -26,6 +26,10 @@ import configService from '../../config';
 import axios from 'axios'
 import { LoadPanel } from 'devextreme-react/load-panel';
 
+import { extendMoment } from 'moment-range';
+
+const momentEx = extendMoment(moment);
+
 const msgAlertTitle = configService.msgAlert;
 const msgPopupTitle = configService.msgConfirm;
 const msgValid = configService.validDateFill;
@@ -60,82 +64,7 @@ class Work extends React.Component {
       isTextMsg: '', // msg ของ Popup
       isDelete: false, // ใช้เช็คว่าเป็นการลบไหม
       data: [
-        {
-          'workId': '0001',
-          'projectId': '0001',
-          'projectName': 'test1',
-          'projectPhase': '1',
-          'typeId': '0001',
-          'typeName': 'test1',
-          'workDate': '01/01/2021',
-          'workDetail': '....',
-          // 'workUrl': '-',
-          'workLinkPlan': 'https://bezkoder.com/node-express-sequelize-postgresql/',
-          'workReference': 'http://lib.swu.ac.th/images/Documents/Researchsupport/APA6thNew.pdf',
-          'workManhour': '8',
-          'workTimeIn': '09:00 AM',
-          'workTimeOut': '18:00 PM',
-          'updateDate': null,
-          'updateBy': null,
-          'createDate': '20/11/2020',
-        }, {
-          'workId': '0002',
-          'projectId': '0002',
-          'projectName': 'test2',
-          'projectPhase': '1',
-          'typeId': '0002',
-          'typeName': 'test2',
-          'workDate': '02/02/2021',
-          'workDetail': '....',
-          // 'workUrl': '-',
-          'workLinkPlan': 'https://bezkoder.com/node-express-sequelize-postgresql/',
-          'workReference': 'http://lib.swu.ac.th/images/Documents/Researchsupport/APA6thNew.pdf',
-          'workManhour': '8',
-          'workTimeIn': '09:00 AM',
-          'workTimeOut': '18:00 PM',
-          'updateDate': null,
-          'updateBy': null,
-          'createDate': '20/11/2020',
-          'createBy': 'joon',
-        }, {
-          'workId': '0003',
-          'projectId': '0003',
-          'projectName': 'test3',
-          'projectPhase': '1',
-          'typeId': '0003',
-          'typeName': 'test3',
-          'workDate': '03/01/2021',
-          'workDetail': '....',
-          // 'workUrl': '-',
-          'workLinkPlan': 'https://bezkoder.com/node-express-sequelize-postgresql/',
-          'workReference': 'http://lib.swu.ac.th/images/Documents/Researchsupport/APA6thNew.pdf',
-          'workManhour': '8',
-          'workTimeIn': '09:00 AM',
-          'workTimeOut': '18:00 PM',
-          'updateDate': null,
-          'updateBy': null,
-          'createDate': '20/11/2020',
-          'createBy': 'joon',
-        }, {
-          'workId': '0004',
-          'projectId': '0004',
-          'projectName': 'test3',
-          'projectPhase': '1',
-          'typeId': '0003',
-          'typeName': 'test3',
-          'workDate': '03/01/2021',
-          'workDetail': '....',
-          // 'workUrl': '-',
-          'workLinkPlan': 'https://bezkoder.com/node-express-sequelize-postgresql/',
-          'workReference': 'http://lib.swu.ac.th/images/Documents/Researchsupport/APA6thNew.pdf',
-          'workManhour': '8',
-          'workTimeIn': '09:00 AM',
-          'workTimeOut': '18:00 PM',
-          'updateDate': null,
-          'updateBy': null,
-          'createDate': '20/11/2020',
-          'createBy': 'joon',
-        }],
+        ],
       popOver: {
         workId: '',
         visible: false
@@ -168,6 +97,10 @@ class Work extends React.Component {
       this.dateOfCurrentMouth.push({ workDate: `${(i + 1) >= 10 ? i + 1 : '0' + (i + 1)}/${moment().format('MM')}/${moment().format('YYYY')}` })
     }
 
+
+
+const range = momentEx.range(this.state.filter.dateFrom, this.state.filter.dateTo);
+console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", range)
     // this.keyDelete = [];
     // ปั้นวันที่ตามเดือนปัจจุบัน end
   }
@@ -177,8 +110,8 @@ class Work extends React.Component {
       this.setState({ loadPanelVisible: true })
       await this.getProjectList()
       await this.getJobtypeList()
-      this.fnGetData();
       this.fnSetDefaultDate()
+      await this.fnGetData();
       this.setState({ loadPanelVisible: false })
     } catch (error) {
       console.log("TCL: componentDidMount -> error", error)
@@ -188,20 +121,17 @@ class Work extends React.Component {
   fnSetDefaultDate() {
     let temp = _.cloneDeep(this.dateOfCurrentMouth)
     // เอาค่าของ workDate ออกมา
-    let dataWorkDate = this.state.data.map(r => r.workDate)
-    // เอาค่าที่ไม่ซ้ำของ workDate
-    temp = temp.filter(r => dataWorkDate.indexOf(r.workDate) === -1)
-    for (const item of this.state.data) {
-      temp.push(item)
-
-    }
-   
-    // for (let i = 0; i < moment().daysInMonth(); i++) {
-    //   this.dateOfCurrentMouth.push({ workDate: `${(i + 1) >= 10 ? i + 1 : '0' + (i + 1)}/${moment().format('MM')}/${moment().format('YYYY')}` })
-    // }
-
-    console.log("TCL: fnSetDefaultDate -> temp", temp)
-    this.setState({ data: temp })
+    setTimeout(() => {
+      let dataWorkDate = this.state.data.map(r => r.workDate)
+      // เอาค่าที่ไม่ซ้ำของ workDate
+      temp = temp.filter(r => dataWorkDate.indexOf(r.workDate) === -1)
+      for (const item of this.state.data) {
+        temp.push(item)
+  
+      }
+      // console.log("TCL: fnSetDefaultDate -> temp", temp)
+      this.setState({ data: temp })
+    }, 150);
   }
 
   
@@ -333,6 +263,10 @@ class Work extends React.Component {
     })
   }
 
+  onSearch = () => {
+    this.setState({ loadPanelVisible: true })
+    this.fnGetData();
+}
   groupRender = (data) => {
     // console.log("groupRender -> data", data)
     // ข้อความ ดำ > บันทึกแล้ว
@@ -363,10 +297,11 @@ class Work extends React.Component {
           </Link>
         </div> :
         <div className="col-6" style={{ textAlign: 'end' }}>
-          <Link to={"/work" + `/{"action":"edit","workDate":${workDate}}`}>
+          <Link to={"/work" + `/{"action":"edit","workDate":${workDate},"workId":${data.data.items[0].workId}}`}>
             <span className="custom-icon-group" style={{ color: 'black', fontSize: '12pt', marginRight: 20 }}><FormOutlined /></span>
           </Link>
           <a className="custom-icon-group" onClick={() => {
+            console.log(data.data, 'data.datadata.datadata.datadata.data')
             this.setState({
               isOpen: true,
               isTypeShowConfirm: "del",
@@ -657,6 +592,29 @@ class Work extends React.Component {
     this.setState({ updateData: temp, isValid_detail: valid });
   }
 
+  onWorkLinkPlanChange = (event, index) => {
+    let temp = _.cloneDeep(this.state.updateData)
+    temp.workLinkPlan = event.target.value
+
+    let valid = this.state.isValid_LinkPlan;
+    if (!event.target.value || event.target.value !== '') {
+      valid = false;
+    }
+    this.setState({ updateData: temp, isValid_LinkPlan: valid });
+  }
+
+  onWorkRefChange = (event, index) => {
+    let temp = _.cloneDeep(this.state.updateData)
+    temp.workRef = event.target.value
+
+    let valid = this.state.isValid_Ref;
+    if (!event.target.value || event.target.value !== '') {
+      valid = false;
+    }
+    this.setState({ updateData: temp, isValid_Ref: valid });
+  }
+ 
+
   // TODO :: Select
   // TODO :: Dropdown Project Name
   handleChangeProject = (value, index) => {
@@ -790,7 +748,10 @@ class Work extends React.Component {
   };
 
   
+
   fnGetData = async () => {
+    return new Promise(async (resolve, reject)=>{
+
     try {
         let filter = {}
         filter.filter = {}
@@ -799,7 +760,6 @@ class Work extends React.Component {
         filter.offset = this.state.pageIndex;
         filter.orderby = "projectName";
 
-        
         if (this.state.filter.projectName && this.state.filter.projectName !== '') {
             filter.filter.projectName = this.state.filter.projectName
         }
@@ -819,8 +779,13 @@ class Work extends React.Component {
       
         const response = await axios.get(api + '/work', { params: filter })
         if (response && response.status === 200) {
-            if (response.data && response.data.resultCode === "20000") {
-                this.setState({ data: response.data.resultData })
+          if (response.data && response.data.resultCode === "20000") {
+              console.log("🚀 ~ file: index.js ~ line 751 ~ Work ~ returnnewPromise ~ this.state.data", this.state.data)
+              let mergeData = this.state.data.concat(response.data.resultData)
+              // console.log("🚀 ~ file: index.js ~ line 749 ~ Work ~ fnGetData= ~ response.data.resultData", response.data.resultData)
+              console.log("\n\n\n🚀 ~ file: index.js ~ line 749 ~ Work ~ fnGetData= ~ mergeData", mergeData)
+                this.setState({ data: mergeData })
+                // this.fnSetDefaultDate()
             } else {
                 this.setState({ data: response.data.resultData })
             }
@@ -831,6 +796,8 @@ class Work extends React.Component {
         this.setState({ loadPanelVisible: false })
         console.log("TCL: Work -> fnGetData -> error", error)
     }
+  })
+
 }
 
   render() {
@@ -922,7 +889,9 @@ class Work extends React.Component {
                     <div className="row form-group">
                       <div className="col-12" style={{ textAlign: 'center' }}>
                         <button class="btn-custom btn-reset " style={{ marginRight: 20 }} onClick={this.handleReset}>RESET</button>
-                        <button class="btn-custom btn-search ">SEARCH</button>
+                      
+                        <button class="btn-custom btn-search " onClick={this.onSearch}>
+                          SEARCH</button>
                       </div>
                     </div>
                   </div>
@@ -977,10 +946,9 @@ class Work extends React.Component {
                     <Column dataField="workManhour" caption="Man Hours" dataType="string" />
                     <Column dataField="workTimeIn" caption="Time In" dataType="string" />
                     <Column dataField="workTimeOut" caption="Time Out" dataType="string" />
-                    <Column dataField="workLinkPlan" caption="Link Plan" dataType="string" />
-                    <Column dataField="workReference" caption="Ref" dataType="string" />
+                    <Column dataField="workPlan" caption="LinkPlan" dataType="string" />
+                    <Column dataField="workRef" caption="Ref" dataType="string" />
                     <Column caption="Edit Delete" alignment="center" width={110} cellRender={this.actionRender}>
-
                     </Column>
                     <Column className="color-red" dataField="workDate" groupIndex={0} groupCellRender={this.groupRender} />
                   </DataGrid>

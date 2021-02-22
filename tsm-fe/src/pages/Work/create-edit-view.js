@@ -403,7 +403,7 @@ class ActionsWork extends React.Component {
         });
     }
 
-    onWorkReferenceChange = (event, index) => {
+    onWorkRefChange = (event, index) => {
         let temp = _.cloneDeep(this.state.data)
         temp[index].workRef = event.target.value
         this.setState({
@@ -594,7 +594,7 @@ class ActionsWork extends React.Component {
                     workId: element.workId,
                     projectId: element.projectId,
                     typeId: element.typeId,
-                    workDate: moment(this.state.workDate).format('YYYY-MM-DD'),
+                    workDate: moment(this.state.workDate).format('DD-MM-YYYY'),
                     workDetail: element.workDetail,
                     workPlan: element.workPlan,
                     workRef: element.workRef,
@@ -615,7 +615,7 @@ class ActionsWork extends React.Component {
             console.log("TCL: ActionsWork -> confirmSave -> body", body)
             var response;
             if (this.state.params.action === 'edit') {
-                response = await axios.put(api + '/work', body)
+                response = await axios.put(api + '/work/'+this.state.params.workId, body)
             } else {
                 response = await axios.post(api + '/work', body)
             }
@@ -968,7 +968,7 @@ class ActionsWork extends React.Component {
                                                                         </label>
                                                                     </div>
                                                                     <div className="col-10" style={{ textAlign: 'start', padding: 0 }}>
-                                                                        <input type="text" class="form-control" id="txtRef" value={data.workRef} onChange={(event) => { this.onWorkRefeChange(event, i) }} />
+                                                                        <input type="text" class="form-control" id="txtRef" value={data.workRef} onChange={(event) => { this.onWorkRefChange(event, i) }} />
                                                                     </div>
                                                                 </div>
                                                             </div>

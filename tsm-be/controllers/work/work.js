@@ -58,12 +58,7 @@ router.get('/:dateFrom/:dateTo', async (req, res) => {
         }
 
         where = `WHERE work_date BETWEEN ${dateFrom} AND ${dateTo}`
-        // if (sqlProjectName !== '') {
-        //     where += `AND ${sqlProjectName}`
-        // }
-        // if (sqlTypeId !== '') {
-        //     where += `AND ${sqlTypeId}`
-        // }
+       
 
         if (sqlProjectName !== '' && sqlTypeName !== '' && sqlDateFrom !== '' && sqlDateTo !== '') {
             where = `WHERE ${sqlProjectName} AND ${sqlTypeName} AND ${sqlDateFrom} AND ${sqlDateTo} AND "delete_date" IS NULL`
@@ -116,8 +111,8 @@ router.get('/', async (req, res) => {
         }
         // query = `SELECT * FROM "${table}" ${where} ;`
 
-        query = `SELECT work.work_id, work.work_date, work.work_detail, work.work_manhour, work.work_time_in, work.work_time_out,
-        work.work_plan, work.work_ref, type.type_name, project.project_name, project.project_phase 
+        query = `SELECT work.work_id, project.project_name, type.type_name, work.work_date, project.project_phase, work.work_detail, work.work_plan, work.work_ref, work.work_manhour, work.work_time_in, work.work_time_out,
+           project.project_name
         FROM ((work 
         LEFT JOIN type ON work.type_id = type.type_id)
         LEFT JOIN project ON work.project_id = project.project_id);`
@@ -129,6 +124,8 @@ router.get('/', async (req, res) => {
             const element = result.resultData[i];
             result.resultData[i].workTimeIn = moment(element.workTimeIn, 'HH:mm:ss').format('HH:mm A')
             result.resultData[i].workTimeOut = moment(element.workTimeOut, 'HH:mm:ss').format('HH:mm A')
+            result.resultData[i].workDate = moment(element.workDate, 'DD/MM/YYYY HH:mm:ss').format('DD/MM/YYYY')
+            console.log("🚀 ~ file: work.js ~ line 128 ~ router.get ~ element.workDate", element.workDate)
         }
         console.log("\nTCL: result", result, '\n')
         return res.json(result)
@@ -158,17 +155,19 @@ router.post('/', async (req, res) => {
         if (body && body.length > 0) {
             for (let i = 0; i < body.length; i++) {
                 const element = body[i];
-                let workId = element.workId.replace(/"/g, "'");
-                let projectId = element.projectId.replace(/"/g, "'");
-                let typeId = element.typeId.replace(/"/g, "'");
-                let workDate = element.workDate.replace(/"/g, "'");
+                console.log("🚀 ~ file: work.js ~ line 158 ~ router.post ~ element", element)
+                // let workId = element.workId.replace(/"/g, "'");
+                
+                let projectId = element.projectId;
+                let typeId = element.typeId;
+                let workDate = moment(element.workDate, 'DD-MM-YYYY').format('YYYY-MM-DD')
                 let workDetail = element.workDetail.replace(/"/g, "'");
                 let workPlan = element.workPlan ? element.workPlan.replace(/"/g, "'") : null;
                 let workRef = element.workRef ? element.workRef.replace(/"/g, "'") : null;
                 let workManhour = element.workManhour.replace(/"/g, "'");
                 let workTimeIn = element.workTimeIn.replace(/"/g, "'");
                 let workTimeOut = element.workTimeOut.replace(/"/g, "'");
-                var value = `${workId},${projectId},${typeId},'${workDate}','${workDetail}','${workPlan}','${workRef}','${workManhour}','${moment(workTimeIn, 'HH:mm A').format('HH:mm:ss')}','${moment(workTimeOut, 'HH:mm A').format('HH:mm:ss')}', null, null, current_timestamp, ${user}, null, null`
+                var value = `${projectId},${typeId},'${workDate}','${workDetail}','${workPlan}','${workRef}','${workManhour}','${moment(workTimeIn, 'HH:mm A').format('HH:mm:ss')}','${moment(workTimeOut, 'HH:mm A').format('HH:mm:ss')}', null, null, current_timestamp, ${user}, null, null`
                 query = `INSERT INTO 
                             "${table}" 
                                 (${fields}) 
@@ -222,20 +221,27 @@ router.put('/:workId', async function (req, res) {
 
         let workId = req.params.workId || null
         let body = req.body || {}
-        let projectName = body.projectName.replace(/"/g, "'");
-        let typeName = body.typeName.replace(/"/g, "'");
-        let workTimeIn = body.workTimeIn.replace(/"/g, "'");
-        let workTimeOut = body.workTimeOut.replace(/"/g, "'");
-        let workManhour = body.workManhour.replace(/"/g, "'");
-        let workDetail = body.workDetail.replace(/"/g, "'");
-        let workPlan = body.workPlan.replace(/"/g, "'");
-        let workRef = body.workRef ? body.workRef.replace(/"/g, "'") : 'null';
-
-        let query = '';
-
-        query = `UPDATE "${table}" SET "project_Name" = '${projectName}', "type_Name" = '${typeName}', "work_TimeIn" = '${workTimeIn}', "work_TimeOut" = '${workTimeOut}', "work_Manhour" = '${workManhour}', "work_Detail" = '${workDetail}', "work_Plan" = '${workPlan}', "work_Ref" = '${workRef}', "updateDate" = current_timestamp, "updateBy" = 'test_user' WHERE "worktId" = ${workId};`
-        console.log("TCL: query", query)
-        var result = await postgresService.updatePostgrest(req, query, 'put');
+        var allInsertResponse = []
+        console.log("🚀 ~ file: work.js ~ line 224 ~ body", body)
+        for (const item of body) {
+            
+            let projectId = item.projectId;
+            let typeId = item.typeId;
+            let workTimeIn =  moment(item.workTimeIn, 'HH:mm A').format('HH:mm:ss');
+            let workTimeOut = moment(item.workTimeOut, 'HH:mm A').format('HH:mm:ss');
+            let workManhour = item.workManhour.replace(/"/g, "'");
+            let workDetail = item.workDetail.replace(/"/g, "'");
+            let workPlan = item.workPlan.replace(/"/g, "'");
+            let workRef = item.workRef ? item.workRef.replace(/"/g, "'") : 'null';
+    
+            let query = '';
+    
+            query = `UPDATE "${table}" SET "project_id" = '${projectId}', "type_id" = '${typeId}', "work_time_in" = '${workTimeIn}', "work_time_out" = '${workTimeOut}', "work_manhour" = '${workManhour}', "work_detail" = '${workDetail}', "work_plan" = '${workPlan}', "work_ref" = '${workRef}', "update_date" = current_timestamp, "update_by" = 'test_user' WHERE "work_id" = ${workId};`
+            console.log("TCL: query", query)
+            var result = await postgresService.updatePostgrest(req, query, 'put');
+            allInsertResponse.push(result)
+        }
+        await Promise.all(allInsertResponse);
         return res.json(result)
 
     } catch (error) {
