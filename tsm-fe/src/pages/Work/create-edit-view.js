@@ -206,6 +206,8 @@ class ActionsWork extends React.Component {
         this.setState({ data: data, isValid_projectName: valid });
     };
 
+    
+
     handleBlurProject = () => {
         console.log("blur ---- ", this.typeList);
     };
@@ -570,18 +572,33 @@ class ActionsWork extends React.Component {
         }
     }
 
-    deleteData = (data) => {
+    deleteData = async (data) => {
+        try {
+            var response = await axios.delete(api + '/work/' + data);
+
         // ต้อง call api -------------------
         let tempDel = _.cloneDeep(this.state.data)
         tempDel.splice(data[1], 1);
         this.setState({ data: tempDel })
         // ต้อง call api -------------------
-
+        if (response && response.status === 200) {
+            if (response.data && response.data.resultCode === "20000") {
+            } else {
         this.setState({ isOpen: false });
         this.setState({ isPopupError: false });
         this.setState({ isPopupSuccess: true });
         this.setState({ isPopupMsg: msgAlertTitle.deleted });
     }
+}
+} catch (error) {
+    this.setState({ loadPanelVisible: false })
+    this.setState({ isOpen: false })
+    this.setState({ isPopupError: true })
+    this.setState({ isPopupSuccess: false })
+    this.setState({ isPopupMsg: msgAlertTitle.systemError })
+    console.log("TCL: WorkEdit -> fnGetData -> error", error)
+}
+}
 
     confirmSave = async (data) => {
         this.setState({ loadPanelVisible: true })
@@ -762,7 +779,8 @@ class ActionsWork extends React.Component {
                                                                                 filterOption={(input, option) =>
                                                                                     option.props.children[1].toLowerCase().indexOf(input.toLowerCase()) >= 0
                                                                                 }
-                                                                                value={data.projectId}>
+                                                                                
+                                                                                value={data.projectName}>
                                                                                 {this.projectList}
                                                                             </Select>
                                                                         </div>
@@ -798,7 +816,7 @@ class ActionsWork extends React.Component {
                                                                                         .toLowerCase()
                                                                                         .indexOf(input.toLowerCase()) >= 0
                                                                                 }
-                                                                                value={data.typeId}
+                                                                                value={data.typeName}
                                                                             >
 
                                                                                 {this.typeList}

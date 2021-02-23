@@ -366,11 +366,13 @@ class Project extends React.Component {
                                             <Column
                                                 caption="Project Name"
                                                 dataField="projectName"
+                                                alignment="center"
                                                 dataType="string"
                                             />
                                             <Column
                                                 caption="Phase"
                                                 dataField="projectPhase"
+                                                alignment="center"
                                                 dataType="string"
                                             />
                                             <Column

@@ -252,6 +252,19 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
     }
   }
 
+  handleChangeDateEdit  = (event) => {
+    let temp = _.cloneDeep(this.state.data)
+    for (let i = 0; i < temp.length; i++) {
+        const element = temp[i];
+        element.workDate = event.value
+    }
+
+    if (!event.value || event.value !== '') {
+        this.setState({ isValid_workDate: false });
+    }
+    this.setState({ workDate: event.value, data: temp })
+}
+
   handleReset = () => {
     this.setState({
       filter: {
@@ -267,6 +280,8 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
     this.setState({ loadPanelVisible: true })
     this.fnGetData();
 }
+
+
   groupRender = (data) => {
     // console.log("groupRender -> data", data)
     // ข้อความ ดำ > บันทึกแล้ว
@@ -275,7 +290,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
     let day = moment(data.value, 'DD/MM/YYYY').format('dddd')
     let id = data.data.items && data.data.items.length > 0 ? data.data.items[0].workId : data.data.collapsedItems && data.data.collapsedItems.length > 0 ? data.data.collapsedItems[0].workId : null
     let name = `DATE : ${data.value}  ${day}`
-    let now = moment().format('DD/MM/YYYY');
+    let now = moment().format('DD-MM-YYYY');
     let workDate = '"' + data.value.replace(/\//g, "%2F") + '"'
       
 
@@ -354,36 +369,55 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
     }
   }
 
-  onDeleteData = (data) => {
-    if (data[1] === 'one') {
-      let dataWorkDate = this.state.data.map(r => {
-        if (r.workDate === data[0].workDate) {
-          return r
-        }
-      })
+  onDeleteData = async (data) => {
+    try {
+      var response = await axios.post(api + '/work/' , data);
+   
+    // if (data[1] === 'one') {
+    //   let dataWorkDate = this.state.data.map(r => {
+    //     if (r.workDate === data[0].workDate) {
+    //       return r
+    //     }
+    //   })
 
-      let newData = _.without(dataWorkDate, undefined);
+    //   let newData = _.without(dataWorkDate, undefined);
 
-      // ต้อง call api -------------------
-      let tempDel = this.state.data.filter(r => data[0].workId.indexOf(r.workId) === -1)
-      if (newData && newData.length <= 1) {
-        tempDel.push({ workDate: data[0].workDate })
+    //   // ต้อง call api -------------------
+    //   let tempDel = this.state.data.filter(r => data[0].workId.indexOf(r.workId) === -1)
+    //   if (newData && newData.length <= 1) {
+    //     tempDel.push({ workDate: data[0].workDate })
+    //   }
+    //   this.setState({ data: tempDel })
+    // } else {
+    //   let tempDel = _.cloneDeep(this.state.data)
+    //   for (let i = 0; i < data[0].items.length; i++) {
+    //     const element = data[0].items[i];
+    //     tempDel = tempDel.filter(r => element.workId.indexOf(r.workId) === -1)
+    //   }
+    //   tempDel.push({ workDate: data[0].key })
+    //   this.setState({ data: tempDel })
+
+    if (response && response.status === 200) {
+      if (response.data && response.data.resultCode === "20000") {
+          this.setState({ isOpen: false });
+          this.setState({ isPopupError: false });
+          this.setState({ isPopupSuccess: true });
+          this.setState({ isPopupMsg: msgAlertTitle.deleted });
+      } else {
+          this.setState({ isOpen: false })
+          this.setState({ isPopupError: true })
+          this.setState({ isPopupSuccess: false })
+          this.setState({ isPopupMsg: msgAlertTitle.systemError })
       }
-      this.setState({ data: tempDel })
-    } else {
-      let tempDel = _.cloneDeep(this.state.data)
-      for (let i = 0; i < data[0].items.length; i++) {
-        const element = data[0].items[i];
-        tempDel = tempDel.filter(r => element.workId.indexOf(r.workId) === -1)
-      }
-      tempDel.push({ workDate: data[0].key })
-      this.setState({ data: tempDel })
     }
+  } catch (error) {
+    this.setState({ loadPanelVisible: false })
     this.setState({ isOpen: false })
-    this.setState({ isPopupError: false })
-    this.setState({ isPopupSuccess: true })
-    this.setState({ isPopupMsg: msgAlertTitle.deleted })
-
+    this.setState({ isPopupError: true })
+    this.setState({ isPopupSuccess: false })
+    this.setState({ isPopupMsg: msgAlertTitle.systemError })
+    console.log("TCL: Work -> fnGetData -> error", error)
+  }
   }
 
   onUpdateData = (data) => {
@@ -644,6 +678,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
     this.setState({ updateData: item, isValid_jobType: valid });
   };
 
+  
   // TODO :: calculate man hours
   calManHours = () => {
 
@@ -939,15 +974,15 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
                       showNavigationButtons={true}
                     />
 
-                    <Column dataField="projectName" caption="Project" dataType="string" />
-                    <Column dataField="projectPhase" caption="Phase" dataType="string" />
-                    <Column dataField="typeName" caption="Type" dataType="string" />
-                    <Column dataField="workDetail" caption="Detail" dataType="string" />
-                    <Column dataField="workManhour" caption="Man Hours" dataType="string" />
-                    <Column dataField="workTimeIn" caption="Time In" dataType="string" />
-                    <Column dataField="workTimeOut" caption="Time Out" dataType="string" />
-                    <Column dataField="workPlan" caption="LinkPlan" dataType="string" />
-                    <Column dataField="workRef" caption="Ref" dataType="string" />
+                    <Column dataField="projectName" caption="Project" dataType="string" alignment="center" />
+                    <Column dataField="projectPhase" caption="Phase" dataType="string" alignment="center"/>
+                    <Column dataField="typeName" caption="Type" dataType="string"  alignment="center" />
+                    <Column dataField="workDetail" caption="Detail" dataType="string"  alignment="center" />
+                    <Column dataField="workManhour" caption="Man Hours" dataType="string"  alignment="center" />
+                    <Column dataField="workTimeIn" caption="Time In" dataType="string"  alignment="center"/>
+                    <Column dataField="workTimeOut" caption="Time Out" dataType="string"  alignment="center"/>
+                    <Column dataField="workPlan" caption="LinkPlan" dataType="string"  alignment="center"/>
+                    <Column dataField="workRef" caption="Ref" dataType="string"  alignment="center"/>
                     <Column caption="Edit Delete" alignment="center" width={110} cellRender={this.actionRender}>
                     </Column>
                     <Column className="color-red" dataField="workDate" groupIndex={0} groupCellRender={this.groupRender} />
@@ -1025,15 +1060,16 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
 
                     </div>
                     <div className={`col-10`} style={{ textAlign: 'start', padding: 0 }}>
-                      <DateBox value={null} type="date" value={this.state.workDate}
-                        type="date" onValueChanged={(e) => {
-                          this.handleChangeDate(e)
-                        }}
-                        className={`${this.state.isValid_workDate && this.state.isSubmit ? 'has-error-input' : ''}`} />
-                      {this.state.isValid_workDate && this.state.isSubmit ? <span className="color-red">{msgValid.work.validWorkDate}</span> : null}
-                    </div>
-                  </div>
-                </div>
+                    <DateBox value={null} type="date" value={this.state.workDate}
+                                                        displayFormat="dd/MM/yyyy"
+                                                        type="date" onValueChanged={(e) => {
+                                                            this.handleChangeDateEdit(e)
+                                                        }}
+                                                        className={`${this.state.isValid_workDate && this.state.isSubmit ? 'has-error-input' : ''}`} />
+                                                    {this.state.isValid_workDate && this.state.isSubmit ? <span className="color-red">{msgValid.work.validWorkDate}</span> : null}
+                                                </div>
+                                            </div>
+                                        </div>
               </div>
 
               <div className="row form-group">
@@ -1057,7 +1093,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
                           filterOption={(input, option) =>
                             option.props.children[1].toLowerCase().indexOf(input.toLowerCase()) >= 0
                           }
-                          value={this.state.updateData.projectId}>
+                          value={this.state.updateData.projectName}>
                           {this.projectList}
                         </Select>
                       </div>
@@ -1088,7 +1124,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
                               .toLowerCase()
                               .indexOf(input.toLowerCase()) >= 0
                           }
-                          value={this.state.updateData.typeId}
+                          value={this.state.updateData.typeName} 
                         >
                           {this.typeList}
                         </Select>

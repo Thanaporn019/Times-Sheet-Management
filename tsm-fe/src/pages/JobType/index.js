@@ -352,11 +352,13 @@ class JobType extends React.Component {
                                                 caption="Job Type"
                                                 dataField="typeName"
                                                 dataType="string"
+                                                alignment="center"
                                             />
                                             <Column
                                                 caption="Code"
                                                 dataField="typeCode"
                                                 dataType="string"
+                                                alignment="center"
                                             />
                                             <Column
                                                 width="100"

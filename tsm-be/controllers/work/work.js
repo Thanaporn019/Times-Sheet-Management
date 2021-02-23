@@ -200,7 +200,7 @@ router.delete('/:workId', async (req, res) => {
         let workId = req.params.workId || null
         let query = '';
 
-        query = `UPDATE "${table}" SET "delete_Date" = current_timestamp, "deleteBy" = 'test_user' WHERE "work_Id" = ${workId};`
+        query = `UPDATE "${table}" SET "delete_date" = current_timestamp, "delete_by" = 'test_user' WHERE "work_id" = ${workId};`
         var result = await postgresService.deletePostgrest(req, query, 'delete');
         return res.json(result)
 
