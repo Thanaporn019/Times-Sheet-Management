@@ -141,6 +141,7 @@ class ActionsWork extends React.Component {
 
                     let temp = [];
                     for (let i = 0; i < resData.length; i++) {
+                        console.log("🚀 ~ file: create-edit-view.js ~ line 146 ~ ActionsWork ~ returnnewPromise ~ resData[i].projectId", resData[i].projectId)
                         temp.push(
                             <Option key={resData[i].projectId} value={resData[i].projectId}> {resData[i].projectName} </Option>
                         );
@@ -194,9 +195,11 @@ class ActionsWork extends React.Component {
     // TODO :: Select
     // TODO :: Dropdown Project Name
     handleChangeProject = (value, index) => {
+    console.log("🚀 ~ file: create-edit-view.js ~ line 197 ~ ActionsWork ~ index", index)
+    console.log("🚀 ~ file: create-edit-view.js ~ line 197 ~ ActionsWork ~ value", value)
         let data = [...this.state.data];
         let item = { ...data[index] };
-        item.projectName = value;
+        item.projectId = value;
         data[index] = item;
 
         let valid = [...this.state.isValid_projectName];
@@ -220,7 +223,7 @@ class ActionsWork extends React.Component {
     handleChangeType = (value, index) => {
         let data = [...this.state.data];
         let item = { ...data[index] };
-        item.typeName = value;
+        item.typeId = value;
         data[index] = item;
 
         let valid = [...this.state.isValid_jobType];
@@ -455,9 +458,11 @@ class ActionsWork extends React.Component {
             for (let i = 0; i < temp.length; i++) {
                 const element = temp[i];
                 let valid = [...this.state.isValid_projectName];
+                console.log("🚀 ~ file: create-edit-view.js ~ line 459 ~ ActionsWork ~ element.projectId", element.projectId)
                 if (!element.projectId || element.projectId === '') {
                     res = false;
                     valid[i] = true;
+                    console.log("🚀 ~ file: create-edit-view.js ~ line 461 ~ ActionsWork ~ valid", valid)
                     this.setState({ isValid_projectName: valid });
                 }
             }
@@ -751,6 +756,7 @@ class ActionsWork extends React.Component {
                                             </p>
                                         </div>
                                         {this.state.data.map((data, i) => {
+                                            console.log('data.projectId --> ', data.projectId)
                                             return (
                                                 <>
                                                     <div className="box-action-content">
@@ -762,7 +768,7 @@ class ActionsWork extends React.Component {
                                                                         style={{ textAlign: "right" }}
                                                                     >
                                                                         <label className="title-field" for="ddlProjectName" >
-                                                                            Project Name <span style={{ color: "red" }}> * </span>
+                                                                            Project Name  <span style={{ color: "red" }}> * </span>
                                                                         </label>
                                                                     </div>
                                                                     <div className={`col-8`} style={{ textAlign: 'start', padding: 0 }}>
@@ -786,12 +792,12 @@ class ActionsWork extends React.Component {
                                                                                     option.props.children[1].toLowerCase().indexOf(input.toLowerCase()) >= 0
                                                                                 }
                                                                                 
-                                                                                value={data.projectName}>
+                                                                                value={data.projectId}>
                                                                                     
                                                                                 {this.projectList}
                                                                             </Select>
                                                                         </div>
-                                                                        
+                                                                   
                                                                         {this.state.isValid_projectName[i] && this.state.isSubmit ? <span className="color-red">{msgValid.work.validProjectName}</span> : null}
                                                                     </div>
                                                                 </div>
@@ -824,7 +830,7 @@ class ActionsWork extends React.Component {
                                                                                         .toLowerCase()
                                                                                         .indexOf(input.toLowerCase()) >= 0
                                                                                 }
-                                                                                value={data.typeName}
+                                                                                value={data.typeId}
                                                                             >
 
                                                                                 {this.typeList}

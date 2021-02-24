@@ -252,8 +252,8 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
     }
   }
 
-  handleChangeDate  = (event) => {
-    let temp = _.cloneDeep(this.state.data)
+  handleChangeDate  = (event,index) => {
+    let temp = _.cloneDeep(this.state.updateData.data)
     for (let i = 0; i < temp.length; i++) {
         const element = temp[i];
         element.workDate = event.value
@@ -261,8 +261,9 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
 
     if (!event.value || event.value !== '') {
         this.setState({ isValid_workDate: false });
+        
     }
-    this.setState({ workDate: event.value, data: temp })
+    this.setState({ updateData: event.value, data: temp })
 }
 
 
@@ -275,6 +276,9 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
         typeId: null
       }
     })
+    setTimeout(() => {
+      this.fnGetData();
+  }, 100);
   }
 
   onSearch = () => {
@@ -816,13 +820,14 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
         if (response && response.status === 200) {
           if (response.data && response.data.resultCode === "20000") {
               console.log("🚀 ~ file: index.js ~ line 751 ~ Work ~ returnnewPromise ~ this.state.data", this.state.data)
-              let mergeData = this.state.data.concat(response.data.resultData)
+              // let mergeData = this.state.data.concat(response.data.resultData)
+              let mergeData = (response.data.resultData)
               // console.log("🚀 ~ file: index.js ~ line 749 ~ Work ~ fnGetData= ~ response.data.resultData", response.data.resultData)
               console.log("\n\n\n🚀 ~ file: index.js ~ line 749 ~ Work ~ fnGetData= ~ mergeData", mergeData)
                 this.setState({ data: mergeData })
                 // this.fnSetDefaultDate()
             } else {
-                this.setState({ data: response.data.resultData })
+                this.setState({ data: this.state.data(response.data.resultData) })
             }
 
         }
@@ -923,7 +928,8 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
 
                     <div className="row form-group">
                       <div className="col-12" style={{ textAlign: 'center' }}>
-                        <button class="btn-custom btn-reset " style={{ marginRight: 20 }} onClick={this.handleReset}>RESET</button>
+                        <button class="btn-custom btn-reset " style={{ marginRight: 20 }} onClick={this.handleReset}>RESET
+                        </button>
                       
                         <button class="btn-custom btn-search " onClick={this.onSearch}>
                           SEARCH</button>
@@ -1102,36 +1108,6 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
                     </div>
                   </div>
                 </div>
-
-                {/* <div className="col-6">
-                  <div className="row">
-                    <div className="col-4" style={{ textAlign: "right" }} >
-                      <label className="title-field" for="ddlProjectName" >
-                        Job Type <span style={{ color: "red" }}> * </span>
-                      </label>
-                    </div>
-                    <div className={`col-8`} style={{ textAlign: 'start', padding: 0 }}>
-                      <div className={`form-control div-select ${this.state.isValid_projectName && this.state.isSubmit ? 'has-error-input' : ''}`}>
-                        <Select
-                          showSearch
-                          style={{ width: 200 }}
-                          placeholder="Please selete type"
-                          optionFilterProp="children"
-                          onChange={(e) => {
-                            this.handleChangeType(e);
-                          }}
-                          filterOption={(input, option) =>
-                            option.props.children[1].toLowerCase().indexOf(input.toLowerCase()) >= 0
-                          }
-                          value={this.state.updateData.typeName}>
-                          {this.typeList}
-                        </Select>
-                      </div>
-                      {this.state.isValid_jobType && this.state.isSubmit ? <span className="color-red">{msgValid.work.validJobType}</span> : null}
-                    </div>
-                  </div>
-                </div>
-                </div> */}
 
                 {/* Job Type */}
                 <div className="col-6">

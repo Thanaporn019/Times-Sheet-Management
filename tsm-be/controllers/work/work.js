@@ -27,6 +27,7 @@ router.get('/:dateFrom/:dateTo', async (req, res) => {
         } else {
             orderby = ``;
         }
+        
         let sqlProjectName = ``;
         let sqlTypeName = ``;
         let sqlDateFrom = ``;
@@ -111,7 +112,7 @@ router.get('/', async (req, res) => {
         }
         // query = `SELECT * FROM "${table}" ${where} ;`
 
-        query = `SELECT work.work_id, project.project_name, type.type_name, work.work_date, project.project_phase, work.work_detail, work.work_plan, work.work_ref, work.work_manhour, work.work_time_in, work.work_time_out,
+        query = `SELECT work.work_id, project.project_name, project.project_id, type.type_id, type.type_name, work.work_date, project.project_phase, work.work_detail, work.work_plan, work.work_ref, work.work_manhour, work.work_time_in, work.work_time_out,
            project.project_name
         FROM ((work 
         LEFT JOIN type ON work.type_id = type.type_id)
