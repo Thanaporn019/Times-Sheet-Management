@@ -54,7 +54,7 @@ class Work extends React.Component {
         typeId: null
       },
       projectList: [],
-      jobtypeList: [],
+      typeList: [],
       isPopupSuccess: false, // alert success case
       isPopupError: false,  // alert error case
       isPopupMsg: '',  // alert msg
@@ -97,7 +97,7 @@ class Work extends React.Component {
       this.dateOfCurrentMouth.push({ workDate: `${(i + 1) >= 10 ? i + 1 : '0' + (i + 1)}/${moment().format('MM')}/${moment().format('YYYY')}` })
     }
 
-
+    
 
 const range = momentEx.range(this.state.filter.dateFrom, this.state.filter.dateTo);
 console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", range)
@@ -109,7 +109,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
     try {
       this.setState({ loadPanelVisible: true })
       await this.getProjectList()
-      await this.getJobtypeList()
+      await this.gettypeList()
       this.fnSetDefaultDate()
       await this.fnGetData();
       this.setState({ loadPanelVisible: false })
@@ -131,7 +131,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
       }
       // console.log("TCL: fnSetDefaultDate -> temp", temp)
       this.setState({ data: temp })
-    }, 150);
+    }, 250);
   }
 
   
@@ -181,7 +181,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
     });
   }
 
-  async getJobtypeList() {
+  async gettypeList() {
     return new Promise(async (resolve, reject) => {
       try {
         let resData = []
@@ -191,10 +191,10 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
         const response = await axios.get(api + '/type', { params: filter })
         if (response && response.status === 200) {
           if (response.data && response.data.resultCode === "20000") {
-            this.setState({ jobtypeList: response.data.resultData })
+            this.setState({ typeList: response.data.resultData })
             resData = response.data.resultData
           } else {
-            this.setState({ jobtypeList: response.data.resultData ? response.data.resultData : [] })
+            this.setState({ typeList: response.data.resultData ? response.data.resultData : [] })
             resData = response.data.resultData || [];
           }
 
@@ -205,7 +205,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
             );
           }
 
-          this.jobtypeList = temp;
+          this.typeList = temp;
         }
         resolve();
       } catch (error) {
@@ -233,7 +233,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
     });
   }
 
-  handleChangeDate = (event, type) => {
+  handleChangeDateFrom = (event, type) => {
     if (type === 'from') {
       this.setState({
         filter: {
@@ -252,7 +252,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
     }
   }
 
-  handleChangeDateEdit  = (event) => {
+  handleChangeDate  = (event) => {
     let temp = _.cloneDeep(this.state.data)
     for (let i = 0; i < temp.length; i++) {
         const element = temp[i];
@@ -264,6 +264,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
     }
     this.setState({ workDate: event.value, data: temp })
 }
+
 
   handleReset = () => {
     this.setState({
@@ -626,15 +627,15 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
     this.setState({ updateData: temp, isValid_detail: valid });
   }
 
-  onWorkLinkPlanChange = (event, index) => {
+  onWorkPlanChange = (event, index) => {
     let temp = _.cloneDeep(this.state.updateData)
-    temp.workLinkPlan = event.target.value
+    temp.workPlan = event.target.value
 
-    let valid = this.state.isValid_LinkPlan;
+    let valid = this.state.isValid_Plan;
     if (!event.target.value || event.target.value !== '') {
       valid = false;
     }
-    this.setState({ updateData: temp, isValid_LinkPlan: valid });
+    this.setState({ updateData: temp, isValid_Plan: valid });
   }
 
   onWorkRefChange = (event, index) => {
@@ -653,29 +654,28 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
   // TODO :: Dropdown Project Name
   handleChangeProject = (value, index) => {
     let item = this.state.updateData;
-    item.projectId = value;
+    item.projectName = value;
     let valid = this.state.isValid_projectName;
     console.log("TCL: ActionsWork -> handleChangeProject -> valid", valid)
     if (!value || value !== '') {
       valid = false;
     }
-
     this.setState({ updateData: item, isValid_projectName: valid });
-
     console.log("TCL: ActionsWork -> handleChangeProject -> ", this.state)
   };
 
   // TODO :: Dropdown Job Type
   handleChangeType = (value, index) => {
     let item = this.state.updateData;
-    item.typeId = value;
-
+    item.typeName = value;
     let valid = this.state.isValid_jobType;
+    console.log("TCL: ActionsWork -> handleChangeType -> valid", valid)
     if (!value || value !== '') {
       valid = false;
     }
 
     this.setState({ updateData: item, isValid_jobType: valid });
+    console.log("TCL: ActionsWork -> handleChangeType -> ", this.state)
   };
 
   
@@ -782,7 +782,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
 
   };
 
-  
+
 
   fnGetData = async () => {
     return new Promise(async (resolve, reject)=>{
@@ -879,7 +879,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
                             <div className="col-4"><label for="ddlJobType" className="title-field">Job Type</label></div>
                             <select class="form-control col-7" id="ddlJobType" value={this.state.filter.typeId} onChange={this.handleTypeChange}>
                               {
-                                this.state.jobtypeList.map(r => {
+                                this.state.typeList.map(r => {
                                   // console.log("Work -> render -> r", r)
                                   return <option value={r.typeId} selected={r.typeId == this.state.filter.typeId}>{r.typeName}</option>
                                 })
@@ -899,7 +899,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
                                 value={this.state.filter.dateFrom}
                                 displayFormat="dd/MM/yyyy"
                                 type="date" onValueChanged={(e) => {
-                                  this.handleChangeDate(e, 'from')
+                                  this.handleChangeDateFrom(e, 'from')
                                 }} />
                             </div>
                           </div>
@@ -911,7 +911,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
                               <DateBox value={this.state.filter.dateTo}
                                 displayFormat="dd/MM/yyyy"
                                 type="date" type="date" onValueChanged={(e) => {
-                                  this.handleChangeDate(e, 'to')
+                                  this.handleChangeDateFrom(e, 'to')
                                 }} />
                             </div>
                           </div>
@@ -1060,16 +1060,17 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
 
                     </div>
                     <div className={`col-10`} style={{ textAlign: 'start', padding: 0 }}>
-                    <DateBox value={null} type="date" value={this.state.workDate}
+                    <DateBox value={null} type="date" value={this.state.updateData.workDate}
                                                         displayFormat="dd/MM/yyyy"
                                                         type="date" onValueChanged={(e) => {
-                                                            this.handleChangeDateEdit(e)
+                                                            this.handleChangeDate(e)
                                                         }}
                                                         className={`${this.state.isValid_workDate && this.state.isSubmit ? 'has-error-input' : ''}`} />
                                                     {this.state.isValid_workDate && this.state.isSubmit ? <span className="color-red">{msgValid.work.validWorkDate}</span> : null}
                                                 </div>
                                             </div>
                                         </div>
+                                        
               </div>
 
               <div className="row form-group">
@@ -1101,6 +1102,37 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
                     </div>
                   </div>
                 </div>
+
+                {/* <div className="col-6">
+                  <div className="row">
+                    <div className="col-4" style={{ textAlign: "right" }} >
+                      <label className="title-field" for="ddlProjectName" >
+                        Job Type <span style={{ color: "red" }}> * </span>
+                      </label>
+                    </div>
+                    <div className={`col-8`} style={{ textAlign: 'start', padding: 0 }}>
+                      <div className={`form-control div-select ${this.state.isValid_projectName && this.state.isSubmit ? 'has-error-input' : ''}`}>
+                        <Select
+                          showSearch
+                          style={{ width: 200 }}
+                          placeholder="Please selete type"
+                          optionFilterProp="children"
+                          onChange={(e) => {
+                            this.handleChangeType(e);
+                          }}
+                          filterOption={(input, option) =>
+                            option.props.children[1].toLowerCase().indexOf(input.toLowerCase()) >= 0
+                          }
+                          value={this.state.updateData.typeName}>
+                          {this.typeList}
+                        </Select>
+                      </div>
+                      {this.state.isValid_jobType && this.state.isSubmit ? <span className="color-red">{msgValid.work.validJobType}</span> : null}
+                    </div>
+                  </div>
+                </div>
+                </div> */}
+
                 {/* Job Type */}
                 <div className="col-6">
                   <div className="row">
@@ -1110,7 +1142,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
                       </label>
                     </div>
                     <div className={`col-8`} style={{ textAlign: 'start', padding: 0 }}>
-                      <div className={`form-control div-select ${this.state.isValid_projectName && this.state.isSubmit ? 'has-error-input' : ''}`}>
+                      <div className={`form-control div-select ${this.state.isValid_jobType && this.state.isSubmit ? 'has-error-input' : ''}`}>
                         <Select
                           showSearch
                           style={{ width: 200 }}
@@ -1132,9 +1164,9 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
                       {this.state.isValid_jobType && this.state.isSubmit ? <span className="color-red">{msgValid.work.validJobType}</span> : null}
 
                     </div>
-                  </div>
+                  </div> 
                 </div>
-              </div>
+                </div>
 
               {/* Time in */}
               <div className="row form-group" >
@@ -1253,7 +1285,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
               </div>
 
 
-              {/* Link Plan */}
+              {/* Plan */}
               <div className="row form-group">
                 <div className="col-12">
                   <div className="row">
@@ -1264,7 +1296,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
                     </div>
                     <div className="col-10" style={{ textAlign: 'start', padding: 0 }}>
 
-                      <input type="text" class="form-control" id="txtLinkPlan" value={this.state.updateData.workLinkPlan} onChange={(event) => { this.onWorkLinkPlanChange(event) }} />
+                      <input type="text" class="form-control" id="txtLinkPlan" value={this.state.updateData.workPlan} onChange={(event) => { this.onWorkPlanChange(event) }} />
 
                     </div>
                   </div>

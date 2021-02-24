@@ -91,7 +91,7 @@ class ActionsWork extends React.Component {
         try {
             this.setState({ loadPanelVisible: true })
             await this.getProjectList()
-            await this.getJobtypeList()
+            await this.gettypeList()
             if (this.state.params && this.state.params.workDate) {
                 let workDate = _.cloneDeep(this.state.params.workDate)
                 console.log("TCL: ActionsWork -> componentDidMount -> workDate", workDate)
@@ -156,7 +156,7 @@ class ActionsWork extends React.Component {
         });
     }
 
-    async getJobtypeList() {
+    async gettypeList() {
         return new Promise(async (resolve, reject) => {
             try {
                 let resData = []
@@ -196,7 +196,7 @@ class ActionsWork extends React.Component {
     handleChangeProject = (value, index) => {
         let data = [...this.state.data];
         let item = { ...data[index] };
-        item.projectId = value;
+        item.projectName = value;
         data[index] = item;
 
         let valid = [...this.state.isValid_projectName];
@@ -220,7 +220,7 @@ class ActionsWork extends React.Component {
     handleChangeType = (value, index) => {
         let data = [...this.state.data];
         let item = { ...data[index] };
-        item.typeId = value;
+        item.typeName = value;
         data[index] = item;
 
         let valid = [...this.state.isValid_jobType];
@@ -275,6 +275,7 @@ class ActionsWork extends React.Component {
         this.checkGreaterTime('one', index)
     };
 
+    
 
     // TODO :: calculate man hours
     calManHours = (index) => {
@@ -404,6 +405,7 @@ class ActionsWork extends React.Component {
             data: temp
         });
     }
+
 
     onWorkRefChange = (event, index) => {
         let temp = _.cloneDeep(this.state.data)
@@ -764,6 +766,8 @@ class ActionsWork extends React.Component {
                                                                         </label>
                                                                     </div>
                                                                     <div className={`col-8`} style={{ textAlign: 'start', padding: 0 }}>
+
+                                                                        
                                                                         <div className={`form-control div-select ${this.state.isValid_projectName[i] && this.state.isSubmit ? 'has-error-input' : ''}`}>
                                                                             <Select
                                                                                 showSearch
@@ -772,6 +776,8 @@ class ActionsWork extends React.Component {
                                                                                 optionFilterProp="children"
                                                                                 onChange={(e) => {
                                                                                     
+                                                                                    
+
                                                                                     console.log("TCL: ActionsWork -> render -> ", this.projectList)
                                                                                     this.handleChangeProject(e, i);
                                                                                 }}
@@ -781,9 +787,11 @@ class ActionsWork extends React.Component {
                                                                                 }
                                                                                 
                                                                                 value={data.projectName}>
+                                                                                    
                                                                                 {this.projectList}
                                                                             </Select>
                                                                         </div>
+                                                                        
                                                                         {this.state.isValid_projectName[i] && this.state.isSubmit ? <span className="color-red">{msgValid.work.validProjectName}</span> : null}
                                                                     </div>
                                                                 </div>
@@ -796,7 +804,7 @@ class ActionsWork extends React.Component {
                                                                         </label>
                                                                     </div>
                                                                     <div className={`col-8`} style={{ textAlign: 'start', padding: 0 }}>
-                                                                        <div className={`form-control div-select ${this.state.isValid_projectName[i] && this.state.isSubmit ? 'has-error-input' : ''}`}>
+                                                                        <div className={`form-control div-select ${this.state.isValid_jobType[i] && this.state.isSubmit ? 'has-error-input' : ''}`}>
                                                                             <Select
                                                                                 showSearch
                                                                                 style={{ width: 200 }}
@@ -964,12 +972,12 @@ class ActionsWork extends React.Component {
                                                                 <div className="row">
                                                                     <div className="col-2" style={{ textAlign: "right" }} >
                                                                         <label className="title-field" for="txtLinkPlan" >
-                                                                            Link Plan
+                                                                        Link Plan
                                                                         </label>
                                                                     </div>
                                                                     <div className="col-10" style={{ textAlign: 'start', padding: 0 }}>
 
-                                                                        <input type="text" class="form-control" id="txtLinkPlan" value={data.workPlan} onChange={(event) => { this.onWorkPlanChange(event, i) }} />
+                                                                        <input type="text" class="form-control" id="txtPlan" value={data.workPlan} onChange={(event) => { this.onWorkPlanChange(event, i) }} />
 
                                                                     </div>
                                                                 </div>

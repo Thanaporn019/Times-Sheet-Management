@@ -23,6 +23,7 @@ let data = {
         req: "Please fill in the information.",
         work: {
             validWorkDate: "Please fill in the information.",
+            validWorkDateEdit: "Please fill in the information.",
             validProjectName: "Please fill in the information.",
             validJobType: "Please fill in the information.",
             validTimeIn: "Please fill in the information.",
