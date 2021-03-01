@@ -342,7 +342,7 @@ class Project extends React.Component {
                                             showBorders={true}
                                             showRowLines={true}
                                             ref={this.dataGridRef}
-                                            noDataText="Data Not Found"
+                                            noDataText="No Data"
                                             onOptionChanged={this.handleOptionChange}
                                         >
                                             <Paging defaultPageSize={configService.defaultPageSize}

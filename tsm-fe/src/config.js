@@ -3,7 +3,7 @@
 let data = {
     "appIp": "http://localhost:5000",
     "apiUrlPrefix": "/TimeSheetManagement/Working",
-    "allowedPageSizes": [10, 25, 50, 100],
+    "allowedPageSizes": [10,20, 25, 50, 100,250],
     "defaultPageSize": 10,
     "fields": {
         "typeList": "typeId,typeName,typeCode,updateDate,updateBy,createDate,createBy",

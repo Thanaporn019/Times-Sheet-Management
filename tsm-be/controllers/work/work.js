@@ -157,7 +157,7 @@ router.post('/', async (req, res) => {
             for (let i = 0; i < body.length; i++) {
                 const element = body[i];
                 console.log("🚀 ~ file: work.js ~ line 158 ~ router.post ~ element", element)
-                // let workId = element.workId.replace(/"/g, "'");
+               
                 
                 let projectId = element.projectId;
                 let typeId = element.typeId;

@@ -525,6 +525,7 @@ updateBy: null,
                                             <div className="col-4" style={{ textAlign: 'right' }}><label className="title-field" for="txtManDay">Man Day{this.state.params.action !== 'view' ? <span style={{ color: 'red' }}></span> : null}</label></div>
                                             <div className="col-5" style={{ textAlign: 'start', padding: 0 }}>
                                                 <input type="text" class="form-control col-5" id="txtManDay" value={this.state.data.projectManDays} onChange={this.onManDaysChange} disabled={this.state.params.action === 'view'}/>
+                                          
                                             </div>
                                         </div>
 
