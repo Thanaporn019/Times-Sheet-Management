@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "C:\\Users\\Administrator\\Documents\\Bluefin-EM\\bluefin-em\\mockup\\mappings"
+		},
+		{
+			"uri": "ssh://10.1.2.141/",
+			"name": "SSH FS - 10.1.2.141"
+		}
+	],
+	"settings": {}
+}

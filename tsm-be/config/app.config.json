@@ -1,0 +1,44 @@
+{
+    "default": {
+        "appName": "times-sheet-management",
+        "appPort": 5000,
+        "appIp": "0.0.0.0",
+        "apiUrlPrefix": "/TimeSheetManagement/Working",
+        "database": {
+            "user": "postgres",
+            "host": "localhost",
+            "database": "postgres",
+            "password": "11111",
+            "port": 5432
+        },
+        "feUrl": "http://localhost:3000/",
+        "responseMsg": {
+            "message": {
+                "timeout": {
+                    "resultCode": "",
+                    "resultDescription": ""
+                },
+                "error": {
+                    "resultCode": "50000",
+                    "resultDescription": "System error"
+                },
+                "success": {
+                    "resultCode": "20000",
+                    "resultDescription": "Success"
+                },
+                "dbError": {
+                    "resultCode": "50001",
+                    "resultDescription": "Database error"
+                },
+                "dataExist": {
+                    "resultCode": "40301",
+                    "resultDescription": "Data Exist"
+                },
+                "dataNotFound": {
+                    "resultCode": "40401",
+                    "resultDescription": "Data not found"
+                }
+            }
+        }
+    }
+}
