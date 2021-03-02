@@ -1,0 +1,11 @@
+[
+    {
+      "exec_mode": "fork",
+      "instances": 1,
+      "script": "app.js",
+      "name": "Times-Sheet-Management-be",
+      "interpreter": "node",
+      "env": {
+      }
+    }
+  ]
