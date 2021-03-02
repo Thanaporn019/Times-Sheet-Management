@@ -1,0 +1,9 @@
+{
+    "apps": [
+        {
+            "name": "times-sheet-management",
+            "script": "npm",
+            "args": "start"
+        }
+    ]
+}
