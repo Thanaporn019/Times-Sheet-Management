@@ -2,7 +2,7 @@
     {
       "exec_mode": "fork",
       "instances": 1,
-      "script": "app.js",
+      "script": "index.js",
       "name": "Times-Sheet-Management-be",
       "interpreter": "node",
       "env": {
