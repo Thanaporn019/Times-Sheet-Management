@@ -1,0 +1,11 @@
+[
+    {
+      "exec_mode": "fork",
+      "instances": 1,
+      "script": "frontend.js",
+      "name": "Times-Sheet-Management-fe",
+      "interpreter": "node",
+      "env": {
+      }
+    }
+  ]
