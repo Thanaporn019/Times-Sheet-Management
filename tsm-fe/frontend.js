@@ -4,7 +4,7 @@ const fs = require("fs");
 
 const frontEndPort = process.env.FE_PORT || 5001;
 
-app.use(express.static( __dirname + '/dist'));
+app.use(express.static( __dirname + '/build'));
 
 /*
 const https = require('https');
