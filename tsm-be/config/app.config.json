@@ -6,9 +6,9 @@
         "apiUrlPrefix": "/TimeSheetManagement/Working",
         "database": {
             "user": "postgres",
-            "host": "localhost",
-            "database": "postgres",
-            "password": "11111",
+            "host": "10.1.2.141",
+            "database": "timesheet_train",
+            "password": "postgres",
             "port": 5432
         },
         "feUrl": "http://localhost:3000/",
