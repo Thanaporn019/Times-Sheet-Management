@@ -35,7 +35,7 @@ import reportWebVitals from './reportWebVitals'
 import { createStore, applyMiddleware} from 'redux'
 import { Provider } from 'react-redux'
 import ReduxThunk from 'redux-thunk'
-
+import { HashRouter } from 'react-router-dom'
 const store = createStore(
 
   applyMiddleware(ReduxThunk)
@@ -43,7 +43,9 @@ const store = createStore(
 ReactDOM.render(
 
   <Provider store={store}>
+<HashRouter>
     <App/>
+    </HashRouter>
     </Provider>,
     document.getElementById('root'))
      reportWebVitals();

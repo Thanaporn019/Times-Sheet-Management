@@ -12,7 +12,7 @@ import ActionsProject from '../pages/Project/create-edit'
 
 
 export default () => (
-  <HashRouter>
+  
   <Switch>
     <Route exact path="/" component={Home} />
     <Route exact path="/jobtype" component={JobType} />
@@ -26,5 +26,5 @@ export default () => (
     <Route exact path="/project/:action?/:projectId" render={(props) => <ActionsProject {...props} /> } /> */}
    
   </Switch>
-  </HashRouter>
+  
 )

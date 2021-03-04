@@ -8,7 +8,7 @@ import _ from "lodash";
 import { Breadcrumb, TimePicker, Select } from "antd";
 import { HomeOutlined, PlusOutlined } from "@ant-design/icons";
 import moment from "moment";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route,HashRouter, Link } from "react-router-dom";
 import AlertPopUp from "../../components/popup/alert_popup";
 import ConfirmPopup from "../../components/popup/confirm_popup";
 import configService from "../../config";
