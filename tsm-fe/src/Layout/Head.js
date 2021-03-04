@@ -3,7 +3,7 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Form from "react-bootstrap/Form";
 import { IoPersonCircleOutline } from "react-icons/io5";
-import { NavLink, Link } from 'react-router-dom'
+import { HashRouter, NavLink, Link } from 'react-router-dom'
 // import { GrWorkshop } from "react-icons/gr";
 import { PartitionOutlined, ProjectOutlined, FundProjectionScreenOutlined  } from '@ant-design/icons';
 
