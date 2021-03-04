@@ -1,5 +1,5 @@
 import React from 'react'
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, HashRouter } from 'react-router-dom'
 
 import Home from '../pages/home'
 import Project from '../pages/Project'
@@ -12,6 +12,7 @@ import ActionsProject from '../pages/Project/create-edit'
 
 
 export default () => (
+  
   <Switch>
     <Route exact path="/" component={Home} />
     <Route exact path="/jobtype" component={JobType} />
@@ -25,4 +26,5 @@ export default () => (
     <Route exact path="/project/:action?/:projectId" render={(props) => <ActionsProject {...props} /> } /> */}
    
   </Switch>
+  
 )
