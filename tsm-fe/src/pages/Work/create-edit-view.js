@@ -13,10 +13,7 @@ import AlertPopUp from "../../components/popup/alert_popup";
 import ConfirmPopup from "../../components/popup/confirm_popup";
 import configService from "../../config";
 import axios from 'axios'
-// import { LoadPanel } from 'devextreme-react/load-panel';
-
-import { Provider } from 'react-redux'
-import ReduxThunk from 'redux-thunk'
+import { LoadPanel } from 'devextreme-react/load-panel';
 const msgAlertTitle = configService.msgAlert;
 const msgPopupTitle = configService.msgConfirm;
 const msgValid = configService.validDateFill;
@@ -711,12 +708,10 @@ class ActionsWork extends React.Component {
                 <div className="App">
                     <div id="boxType" className="container-box-content">
                         <div className="row wrap-container">
-                        <HashRouter>
                             <Breadcrumb>
                                 <Breadcrumb.Item href="/work">
                                     <HomeOutlined />
-                                    {/* <span className="breadcrum-custom"> work </span> */}
-                                    <span className="breadcrum-custom">  <Link to="/work">work</Link></span>
+                                    <span className="breadcrum-custom"> work </span>
                                 </Breadcrumb.Item>
                                 {this.state.params.action === "create" ? (
                                     <span className="breadcrum-custom"> Create work </span>
@@ -725,7 +720,7 @@ class ActionsWork extends React.Component {
                                     <span className="breadcrum-custom"> Update work </span>
                                 ) : null}
                             </Breadcrumb>
-                            </HashRouter>
+
                             <div className="wrap-content">
                                 <div className="box-action">
                                     <div className="box-title-search">

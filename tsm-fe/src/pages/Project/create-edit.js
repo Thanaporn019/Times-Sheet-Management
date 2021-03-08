@@ -8,15 +8,13 @@ import _ from "lodash";
 import { Breadcrumb, TimePicker, Select } from 'antd';
 import { HomeOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { BrowserRouter as Router, Switch, Route,HashRouter, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import AlertPopUp from "../../components/popup/alert_popup";
 import ConfirmPopup from "../../components/popup/confirm_popup";
 import configService from '../../config';
 import axios from 'axios'
 import { LoadPanel } from 'devextreme-react/load-panel';
 
-import { Provider } from 'react-redux'
-import ReduxThunk from 'redux-thunk'
 const api = configService.appIp + configService.apiUrlPrefix
 const msgAlertTitle = configService.msgAlert;
 const msgPopupTitle = configService.msgConfirm;
@@ -439,12 +437,11 @@ updateBy: null,
             <div className="App" id="App">
                 <div id="boxType" className="container-box-content">
                     <div className="row wrap-container">
-                    <HashRouter>
+
                         <Breadcrumb>
                             <Breadcrumb.Item href="/project">
                                 <HomeOutlined />
-                                {/* <span className="breadcrum-custom">project</span> */}
-                                <span className="breadcrum-custom ">  <Link to="/project">project</Link></span>
+                                <span className="breadcrum-custom">project</span>
                             </Breadcrumb.Item>
                             {/* <Breadcrumb.Item href="#"> */}
                             {this.state.params.action === 'create' ? <span className="breadcrum-custom">Create project</span> : null}
@@ -453,7 +450,7 @@ updateBy: null,
 
                             {/* </Breadcrumb.Item> */}
                         </Breadcrumb>
-                        </HashRouter>
+
 
                         <div className="wrap-content">
                             <div className="box-action">
