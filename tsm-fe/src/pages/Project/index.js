@@ -255,10 +255,10 @@ class Project extends React.Component {
                     <div id="boxType" className="container-box-content">
                         <div className="row wrap-container">
                             <Breadcrumb>
-                                <Breadcrumb.Item href="#">
+                                {/* <Breadcrumb.Item href="#"> */}
                                     <HomeOutlined />
                                     <span className="breadcrum-custom"> Project </span>
-                                </Breadcrumb.Item>
+                                {/* </Breadcrumb.Item> */}
                             </Breadcrumb>
                             <div className="wrap-content">
                                 <div className="box-search">

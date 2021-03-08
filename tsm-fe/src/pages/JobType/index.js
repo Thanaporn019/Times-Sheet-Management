@@ -232,10 +232,10 @@ class JobType extends React.Component {
                     <div id="boxType" className="container-box-content">
                         <div className="row wrap-container">
                             <Breadcrumb>
-                                <Breadcrumb.Item href="#">
+                                {/* <Breadcrumb.Item href="#"> */}
                                     <HomeOutlined />
                                     <span className="breadcrum-custom"> Job Type </span>
-                                </Breadcrumb.Item>
+                                {/* </Breadcrumb.Item> */}
                             </Breadcrumb>
                             <div className="wrap-content">
                                 <div className="box-search">
@@ -251,7 +251,7 @@ class JobType extends React.Component {
                                                         style={{ textAlign: "right" }}
                                                     ></div>
                                                 </div>
-                                                {/* Job Type Name */}
+                                                {/* Job Type */}
                                                 <div className="row form-group">
                                                     <div className="col-4" style={{ textAlign: "right" }}>
 
