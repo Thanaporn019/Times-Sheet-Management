@@ -14,6 +14,14 @@ import ConfirmPopup from "../../components/popup/confirm_popup";
 import configService from '../../config';
 import axios from 'axios'
 import { LoadPanel } from 'devextreme-react/load-panel';
+import { HashRouter } from 'react-router-dom'
+import { Provider } from 'react-redux'
+import ReduxThunk from 'redux-thunk'
+
+
+   
+   
+    
 
 const api = configService.appIp + configService.apiUrlPrefix
 const msgAlertTitle = configService.msgAlert;
@@ -191,6 +199,7 @@ class ActionJobType extends React.Component {
                 <div id="boxType" className="container-box-content">
                     <div className="row wrap-container">
 
+                   
                         <Breadcrumb>
                             <Breadcrumb.Item href="/jobtype">
                                 <HomeOutlined />
@@ -202,7 +211,7 @@ class ActionJobType extends React.Component {
 
                             {/* </Breadcrumb.Item> */}
                         </Breadcrumb>
-
+                        
                         <div className="wrap-content">
                             <div className="box-action">
                                 <div className="box-title-search">
@@ -210,9 +219,9 @@ class ActionJobType extends React.Component {
                                         {this.state.params.action === 'create' ? <p className="font-size-search">Create Job type</p> : null}
                                         {this.state.params.action === 'edit' ? <p className="font-size-search">Update Job type</p> : null}
 
-                                        {/* Job Type Name */}
+                                        {/* Job Type */}
                                         <div className="row form-group">
-                                            <div className={`col-5`} style={{ textAlign: 'right' }}><label className="title-field" for="txtJobTypeName">Job Type Name<span style={{ color: 'red' }}>*</span></label></div>
+                                            <div className={`col-5`} style={{ textAlign: 'right' }}><label className="title-field" for="txtJobTypeName">Job Type<span style={{ color: 'red' }}>*</span></label></div>
                                             <div className="col-3" style={{ textAlign: 'start', padding: 0 }}>
                                                 <input type="text" class={`form-control ${this.state.valid_typeName && this.state.isSubmit ? 'has-error-input' : ''}`} id="txtJobTypeName" value={this.state.data.typeName} onChange={this.onTypeNameChange} />
                                                 {this.state.valid_typeName && this.state.isSubmit ? <span className="color-red">{msgValid.req}</span> : null}
