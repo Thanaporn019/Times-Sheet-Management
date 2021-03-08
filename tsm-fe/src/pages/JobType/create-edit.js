@@ -15,8 +15,8 @@ import configService from '../../config';
 import axios from 'axios'
 import { LoadPanel } from 'devextreme-react/load-panel';
 
-// import { Provider } from 'react-redux'
-// import ReduxThunk from 'redux-thunk'
+import { Provider } from 'react-redux'
+import ReduxThunk from 'redux-thunk'
 
 
    

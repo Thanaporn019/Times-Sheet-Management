@@ -15,8 +15,8 @@ import configService from '../../config';
 import axios from 'axios'
 import { LoadPanel } from 'devextreme-react/load-panel';
 
-// import { Provider } from 'react-redux'
-// import ReduxThunk from 'redux-thunk'
+import { Provider } from 'react-redux'
+import ReduxThunk from 'redux-thunk'
 const api = configService.appIp + configService.apiUrlPrefix
 const msgAlertTitle = configService.msgAlert;
 const msgPopupTitle = configService.msgConfirm;
@@ -444,7 +444,7 @@ updateBy: null,
                             <Breadcrumb.Item href="/project">
                                 <HomeOutlined />
                                 {/* <span className="breadcrum-custom">project</span> */}
-                                <span className="breadcrum-custom">  <Link to="/project">project</Link></span>
+                                <span className="breadcrum-custom ">  <Link to="/project">project</Link></span>
                             </Breadcrumb.Item>
                             {/* <Breadcrumb.Item href="#"> */}
                             {this.state.params.action === 'create' ? <span className="breadcrum-custom">Create project</span> : null}
