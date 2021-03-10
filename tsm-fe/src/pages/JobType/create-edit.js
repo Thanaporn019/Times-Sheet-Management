@@ -203,7 +203,7 @@ class ActionJobType extends React.Component {
                         <Breadcrumb>
                             <Breadcrumb.Item href="/jobtype">
                                 <HomeOutlined />
-                                <span className="breadcrum-custom">Job Type</span>
+                                <span className="breadcrum-custom">job type</span>
                             </Breadcrumb.Item>
                             {/* <Breadcrumb.Item href="#"> */}
                             {this.state.params.action === 'create' ? <span className="breadcrum-custom">  Create Job type</span> : null}

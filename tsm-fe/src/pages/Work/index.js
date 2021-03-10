@@ -20,13 +20,14 @@ import DataGrid, {
   Pager,
   Scrolling,
 } from 'devextreme-react/data-grid';
-import _ from "lodash";
+import _, { result } from "lodash";
 import { Breadcrumb, Modal, TimePicker, Select } from 'antd';
 import configService from '../../config';
 import axios from 'axios'
 import { LoadPanel } from 'devextreme-react/load-panel';
 
 import { extendMoment } from 'moment-range';
+import Swal from 'sweetalert2';
 
 const momentEx = extendMoment(moment);
 
@@ -92,11 +93,12 @@ class Work extends React.Component {
     ];
 
     // ปั้นวันที่ตามเดือนปัจจุบัน start
-    this.dateOfCurrentMouth = []
-    for (let i = 0; i < moment().daysInMonth(); i++) {
-      this.dateOfCurrentMouth.push({ workDate: `${(i + 1) >= 10 ? i + 1 : '0' + (i + 1)}/${moment().format('MM')}/${moment().format('YYYY')}` })
-    }
-
+   
+    
+    // this.dateOfCurrentMouth = []
+    // for (let i = 0; i < moment().daysInMonth(); i++) {
+    //   this.dateOfCurrentMouth.push({ workDate: `${(i + 1) >= 10 ? i + 1 : '0' + (i + 1)}/${moment().format('MM')}/${moment().format('YYYY')}` })
+    // }
     
 
 const range = momentEx.range(this.state.filter.dateFrom, this.state.filter.dateTo);
@@ -110,8 +112,9 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
       this.setState({ loadPanelVisible: true })
       await this.getProjectList()
       await this.gettypeList()
-      this.fnSetDefaultDate()
       await this.fnGetData();
+     
+      this.fnSetDefaultDate()
       this.setState({ loadPanelVisible: false })
     } catch (error) {
       console.log("TCL: componentDidMount -> error", error)
@@ -129,7 +132,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
         temp.push(item)
   
       }
-      // console.log("TCL: fnSetDefaultDate -> temp", temp)
+      console.log("TCL: fnSetDefaultDate -> temp", temp)
       this.setState({ data: temp })
     }, 250);
   }
@@ -292,10 +295,10 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
     // ข้อความ ดำ > บันทึกแล้ว
     // ข้อความ แดง > ไม่บันทึก / ส - อ
     // ข้อความ น้ำเงิน > ปัจจุบัน
-    let day = moment(data.value, 'DD/MM/YYYY').format('dddd')
+    let day = moment(data.value, 'YYYY/MM/DD').format('dddd')
     let id = data.data.items && data.data.items.length > 0 ? data.data.items[0].workId : data.data.collapsedItems && data.data.collapsedItems.length > 0 ? data.data.collapsedItems[0].workId : null
     let name = `DATE : ${data.value}  ${day}`
-    let now = moment().format('DD-MM-YYYY');
+    let now = moment().format('YYYY-MM-DD');
     let workDate = '"' + data.value.replace(/\//g, "%2F") + '"'
       
 
@@ -471,7 +474,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
     // แถบสี เทา > ส-อ
     if (e.rowType === 'group') {
       // console.log("TCL: onRowPrepared -> e ===> ", e)
-      let day = moment(e.key[0], 'DD/MM/YYYY').format('dddd')
+      let day = moment(e.key[0], 'YYYY/MM/DD').format('dddd')
       if (day !== 'Sunday' && day !== 'Saturday') {
         e.rowElement.style.backgroundColor = 'rgb(232 211 255)';
       } else {
@@ -789,6 +792,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
 
 
   fnGetData = async () => {
+    
     return new Promise(async (resolve, reject)=>{
 
     try {
@@ -815,13 +819,49 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
         filter.filter.dateTo = this.state.filter.dateTo
     }
 
+    let start = moment(this.state.filter.dateFrom);
+    let end = moment(this.state.filter.dateTo);
+    console.log(this.state.filter.dateFrom)
+    console.log(this.state.filter.dateTo)
+    this.dateOfCurrentMouth = []
+    for (let i = start; i.isSameOrBefore(end, 'day'); i=i.add(1,'day')){
+      this.dateOfCurrentMouth.push({ 
+     
+        workDate: i.format("YYYY/MM/DD")})
+        console.log(i.format("YYYY/MM/DD"))
+        
       
+      }
+      
+      console.log("🚀 ~ file: index.js ~ line 829 ~ Work ~ returnnewPromise ~ this.dateOfCurrentMouth", this.dateOfCurrentMouth)
+    
+
+
         const response = await axios.get(api + '/work', { params: filter })
         if (response && response.status === 200) {
           if (response.data && response.data.resultCode === "20000") {
               console.log("🚀 ~ file: index.js ~ line 751 ~ Work ~ returnnewPromise ~ this.state.data", this.state.data)
               // let mergeData = this.state.data.concat(response.data.resultData)
-              let mergeData = (response.data.resultData)
+             
+             
+              console.log("🚀 ~ file: index.js ~ line 849 ~ Work ~ returnnewPromise ~ response.data.resultData", response.data.resultData)
+              // let tempData = []
+
+              // for (let i = 0; i < response.data.resultData.length; i++) {
+              //   const element = response.data.resultData[i];
+
+              //   this.dateOfCurrentMouth.forEach( x => {
+              //     if(x.workDate === element.workDate){
+              //       console.log("🚀 ~ file: index.js ~ line 852 ~ Work ~ returnnewPromise ~ x", x)
+              //       tempData.push(element)
+              //     }
+              //   })
+
+              // }
+              // console.log("🚀 ~ file: index.js ~ line 859 ~ Work ~ returnnewPromise ~ tempData", tempData)
+              // console.log("🚀 ~ file: index.js ~ line 859 ~ Work ~ returnnewPromise ~ this.dateOfCurrentMouth", this.dateOfCurrentMouth)
+              let mergeData = this.dateOfCurrentMouth.concat(response.data.resultData)
+              
               // console.log("🚀 ~ file: index.js ~ line 749 ~ Work ~ fnGetData= ~ response.data.resultData", response.data.resultData)
               console.log("\n\n\n🚀 ~ file: index.js ~ line 749 ~ Work ~ fnGetData= ~ mergeData", mergeData)
                 this.setState({ data: mergeData })
@@ -902,7 +942,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
                             <div className="col-7" style={{ paddingLeft: 0, paddingRight: 0 }}>
                               <DateBox
                                 value={this.state.filter.dateFrom}
-                                displayFormat="dd/MM/yyyy"
+                                displayFormat="yyyy/MM/dd"
                                 type="date" onValueChanged={(e) => {
                                   this.handleChangeDateFrom(e, 'from')
                                 }} />
@@ -914,7 +954,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
                             <div className="col-4"><label for="ddlDateTo" className="title-field">Date : To</label></div>
                             <div className="col-7" style={{ paddingLeft: 0, paddingRight: 0 }}>
                               <DateBox value={this.state.filter.dateTo}
-                                displayFormat="dd/MM/yyyy"
+                                displayFormat="yyyy/MM/dd"
                                 type="date" type="date" onValueChanged={(e) => {
                                   this.handleChangeDateFrom(e, 'to')
                                 }} />
@@ -987,7 +1027,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
                     <Column dataField="workManhour" caption="Man Hours" dataType="string"  alignment="center" />
                     <Column dataField="workTimeIn" caption="Time In" dataType="string"  alignment="center"/>
                     <Column dataField="workTimeOut" caption="Time Out" dataType="string"  alignment="center"/>
-                    <Column dataField="workPlan" caption="LinkPlan" dataType="string"  alignment="center"/>
+                    <Column dataField="workPlan" caption="Link Plan" dataType="string"  alignment="center"/>
                     <Column dataField="workRef" caption="Ref" dataType="string"  alignment="center"/>
                     <Column caption="Edit Delete" alignment="center" width={110} cellRender={this.actionRender}>
                     </Column>
@@ -1067,7 +1107,7 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
                     </div>
                     <div className={`col-10`} style={{ textAlign: 'start', padding: 0 }}>
                     <DateBox value={null} type="date" value={this.state.updateData.workDate}
-                                                        displayFormat="dd/MM/yyyy"
+                                                        displayFormat="yyyy/MM/dd"
                                                         type="date" onValueChanged={(e) => {
                                                             this.handleChangeDate(e)
                                                         }}

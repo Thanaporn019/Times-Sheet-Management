@@ -35,7 +35,7 @@ async function queryPostgrest(req, query, method) {
     try {
         var result = await connectPostgres(req, query, method);
         // console.log("TCL: queryPostgrest -> result", result)
-        return service.convertDateFormat(result, '', 'DD/MM/YYYY HH:mm:ss');
+        return service.convertDateFormat(result, '', 'YYYY/MM/DD HH:mm:ss');
     } catch (error) {
         console.log("TCL: queryPostgrest -> error", error)
     }
