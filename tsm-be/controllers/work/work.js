@@ -48,11 +48,11 @@ router.get('/:dateFrom/:dateTo', async (req, res) => {
                 sqlTypeName = `LOWER("type_name") LIKE LOWER('%${filter.typeName}%')`
             }
             if (filter.dateFrom) {
-                sqlDateFrom = date_from >= '${moment(filter.dateFrom).format("DD/MM/YYYY HH:mm:ss")}'
+                sqlDateFrom = date_from >= '${moment(filter.dateFrom).format("YYYY/MM/DD HH:mm:ss")}'
             }
 
             if (filter.dateTo) {
-                sqlDateTo = date_to <= '${moment(filter.dateTo).format("DD/MM/YYYY HH:mm:ss")}'
+                sqlDateTo = date_to <= '${moment(filter.dateTo).format("YYYY/MM/DD HH:mm:ss")}'
 
             }
 
@@ -125,7 +125,7 @@ router.get('/', async (req, res) => {
             const element = result.resultData[i];
             result.resultData[i].workTimeIn = moment(element.workTimeIn, 'HH:mm:ss').format('HH:mm A')
             result.resultData[i].workTimeOut = moment(element.workTimeOut, 'HH:mm:ss').format('HH:mm A')
-            result.resultData[i].workDate = moment(element.workDate, 'DD/MM/YYYY HH:mm:ss').format('DD/MM/YYYY')
+            result.resultData[i].workDate = moment(element.workDate, 'YYYY/MM/DD HH:mm:ss').format('YYYY/MM/DD')
             console.log("🚀 ~ file: work.js ~ line 128 ~ router.get ~ element.workDate", element.workDate)
         }
         console.log("\nTCL: result", result, '\n')
@@ -161,7 +161,7 @@ router.post('/', async (req, res) => {
                 
                 let projectId = element.projectId;
                 let typeId = element.typeId;
-                let workDate = moment(element.workDate, 'DD-MM-YYYY').format('YYYY-MM-DD')
+                let workDate = moment(element.workDate, 'YYYY-MM-DD').format('DD-MM-YYYY ')
                 let workDetail = element.workDetail.replace(/"/g, "'");
                 let workPlan = element.workPlan ? element.workPlan.replace(/"/g, "'") : null;
                 let workRef = element.workRef ? element.workRef.replace(/"/g, "'") : null;

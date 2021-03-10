@@ -98,7 +98,7 @@ class ActionsWork extends React.Component {
                 let date = workDate.replace(/%2F/g, "\/")
                 if (this.state.params.action === 'create') {
                     this.setState({
-                        workDate: moment(date, 'DD/MM/YYYY').toDate()
+                        workDate: moment(date, 'YYYY/MM/DD').toDate()
                     })
 
                 }
@@ -618,7 +618,7 @@ class ActionsWork extends React.Component {
                     workId: element.workId,
                     projectId: element.projectId,
                     typeId: element.typeId,
-                    workDate: moment(this.state.workDate).format('DD-MM-YYYY'),
+                    workDate: moment(this.state.workDate).format('YYYY-MM-DD'),
                     workDetail: element.workDetail,
                     workPlan: element.workPlan,
                     workRef: element.workRef,
@@ -673,7 +673,7 @@ class ActionsWork extends React.Component {
                 let resData = []
                 let filter = {
                     "filter": {
-                        "workDate": moment(this.state.params.workDate.replace(/%2F/g, "\/"), 'DD/MM/YYYY').format('YYYY-MM-DD')
+                        "workDate": moment(this.state.params.workDate.replace(/%2F/g, "\/"), 'YYYY/MM/DD').format('YYYY-MM-DD')
                     }
                 }
                 const response = await axios.get(api + '/work', { params: filter })
@@ -689,7 +689,7 @@ class ActionsWork extends React.Component {
                             temp[i].workTimeOut = moment(element.workTimeOut, 'HH:mm A').local();
                         }
                         console.log("TCL: ActionsWork -> getDataView -> temp", temp)
-                        this.setState({ data: temp, workDate: moment(temp[0].workDate, 'DD/MM/YYYY').toDate() })
+                        this.setState({ data: temp, workDate: moment(temp[0].workDate, 'YYYY/MM/DD').toDate() })
                     } else {
                         // this.setState({ data: [], workDate: null })
                     }
@@ -740,7 +740,7 @@ class ActionsWork extends React.Component {
                                                 </div>
                                                 <div className={`col-4`} style={{ textAlign: 'start', padding: 0 }}>
                                                     <DateBox value={null} type="date" value={this.state.workDate}
-                                                        displayFormat="dd/MM/yyyy"
+                                                        displayFormat="yyyy/MM/dd"
                                                         type="date" onValueChanged={(e) => {
                                                             this.handleChangeDate(e)
                                                         }}

@@ -392,11 +392,11 @@ updateBy: null,
                             projectName: response.data.resultData[0].projectName,
                             projectPhase: response.data.resultData[0].projectPhase,
                             projectDetail: response.data.resultData[0].projectDetail,
-                            projectStartDate: moment(response.data.resultData[0].projectStartDate, 'DD/MM/YYYY HH:mm:ss').toDate(),
-                            projectEndDate: moment(response.data.resultData[0].projectEndDate, 'DD/MM/YYYY HH:mm:ss').toDate(),
+                            projectStartDate: moment(response.data.resultData[0].projectStartDate, 'YYYY/MM/DD HH:mm:ss').toDate(),
+                            projectEndDate: moment(response.data.resultData[0].projectEndDate, 'YYYY/MM/DD HH:mm:ss').toDate(),
                             projectManDays: response.data.resultData[0].projectManDays,
                             customerEmail: response.data.resultData[0].customerEmail,
-                            createDate: response.data.resultData[0].createDate,
+                            createDate: response.data.resultData[0].createDate, 
                             createBy: response.data.resultData[0].createBy,
                             updateDate: response.data.resultData[0].updateDate,
                             updateBy: response.data.resultData[0].updateBy,
@@ -467,7 +467,7 @@ updateBy: null,
                                                 <DateBox
                                                     value={this.state.data.projectStartDate}
                                                     disabled={this.state.params.action === 'view'}
-                                                    displayFormat="dd/MM/yyyy"
+                                                    displayFormat="yyyy/MM/dd"
                                                     type="date" onValueChanged={(e) => {
                                                         this.handleChangeDate(e, 'start')
                                                     }}
@@ -485,7 +485,7 @@ updateBy: null,
                                             <div className={`col-4`} style={{ textAlign: 'start', padding: 0 }}>
                                                 <DateBox
                                                     value={this.state.data.projectEndDate}
-                                                    displayFormat="dd/MM/yyyy"
+                                                    displayFormat="yyyy/MM/dd"
                                                     disabled={this.state.params.action === 'view'}
                                                     type="date" onValueChanged={(e) => {
                                                         this.handleChangeDate(e, 'end')
