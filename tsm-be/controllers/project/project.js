@@ -119,7 +119,7 @@ router.post('/', async (req, res) => {
         let fields = `"project_name","project_phase","project_detail","project_start_date","project_end_date","project_mandays","customer_email","update_date","update_by","create_date","create_by","delete_date","delete_by"`;
         // ? "createBy" เอาค่ามาจากไหน..ยังไม่มีข้อมูล เพราะส่วนนี้ดึงมาจากตอน login ซึ่งระบบนี้ยังไม่มี login
         query = `INSERT INTO "${table}" (${fields}) 
-                VALUES ('${projectName}', '${projectPhase}', '${projectDetail}', '${projectStartDate}', '${projectEndDate}', '${projectManDays}', '${customerEmail}', null, null, current_timestamp, ${user}, null, null);`
+                VALUES ('${projectName}', '${projectPhase}', '${projectDetail}', '${projectStartDate}', '${projectEndDate}', '${projectManDays}', '${customerEmail}', null, null, current_TIMESTAMP, ${user}, null, null);`
         console.log("\nTCL: query", query, '\n')
         var result = await postgresService.insertPostgrest(req, query, 'post');
         console.log("\nTCL: result", result, '\n')
@@ -142,7 +142,7 @@ router.delete('/:projectId', async (req, res) => {
         let query = '';
         let user = null;
         // ? "deleteBy" เอาค่ามาจากไหน..ยังไม่มีข้อมูล เพราะส่วนนี้ดึงมาจากตอน login ซึ่งระบบนี้ยังไม่มี login
-        query = `UPDATE "${table}" SET "delete_date" = current_timestamp, "delete_by" = ${user} WHERE "project_id" = ${projectId};`
+        query = `UPDATE "${table}" SET "delete_date" = current_TIMESTAMP, "delete_by" = ${user} WHERE "project_id" = ${projectId};`
         console.log("\nTCL: query", query, '\n')
         var result = await postgresService.deletePostgrest(req, query, 'delete');
         console.log("\nTCL: result", result, '\n')
@@ -175,7 +175,7 @@ router.put('/:projectId', async function (req, res) {
 
         let query = '';
         // ? "updateBy" เอาค่ามาจากไหน..ยังไม่มีข้อมูล เพราะส่วนนี้ดึงมาจากตอน login ซึ่งระบบนี้ยังไม่มี login
-        query = `UPDATE "${table}" SET "project_name" = '${projectName}', "project_phase" = '${projectPhase}', "project_detail" = '${projectDetail}', "project_start_date" = '${projectStartDate}', "project_end_date" = '${projectEndDate}', "project_mandays" = '${projectManDays}', "customer_email" = '${customerEmail}', "update_date" = current_timestamp, "update_by" = ${user} WHERE "project_id" = ${projectId};`
+        query = `UPDATE "${table}" SET "project_name" = '${projectName}', "project_phase" = '${projectPhase}', "project_detail" = '${projectDetail}', "project_start_date" = '${projectStartDate}', "project_end_date" = '${projectEndDate}', "project_mandays" = '${projectManDays}', "customer_email" = '${customerEmail}', "update_date" = current_TIMESTAMP, "update_by" = ${user} WHERE "project_id" = ${projectId};`
         console.log("\nTCL: query", query, '\n')
         var result = await postgresService.updatePostgrest(req, query, 'put');
         console.log("\nTCL: result", result, '\n')
