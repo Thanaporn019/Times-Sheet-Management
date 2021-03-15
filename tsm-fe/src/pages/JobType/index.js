@@ -234,7 +234,7 @@ class JobType extends React.Component {
                             <Breadcrumb>
                                 {/* <Breadcrumb.Item href="#"> */}
                                     <HomeOutlined />
-                                    <span className="breadcrum-custom"> Job Type77777 </span>
+                                    <span className="breadcrum-custom"> Job Type </span>
                                 {/* </Breadcrumb.Item> */}
                             </Breadcrumb>
                             <div className="wrap-content">
