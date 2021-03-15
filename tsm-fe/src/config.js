@@ -1,7 +1,7 @@
 
 
 let data = {
-    "appIp": "http://10.1.2.145:5000",
+    "appIp": "http://10.1.2.143:5000",
     "apiUrlPrefix": "/TimeSheetManagement/Working",
     "allowedPageSizes": [10,20, 25, 50, 100,250],
     "defaultPageSize": 10,
