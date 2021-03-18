@@ -168,7 +168,7 @@ router.post('/', async (req, res) => {
                 let workManhour = element.workManhour.replace(/"/g, "'");
                 let workTimeIn = element.workTimeIn.replace(/"/g, "'");
                 let workTimeOut = element.workTimeOut.replace(/"/g, "'");
-                var value = `${projectId},${typeId},'${workDate}','${workDetail}','${workPlan}','${workRef}','${workManhour}','${moment(workTimeIn, 'HH:mm A').format('HH:mm:ss')}','${moment(workTimeOut, 'HH:mm A').format('HH:mm:ss')}', null, null, current_timestamp, ${user}, null, null`
+                var value = `${projectId},${typeId},'${workDate}','${workDetail}','${workPlan}','${workRef}','${workManhour}','${moment(workTimeIn, 'HH:mm A').format('HH:mm:ss')}','${moment(workTimeOut, 'HH:mm A').format('HH:mm:ss')}', null, null, current_TIMESTAMP, ${user}, null, null`
                 query = `INSERT INTO 
                             "${table}" 
                                 (${fields}) 
@@ -201,7 +201,7 @@ router.delete('/:workId', async (req, res) => {
         let workId = req.params.workId || null
         let query = '';
 
-        query = `UPDATE "${table}" SET "delete_date" = current_timestamp, "delete_by" = 'test_user' WHERE "work_id" = ${workId};`
+        query = `UPDATE "${table}" SET "delete_date" = current_TIMESTAMP, "delete_by" = 'test_user' WHERE "work_id" = ${workId};`
         var result = await postgresService.deletePostgrest(req, query, 'delete');
         return res.json(result)
 
@@ -237,7 +237,7 @@ router.put('/:workId', async function (req, res) {
     
             let query = '';
     
-            query = `UPDATE "${table}" SET "project_id" = '${projectId}', "type_id" = '${typeId}', "work_time_in" = '${workTimeIn}', "work_time_out" = '${workTimeOut}', "work_manhour" = '${workManhour}', "work_detail" = '${workDetail}', "work_plan" = '${workPlan}', "work_ref" = '${workRef}', "update_date" = current_timestamp, "update_by" = 'test_user' WHERE "work_id" = ${workId};`
+            query = `UPDATE "${table}" SET "project_id" = '${projectId}', "type_id" = '${typeId}', "work_time_in" = '${workTimeIn}', "work_time_out" = '${workTimeOut}', "work_manhour" = '${workManhour}', "work_detail" = '${workDetail}', "work_plan" = '${workPlan}', "work_ref" = '${workRef}', "update_date" = current_TIMESTAMP, "update_by" = 'test_user' WHERE "work_id" = ${workId};`
             console.log("TCL: query", query)
             var result = await postgresService.updatePostgrest(req, query, 'put');
             allInsertResponse.push(result)

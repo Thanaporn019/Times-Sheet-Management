@@ -255,18 +255,31 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
     }
   }
 
-  handleChangeDate  = (event,index) => {
-    let temp = _.cloneDeep(this.state.updateData.data)
-    for (let i = 0; i < temp.length; i++) {
-        const element = temp[i];
-        element.workDate = event.value
-    }
+//   handleChangeDate  = (event,index) => {
+//     let temp = _.cloneDeep(this.state.updateData.data)
+//     for (let i = 0; i < temp.length; i++) {
+//         const element = temp[i];
+//         element.workDate = event.value
+//     }
 
-    if (!event.value || event.value !== '') {
-        this.setState({ isValid_workDate: false });
+//     if (!event.value || event.value !== '') {
+//         this.setState({ isValid_workDate: false });
         
-    }
-    this.setState({ updateData: event.value, data: temp })
+//     }
+//     this.setState({ updateData: event.value, data: temp })
+// }
+
+handleChangeDate = (event) => {
+  let temp = _.cloneDeep(this.state.data)
+  for (let i = 0; i < temp.length; i++) {
+      const element = temp[i];
+      element.workDate = event.value
+  }
+
+  if (!event.value || event.value !== '') {
+      this.setState({ isValid_workDate: false });
+  }
+  this.setState({ workDate: event.value, data: temp })
 }
 
 
@@ -829,9 +842,9 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
      
         workDate: i.format("YYYY/MM/DD")})
         console.log(i.format("YYYY/MM/DD"))
-        
       
       }
+      
       
       console.log("🚀 ~ file: index.js ~ line 829 ~ Work ~ returnnewPromise ~ this.dateOfCurrentMouth", this.dateOfCurrentMouth)
     
@@ -1118,6 +1131,24 @@ console.log("🚀 ~ file: index.js ~ line 103 ~ Work ~ constructor ~ range", ran
                                         </div>
                                         
               </div>
+
+
+              {/* Date : <span style={{ color: "red" }}> * </span>
+                                                    </label>
+                                                </div>
+                                                <div className={`col-4`} style={{ textAlign: 'start', padding: 0 }}>
+                                                    <DateBox value={null} type="date" value={this.state.data}
+                                                        displayFormat="yyyy/MM/dd"
+                                                        type="date" onValueChanged={(e) => {
+                                                            this.handleChangeDate(e)
+                                                        }}
+                                                        className={`${this.state.isValid_workDate && this.state.isSubmit ? 'has-error-input' : ''}`} />
+                                                    {this.state.isValid_workDate && this.state.isSubmit ? <span className="color-red">{msgValid.work.validWorkDate}</span> : null}
+                                                </div>
+                                            </div>
+                                        </div>
+                                         </div>  */}
+
 
               <div className="row form-group">
                 <div className="col-6">
