@@ -113,7 +113,7 @@ router.post('/', async (req, res) => {
         let user = null;
         // ? "createBy" เอาค่ามาจากไหน..ยังไม่มีข้อมูล เพราะส่วนนี้ดึงมาจากตอน login ซึ่งระบบนี้ยังไม่มี login
         let fields = `"type_name", "type_code", "update_date", "update_by", "create_date", "create_by", "delete_date", "delete_by"`
-        query = `INSERT INTO "${table}" (${fields}) VALUES ('${typeName}', '${typeCode}', null, null, current_timestamp, ${user}, null, null);`
+        query = `INSERT INTO "${table}" (${fields}) VALUES ('${typeName}', '${typeCode}', null, null, current_TIMESTAMP, ${user}, null, null);`
 
         console.log("\nTCL: query", query, '\n')
         var result = await postgresService.insertPostgrest(req, query, 'post');
@@ -137,7 +137,7 @@ router.delete('/:typeId', async (req, res) => {
         let query = '';
         let user = null;
         // ? "deleteBy" เอาค่ามาจากไหน..ยังไม่มีข้อมูล เพราะส่วนนี้ดึงมาจากตอน login ซึ่งระบบนี้ยังไม่มี login
-        query = `UPDATE "${table}" SET "delete_date" = current_timestamp, "delete_by" = ${user} WHERE "type_id" = ${typeId};`
+        query = `UPDATE "${table}" SET "delete_date" = current_TIMESTAMP, "delete_by" = ${user} WHERE "type_id" = ${typeId};`
         console.log("\nTCL: query", query, '\n')
         var result = await postgresService.deletePostgrest(req, query, 'delete');
         console.log("\nTCL: result", result, '\n')
@@ -164,7 +164,7 @@ router.put('/:typeId', async function (req, res) {
         let user = null;
         let query = '';
         // ? "updateBy" เอาค่ามาจากไหน..ยังไม่มีข้อมูล เพราะส่วนนี้ดึงมาจากตอน login ซึ่งระบบนี้ยังไม่มี login
-        query = `UPDATE "${table}" SET "type_name" = '${typeName}', "type_code" = '${typeCode}', "update_date" = current_timestamp, "update_by" = ${user} WHERE "type_id" = ${typeId};`
+        query = `UPDATE "${table}" SET "type_name" = '${typeName}', "type_code" = '${typeCode}', "update_date" = current_TIMESTAMP, "update_by" = ${user} WHERE "type_id" = ${typeId};`
         console.log("\nTCL: query", query, '\n')
         var result = await postgresService.updatePostgrest(req, query, 'put');
         console.log("\nTCL: result", result, '\n')
